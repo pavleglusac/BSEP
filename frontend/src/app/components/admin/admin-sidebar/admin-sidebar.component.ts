@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 interface MenuOption {
   title: string;
@@ -79,6 +79,11 @@ const menus = {
 })
 export class AdminSidebarComponent {
   menus: any = menus;
+  faRightFromBracket: IconDefinition = faRightFromBracket;
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
+
+  signOut(): void {
+    // TODO: Implement method
+  }
 }
