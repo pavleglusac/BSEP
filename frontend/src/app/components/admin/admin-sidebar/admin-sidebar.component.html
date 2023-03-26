@@ -1,0 +1,24 @@
+<div class="flex flex-col h-full min-h-screen w-64 bg-dark px-6">
+  <div class="w-full flex flex-col justify-center h-24">
+    <img src="./assets/images/homeguard_logo.png" alt="logo" class="w-2/3 my-auto">
+  </div>
+  
+  <!-- public keys -->
+  <div class="flex flex-col gap-y-3">
+    <div *ngFor="let group of objectKeys(menus)">
+      <h1 class="text-base text-medium font-medium">{{ group }}</h1>
+      <div class="flex flex-col mt-2 cursor-pointer">
+        
+        <div *ngFor="let option of menus[group]"
+         class="flex w-full text-sm font-medium  py-2 pr-2"
+         [ngClass]="option === chosenOption ? 'text-dark bg-light' : 'text-light bg-dark hover:text-dark hover:bg-medium'"
+         (click)="chosenOption = option">
+         <div class="w-11 text-center"><fa-icon [icon]="option.icon" class="text-xl"></fa-icon></div>
+         <p class="my-auto">{{ option.title }}</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

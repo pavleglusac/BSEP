@@ -1,15 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <p class="text-center text-2xl font-medium">
-      admin works!
-    </p>
-  `,
+  imports: [CommonModule, AdminSidebarComponent],
+  templateUrl: './admin.component.html',
   styles: [
   ]
 })
