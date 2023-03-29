@@ -1,6 +1,7 @@
 package com.bsep.admin.config;
 
 
+import com.bsep.admin.security.CustomAuthenticationProvider;
 import com.bsep.admin.security.CustomUserDetailsService;
 import com.bsep.admin.security.RestAuthenticationEntryPoint;
 import com.bsep.admin.security.TokenAuthenticationFilter;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,18 +29,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 )
 public class SecurityConfig {
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
-
 	@Autowired
-	private CustomUserDetailsService customUserDetailsService;
+	private CustomAuthenticationProvider authProvider;
+
+	@Bean
+	public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+		AuthenticationManagerBuilder authenticationManagerBuilder =
+				http.getSharedObject(AuthenticationManagerBuilder.class);
+		authenticationManagerBuilder.authenticationProvider(authProvider);
+		return authenticationManagerBuilder.build();
+	}
 
 	@Bean
 	public TokenAuthenticationFilter tokenAuthenticationFilter() {

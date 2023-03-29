@@ -30,7 +30,18 @@ public class User implements UserDetails {
 
 	private String imageUrl;
 
+	private Integer loginAttempts = 0;
+
 	private String password;
+
+	@Column(name = "LOGIN_TOKEN")
+	private String loginToken;
+
+	@Column(name = "EMAIL_VERIFIED")
+	private Boolean emailVerified = false;
+
+	@Column(name = "EMAIL_VERIFICATION_TOKEN")
+	private String emailVerificationToken;
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
@@ -52,7 +63,7 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return loginAttempts < 3;
 	}
 
 	@Override
@@ -62,7 +73,7 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return emailVerified;
 	}
 
 }
