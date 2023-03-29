@@ -16,10 +16,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) {
-		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		return userRepository.findByEmail(email).orElse(null);
 	}
 
 	public UserDetails loadUserById(UUID id) {
-		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+		return userRepository.findById(id).orElse(null);
 	}
 }
