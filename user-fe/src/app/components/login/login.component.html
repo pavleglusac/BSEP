@@ -1,0 +1,66 @@
+<div class="w-full h-full background relative">
+    <div class="absolute top-[20%] left-1/3 rounded-lg backdrop-blur-lg brightness-[1.04] flex flex-col space-y-3 px-16 py-8">
+        <p class="text-primary-violet text-lg font-semibold">Login</p>
+        <p class="text-primary-gray-dark !mb-5">Login to manage your account</p>
+
+        <div *ngIf="page === 1" class="flex flex-col">
+
+        <div class="relative mb-3 xl:w-96">
+            <input
+              [(ngModel)]="email"
+              type="email"
+              class="peer m-0 block h-[58px] w-full rounded-lg border border-solid border-neutral-300 bg-secondary-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-700 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+              id="floatingInput"
+              placeholder="name@example.com" />
+            <label
+              for="floatingInput"
+              class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-700 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
+              >Email address</label
+            >
+            <p class="text-sm text-red-600">{{this.emailError}}</p>
+        </div>
+
+        <div class="relative !mb-3 xl:w-96">
+            <input
+              [(ngModel)]="password"
+              type="password"
+              class="peer m-0 block h-[58px] w-full rounded-lg border border-solid border-neutral-300 bg-secondary-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-700 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+              id="floatingPassword"
+              placeholder="Password" />
+            <label
+              for="floatingPassword"
+              class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-700 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none "
+              >Password</label
+            >
+            <p class="text-sm text-red-600">{{this.passwordError}}</p>
+          </div>
+
+          <button class="button violet-button self-end" (click)="next()">Next</button>
+
+        </div>
+
+        <div *ngIf="page === 2" class="flex flex-col">
+
+            <div class="relative mb-3 xl:w-96">
+                <input
+                [(ngModel)]="code"
+                  type="text"
+                  class="peer m-0 block h-[58px] w-full rounded-lg border border-solid border-neutral-300 bg-secondary-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-700 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+                  id="floatingInputCode"
+                  placeholder="verificationcode" />
+                <label
+                  for="floatingInputCode"
+                  class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-700 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
+                  >Verification code</label
+                >
+                <p class="text-sm text-red-600">{{this.codeError}}</p>
+            </div>
+
+            <div class="flex justify-between mt-[70px]">
+                <button class="button violet-button" (click)="previous()">Previous</button>
+                <button class="button violet-button" (click)="onLogin()">Login</button>
+            </div>
+        </div>
+
+    </div>
+</div>
