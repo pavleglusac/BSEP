@@ -21,7 +21,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		CustomAuthenticationToken customAuthenticationToken = (CustomAuthenticationToken) authentication;
@@ -30,10 +29,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String loginToken = customAuthenticationToken.getLoginToken().toString();
 
 		User user = (User) customUserDetailsService.loadUserByUsername(name);
+		if (user == null) {
+			throw new InvalidLogin("Invalid credentials.");
+		}
+		if (!user.isEnabled()) {
+			throw new InvalidLogin("Login failed. Email might be unverified.");
+		}
 		if (passwordEncoder.matches(password, user.getPassword()) && passwordEncoder.matches(loginToken, user.getLoginToken())) {
 			return new CustomAuthenticationToken(user, password, loginToken, user.getAuthorities());
 		}
-		throw new InvalidLogin("Invalid username or password");
+		throw new InvalidLogin("Invalid credentials.");
 	}
 
 	@Override
