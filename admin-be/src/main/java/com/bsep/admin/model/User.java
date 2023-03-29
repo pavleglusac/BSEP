@@ -32,6 +32,14 @@ public class User implements UserDetails {
 
 	private String password;
 
+	@Column(name = "LOGIN_TOKEN")
+	private String loginToken;
+
+	private Boolean emailVerified = false;
+
+	@Column(name = "EMAIL_VERIFICATION_TOKEN")
+	private String emailVerificationToken;
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
 

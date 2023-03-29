@@ -57,3 +57,6 @@ INSERT INTO USERS(ID, EMAIL, IMAGE_URL, NAME, PASSWORD, PROVIDER, PROVIDER_ID, R
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
 	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49)
+2023-03-29 09:14:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "INSERT INTO USERS(ID, EMAIL, IMAGE_URL, NAME, PASSWORD, ROLE, LOGIN_TOKEN, EMAIL_VERIFICATION_TOKEN) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf24', 'admin@homeguard.com', NULL, 'Admin', '$2a$10$Qg.gpYTtZiVMJ6Fs9QbQA.BtCx4106oSj92X.A/Gv7iAEKQXAg.gy', 'ROLE_ADMIN', 'Yz+F#?l=#y;B/d`', [*])"; expected "DEFAULT, INTERSECTS (, NOT, EXISTS, UNIQUE, INTERSECTS"; SQL statement:
+INSERT INTO USERS(ID, EMAIL, IMAGE_URL, NAME, PASSWORD, ROLE, LOGIN_TOKEN, EMAIL_VERIFICATION_TOKEN) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf24', 'admin@homeguard.com', NULL, 'Admin', '$2a$10$Qg.gpYTtZiVMJ6Fs9QbQA.BtCx4106oSj92X.A/Gv7iAEKQXAg.gy', 'ROLE_ADMIN', 'Yz+F#?l=#y;B/d`', ) [42001-214]
