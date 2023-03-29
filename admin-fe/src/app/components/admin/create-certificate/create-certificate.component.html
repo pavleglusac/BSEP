@@ -1,0 +1,82 @@
+<div class="w-full border ml-80 mt-24">
+    <style>
+        tr {
+            height: 50px;
+        }
+
+        td {
+            min-width: 100px;
+        }
+
+    </style>
+    <div class="text-white p-5 flex flex-col justify-center bg-dark">
+        <table class="text-lg p-5 ml-60" style="padding: 5%;">
+            <tr>
+                <td>Signature algorithm: </td>
+                <td>SHA256withRSA</td>
+            </tr>
+            <tr>
+                <td>Validity Start: </td>
+                <td>{{ today | date: 'dd-MM-yyyy' }}</td>
+            </tr>
+            <tr>
+                <td>Validity Period: </td>
+                <td>
+                    <input type="number" min="1" max="10" value="1" class="text-black w-16 mr-2" [(ngModel)]="validityAmount"> 
+                    <select name="period" id="period" class="text-black w-16 mr-2" [(ngModel)]="validityUnit">
+                      <option value="years">Years</option>
+                      <option value="months">Months</option>
+                      <option value="days">Days</option>
+                    </select>
+                    <button (click)="applyValidity()" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border rounded shadow">Apply</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Validity End: </td>
+                <td><input type="date" class="text-black" [value]="until | date: 'yyyy-MM-dd'"/></td>
+            </tr>
+            <tr>
+                <td>
+                    Name:
+                </td>
+                <td>
+                    <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow">View names</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Templates:
+                </td>
+                <td>
+                    <select name="template" id="template" class="text-black mr-2" #template (change)="onTemplateSelected(template.value)">
+                        <option>CA</option>
+                        <option>Code Signing</option>
+                    </select>
+                    <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="loadTemplate()">Load template</button>
+                </td>
+            </tr>
+            <tr *ngIf="addedExtensions.length > 0">
+                <td>Extensions:</td>
+                <td></td>
+            </tr>
+            <tr *ngFor="let extension of addedExtensions" class="mt-4">
+                <td>
+                    {{ extension.name }}
+                </td>
+                <td>
+                    <span>
+                        <button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="bg-white mr-2  hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="editExtension(extension.name)">Edit</button>
+                        <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="removeExtension(extension.name)">Remove</button>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <app-edit-extension></app-edit-extension>
+        <div class="flex justify-center">
+            <span class="mt-20">
+                <button class="bg-teal-600 w-40 mr-4 hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="approveCertificate()">Approve</button>
+                <button class="bg-amber-600 w-40 hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="approveCertificate()">Deny</button>
+            </span>
+        </div>
+    </div>
+</div>

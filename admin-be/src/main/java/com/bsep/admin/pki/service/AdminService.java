@@ -1,4 +1,4 @@
-package com.bsep.admin.pki;
+package com.bsep.admin.pki.service;
 
 import com.bsep.admin.data.IssuerData;
 import com.bsep.admin.keystores.KeyStoreReader;

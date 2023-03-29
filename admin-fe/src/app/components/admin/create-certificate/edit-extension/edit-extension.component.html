@@ -1,0 +1,25 @@
+<div class="w-full h-full p-2" *ngIf="extension">
+    <p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" class="bg-white h-50" [closable]="true">
+        <div class="min-h-[150px] bg-dark text-white border p-2 mb-2">
+            <h1>Extension: {{extension.name}}</h1>
+
+            <div class="mb-24">
+                <div *ngFor="let option of extension.options">
+                    <div class="flex flex-row">
+                        <div class="w-1/2">
+                            <p>{{option.name}}</p>
+                        </div>
+                        <div class="w-1/2 text-black">
+                            <input class="text-black" [type]="option.type" class="w-full" [(ngModel)]="option.value" [checked]="option.value=='true'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <span>
+                <p-button class="bg-white border text-black mr-4 p-1 mb-2" (click)="updateValue()" >Save</p-button>
+                <p-button class="bg-white border text-black p-1" (click)="hideDialog()" >Close</p-button>
+            </span>
+        </div>
+    </p-dialog>
+</div>
