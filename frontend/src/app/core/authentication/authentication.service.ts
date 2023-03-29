@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { axiosPrivate } from 'src/common/axiosPrivate';
 import { axiosPublic } from "src/common/axiosPublic";
 
 @Injectable({
