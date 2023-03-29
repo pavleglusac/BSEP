@@ -13,5 +13,9 @@ html, body {
 }
 
 .violet-button {
-    @apply bg-primary-violet
+    @apply bg-primary-violet hover:bg-opacity-60
+}
+
+.gray-button {
+    @apply bg-primary-gray-light bg-opacity-10 text-primary-violet hover:bg-opacity-25
 }

@@ -1,6 +1,14 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { StoreType } from 'src/app/shared/store/types';
+import {
+  LoggedUserAction,
+  LoggedUserActionType,
+} from 'src/app/shared/store/logged-user-slice/logged-user.actions';
+import { tokenName } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +28,9 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private store: Store<StoreType>,
+    private router: Router
   ) {}
 
   next = () => {
@@ -37,8 +47,15 @@ export class LoginComponent {
         this.email,
         this.password,
         this.code,
-        () => {
-          this.toastr.success('Login successful');
+        (token) => {
+          {
+            sessionStorage.setItem(tokenName, token);
+            this.store.dispatch(
+              new LoggedUserAction(LoggedUserActionType.LOGIN)
+            );
+            this.toastr.success('Login successful');
+            this.router.navigate(['/']);
+          }
         },
         (error: any) => {
           this.toastr.error(error.message, 'Login failed');
