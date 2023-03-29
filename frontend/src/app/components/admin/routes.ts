@@ -5,7 +5,6 @@ export const ADMIN_ROUTES: Route[] = [
   {
     path: '',
     component: AdminComponent,
-    children: [{ path: 'requests', component: AdminComponent }],
   },
   // ...
 ];
