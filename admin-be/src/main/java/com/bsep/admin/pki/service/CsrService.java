@@ -1,29 +1,52 @@
 package com.bsep.admin.pki.service;
 
 import com.bsep.admin.model.User;
-import com.bsep.admin.pki.dto.CertificateDto;
-import com.bsep.admin.pki.dto.CsrDto;
-import com.bsep.admin.pki.service.AdminService;
 
+import com.bsep.admin.model.Csr;
+
+import com.bsep.admin.pki.KeyService;
+import com.bsep.admin.repository.CsrRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Service
 public class CsrService {
 
 	@Autowired
-	private AdminService adminService;
+	private CsrRepository csrRepository;
 
-	public CsrService() {
+	@Autowired
+	private KeyService keyService;
 
+	public void processCsr(Csr csr, User user) throws Exception {
+		KeyPair keys = keyService.generateKeys();
+		keyService.storeKeys(keys, user.getEmail());
+		LocalDateTime currentTime = LocalDateTime.now();
+		Optional<Csr> existingCsrOpt = this.csrRepository.findByEmail(user.getEmail());
+		if (existingCsrOpt.isPresent()) {
+			csr = this.updateCsr(existingCsrOpt.get(), csr, currentTime);
+		} else {
+			csr.setEmail(user.getEmail());
+			csr.setCreatedDate(currentTime);
+		}
+		csrRepository.save(csr);
 	}
 
-	public void processCsr(CsrDto csr, User user) {
-		// create private and public key
-		// create csr and save to db
-		// store to folder (create folder if it doesn't exist
-		System.out.println(csr);
-		System.out.println(user);
+	private Csr updateCsr(Csr previousCsr, Csr newCsr, LocalDateTime currentTime) {
+		previousCsr.setCommonName(newCsr.getCommonName());
+		previousCsr.setGivenName(newCsr.getGivenName());
+		previousCsr.setSurname(newCsr.getSurname());
+		previousCsr.setOrganization(newCsr.getOrganization());
+		previousCsr.setOrganizationalUnit(newCsr.getOrganizationalUnit());
+		previousCsr.setCountry(newCsr.getCountry());
+		previousCsr.setCreatedDate(currentTime);
+		return previousCsr;
 	}
 
 }

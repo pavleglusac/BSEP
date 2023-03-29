@@ -4,8 +4,8 @@ import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.service.CertificateService;
 import com.bsep.admin.pki.service.CsrService;
-import com.bsep.admin.pki.dto.CsrDto;
 import org.bouncycastle.operator.OperatorCreationException;
+import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,15 +32,19 @@ public class PkiController {
 
 	@PostMapping("/csr")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<String> createCsr(@RequestBody CsrDto csr, Authentication authentication) {
+	public ResponseEntity<String> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
-		csrService.processCsr(csr, user);
+		try{
+			csrService.processCsr(csr, user);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to create CSR");
+		}
 		return ResponseEntity.ok("CSR created");
 	}
 
 	@PostMapping("/certificate")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert) throws CertificateException, OperatorCreationException {
+	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException {
 		System.out.println(cert);
 		certificateService.processCertificate(cert);
 		return ResponseEntity.ok("Certificate created");
