@@ -33,20 +33,24 @@ export class LoginComponent {
 
   onLogin = () => {
     if (this.valid()) {
-      try {
-        this.authService.login(this.email, this.password, this.code);
-        this.toastr.success('Login successful');
-      } catch (error: any) {
-        this.toastr.error(error.message, 'Login failed');
-      }
+      this.authService.login(
+        this.email,
+        this.password,
+        this.code,
+        () => {
+          this.toastr.success('Login successful');
+        },
+        (error: any) => {
+          this.toastr.error(error.message, 'Login failed');
+        }
+      );
     }
   };
 
   valid = () => {
     let valid = true;
     if (!this.code) {
-      this.codeError =
-        'Verification code field is required. Please enter the code you received.';
+      this.codeError = 'Verification code field is required.';
       valid = false;
     } else {
       this.codeError = '';
@@ -58,11 +62,8 @@ export class LoginComponent {
     } else {
       this.emailError = '';
     }
-    if (
-      !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,20}$/.test(this.password)
-    ) {
-      this.passwordError =
-        'Password must have at least 8 characters, including one uppercase letter, one lowercase letter, and one number.';
+    if (!this.password) {
+      this.passwordError = 'Password field is required.';
       valid = false;
     } else {
       this.passwordError = '';

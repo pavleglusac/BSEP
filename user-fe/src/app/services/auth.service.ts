@@ -1,27 +1,43 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { tokenName } from '../shared/constants';
+import { Store } from '@ngrx/store';
+import { StoreType } from '../shared/store/types';
+import {
+  LoggedUserAction,
+  LoggedUserActionType,
+} from '../shared/store/logged-user-slice/logged-user.actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private store: Store<StoreType>) {
+    this.store.select('loggedUser').subscribe((res) => {
+      console.log(res);
+    });
+  }
 
-  login = (email: string, password: string, code: string) => {
+  login = (
+    email: string,
+    password: string,
+    code: string,
+    successCb: () => void,
+    errorCb: (error: any) => void
+  ) => {
+    var that = this;
     this.http
       .post('api/auth/login', { email, password, loginToken: code })
-      .pipe(
-        tap((response) => {
-          // Handle the success case here
-          console.log('Request successful', response);
-        }),
-        catchError((error: HttpErrorResponse) => {
-          // Handle the error case here
-          console.error(error);
-          return throwError(() => new Error(error.message));
-        })
-      );
+      .subscribe({
+        next(value: any) {
+          sessionStorage.setItem(tokenName, value.accessToken);
+          that.store.dispatch(new LoggedUserAction(LoggedUserActionType.LOGIN));
+          successCb();
+        },
+        error(err) {
+          console.log(err);
+          errorCb(err.error);
+        },
+      });
   };
 }
