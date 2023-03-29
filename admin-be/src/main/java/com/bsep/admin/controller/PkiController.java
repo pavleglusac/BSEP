@@ -2,7 +2,7 @@ package com.bsep.admin.controller;
 
 import com.bsep.admin.model.User;
 import com.bsep.admin.pki.CsrService;
-import com.bsep.admin.pki.dto.CsrDto;
+import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,9 +24,13 @@ public class PkiController {
 
 	@PostMapping("/csr")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<String> createCsr(@RequestBody CsrDto csr, Authentication authentication) {
+	public ResponseEntity<String> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
-		csrService.processCsr(csr, user);
+		try{
+			csrService.processCsr(csr, user);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to create CSR");
+		}
 		return ResponseEntity.ok("CSR created");
 	}
 
