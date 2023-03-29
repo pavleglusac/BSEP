@@ -50,6 +50,29 @@
           </p>
         </div>
       </div>
+      
+      <div class="w-full">
+        <label class="block tracking-wide text-medium text-xs font-bold mb-1"
+        for="login-code">
+          Verification Code
+        </label>
+        <input class="appearance-none block w-full text-white tracking-wide
+        placeholder-medium caret-medium border-b focus:border-accent
+        bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+        [ngClass]="code && code.value ? 'border-light' : 'border-medium'"
+        id="login-code" type="text" placeholder="Your Verification Code"
+        formControlName="code"
+        (input)="errorMessage = ''">
+        <div class="h-1">
+          <p *ngIf="code && code.invalid && code.touched"
+            class="text-yellow-400 text-xs italic">
+            <span *ngIf="code.errors?.['required']" id="code-required">
+              Verification code is required.
+            </span>
+          </p>
+        </div>
+      </div>
+
 
     </div>
     <button type="submit" class="w-full h-16 bg-accent active:bg-accent-dark text-white font-medium tracking-wide" id="login-button">

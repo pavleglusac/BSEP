@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronLeft, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { AuthenticationService } from 'src/app/core/authentication/authentication.service';
+import { AuthService } from 'src/app/core/authentication/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -28,23 +29,32 @@ export class LoginComponent {
     password: new FormControl('', [
       Validators.required
     ]),
+    code: new FormControl('', [
+      Validators.required
+    ]),
   });
 
-  constructor(private authenticationService: AuthenticationService) { 
+  constructor(private authenticationService: AuthService, private toastr: ToastrService) { 
     document.getElementById('login-email')?.focus();
   }
 
   async onSubmit() {
-    if (this.loginForm.invalid) return;
-    const success = await this.authenticationService.login(this.email?.value!, this.password?.value!);
-    console.log(success)
-    if (success) {   
-      // this.authenticationService.whoami();
-      window.location.href = '/admin'
-    }
-    else {
-      this.errorMessage = 'Incorrect credentials.';
-    }
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    };
+    await this.authenticationService.login(
+      this.email?.value!,
+      this.password?.value!,
+      this.code?.value!,
+      () => {
+        this.toastr.success('Login successful');
+        window.location.href = '/admin';
+      },
+      (error: any) => {
+        this.toastr.error(error.message, 'Login failed');
+        this.errorMessage = 'Incorrect credentials.';
+      });
   }
 
   get email() {
@@ -54,14 +64,8 @@ export class LoginComponent {
   get password() {
     return this.loginForm.get('password');
   }
-
-  goHome(): void {
-    window.location.href = '/';
-  }
-
-  closePasswordChangeResponseModal(): void {
-    this.passwordChangeResponseModalTitle = '';
-    this.passwordChangeResponseModalMessage = '';
-    this.showPasswordChangeResponseModal = false;
+  
+  get code() {
+    return this.loginForm.get('code');
   }
 }
