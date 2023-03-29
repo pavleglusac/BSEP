@@ -15,6 +15,9 @@ module.exports = {
           gray: "#D4D6E4"
         }
     },
+    boxShadow: {
+      around: '0px 2px 20px 1px rgb(0 0 0 / 0.1)',
+    },
   },
   plugins: [],
   }

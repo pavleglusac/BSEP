@@ -12,9 +12,18 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/http.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.reducer';
+import { HomepageComponent } from './components/homepage/homepage.component';
+import { CsrComponent } from './components/csr/csr.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    HomepageComponent,
+    CsrComponent,
+    SidebarComponent,
+  ],
   imports: [
     BrowserModule,
     FormsModule,
