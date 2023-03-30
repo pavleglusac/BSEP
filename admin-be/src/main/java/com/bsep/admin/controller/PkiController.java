@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/pki")
 public class PkiController {
@@ -24,14 +26,14 @@ public class PkiController {
 
 	@PostMapping("/csr")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<String> createCsr(@RequestBody Csr csr, Authentication authentication) {
+	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
 		try{
 			csrService.processCsr(csr, user);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create CSR");
 		}
-		return ResponseEntity.ok("CSR created");
+		return ResponseEntity.ok(Map.of("message", "CSR created"));
 	}
 
 }
