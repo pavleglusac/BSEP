@@ -13,7 +13,6 @@ export class CsrService {
     successCb: () => void,
     errorCb: (error: any) => void
   ) => {
-    console.log(csr);
     this.http.post('api/pki/csr', csr).subscribe({
       next(value: any) {
         successCb();
