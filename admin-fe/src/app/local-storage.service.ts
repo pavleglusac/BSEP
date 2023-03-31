@@ -11,9 +11,22 @@ function localStorageSyncReducer(
     keys: [
       {
         loggedUser: {
-          encrypt: (state) => CryptoJS.AES.encrypt(state, environment.key).toString(),
+          encrypt: (state) =>
+            CryptoJS.AES.encrypt(state, environment.key).toString(),
           decrypt: (state) =>
-            CryptoJS.AES.decrypt(state, environment.key).toString(CryptoJS.enc.Utf8),
+            CryptoJS.AES.decrypt(state, environment.key).toString(
+              CryptoJS.enc.Utf8
+            ),
+        },
+      },
+      {
+        csr: {
+          encrypt: (state) =>
+            CryptoJS.AES.encrypt(state, environment.key).toString(),
+          decrypt: (state) =>
+            CryptoJS.AES.decrypt(state, environment.key).toString(
+              CryptoJS.enc.Utf8
+            ),
         },
       },
     ],

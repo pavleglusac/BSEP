@@ -3,7 +3,20 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket, faFileLines } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheckDouble,
+  faCertificate,
+  faTurnDown,
+  faMagnifyingGlass,
+  faArrowsDownToPeople,
+  faUserPlus,
+  faUserGroup,
+  faGear,
+  faClipboard,
+  faCircleExclamation,
+  faRightFromBracket,
+  faFileLines,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface MenuOption {
   title: string;
@@ -15,7 +28,7 @@ const menus = {
   'Public Keys': [
     {
       title: 'Review requests',
-      link: 'admin/',
+      link: 'admin/requests',
       icon: faCheckDouble,
     },
     {
@@ -27,9 +40,9 @@ const menus = {
       title: 'All certificates',
       link: 'admin/certificates',
       icon: faFileLines,
-    }
+    },
   ],
-  'Users': [
+  Users: [
     {
       title: 'Register',
       link: '',
@@ -41,7 +54,7 @@ const menus = {
       icon: faUserGroup,
     },
   ],
-  'System': [
+  System: [
     {
       title: 'Settings',
       link: '',
@@ -57,16 +70,15 @@ const menus = {
       link: '',
       icon: faCircleExclamation,
     },
-  ]
-}
+  ],
+};
 
 @Component({
   selector: 'app-admin-sidebar',
   templateUrl: './admin-sidebar.component.html',
   standalone: true,
-  styles: [
-  ],
-  imports: [ CommonModule, FontAwesomeModule ]
+  styles: [],
+  imports: [CommonModule, FontAwesomeModule],
 })
 export class AdminSidebarComponent {
   menus: any = menus;
@@ -74,7 +86,7 @@ export class AdminSidebarComponent {
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   signOut(): void {
     // TODO: Implement method
@@ -82,5 +94,5 @@ export class AdminSidebarComponent {
 
   navigate(option: MenuOption) {
     this.router.navigate([option.link]);
-  } 
+  }
 }
