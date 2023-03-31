@@ -1,4 +1,4 @@
-package com.bsep.admin.controller;
+package com.bsep.admin.auth;
 
 import com.bsep.admin.auth.AuthService;
 import com.bsep.admin.auth.dto.LoginRequest;

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket, faFileLines } from '@fortawesome/free-solid-svg-icons';
 
 interface MenuOption {
   title: string;
@@ -14,28 +15,18 @@ const menus = {
   'Public Keys': [
     {
       title: 'Review requests',
-      link: '',
+      link: 'admin/',
       icon: faCheckDouble,
     },
     {
       title: 'Create certificate',
-      link: '',
+      link: 'admin/create-certificate',
       icon: faCertificate,
     },
     {
-      title: 'Withdraw certificate',
-      link: '',
-      icon: faTurnDown,
-    },
-    {
-      title: 'Insights',
-      link: '',
-      icon: faMagnifyingGlass,
-    },
-    {
-      title: 'Distribute',
-      link: '',
-      icon: faArrowsDownToPeople,
+      title: 'All certificates',
+      link: 'admin/certificates',
+      icon: faFileLines,
     }
   ],
   'Users': [
@@ -83,7 +74,13 @@ export class AdminSidebarComponent {
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
 
+  constructor(private router: Router) { }
+
   signOut(): void {
     // TODO: Implement method
   }
+
+  navigate(option: MenuOption) {
+    this.router.navigate([option.link]);
+  } 
 }

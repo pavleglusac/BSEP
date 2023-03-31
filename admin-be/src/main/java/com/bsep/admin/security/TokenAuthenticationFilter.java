@@ -35,6 +35,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String token = readTokenFromRequest(request);
 
+		if (request.getRequestURI().equals("/api/auth/login")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		if (!StringUtils.hasLength(token)) {
 			filterChain.doFilter(request, response);
 			return;
