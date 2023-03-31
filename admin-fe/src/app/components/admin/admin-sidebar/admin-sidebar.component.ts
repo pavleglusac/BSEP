@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket, faFileLines } from '@fortawesome/free-solid-svg-icons';
 
 interface MenuOption {
   title: string;
@@ -24,19 +24,9 @@ const menus = {
       icon: faCertificate,
     },
     {
-      title: 'Withdraw certificate',
-      link: 'admin/',
-      icon: faTurnDown,
-    },
-    {
-      title: 'Insights',
-      link: 'admin/',
-      icon: faMagnifyingGlass,
-    },
-    {
-      title: 'Distribute',
-      link: 'admin/',
-      icon: faArrowsDownToPeople,
+      title: 'All certificates',
+      link: 'admin/certificates',
+      icon: faFileLines,
     }
   ],
   'Users': [
