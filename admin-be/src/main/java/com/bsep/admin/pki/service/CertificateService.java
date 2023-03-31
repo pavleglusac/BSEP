@@ -4,18 +4,19 @@ import com.bsep.admin.data.IssuerData;
 import com.bsep.admin.data.SubjectData;
 import com.bsep.admin.keystores.KeyStoreReader;
 import com.bsep.admin.keystores.KeyStoreWriter;
+import com.bsep.admin.model.CertificateRevocation;
 import com.bsep.admin.model.Csr;
 import com.bsep.admin.model.CsrStatus;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateOptionDto;
+import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import com.bsep.admin.repository.CertificateRevocationRepository;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -35,6 +36,7 @@ import java.security.cert.Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,6 +53,9 @@ public class CertificateService {
 
 	@Autowired
 	private KeyService keyService;
+
+	@Autowired
+	private CertificateRevocationRepository certificateRevocationRepository;
 
 	BigInteger serialNumber = BigInteger.valueOf(3);
 
@@ -84,11 +89,18 @@ public class CertificateService {
 		// save to keystore
 		KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
 		keyStoreWriter.loadKeyStore("keystores/admin.jks", "admin".toCharArray());
-		keyStoreWriter.writeChain(csr.getEmail(),  issuerData.getPrivateKey(),  "admin".toCharArray(), chainList);
+		keyStoreWriter.writeChain(csr.getEmail(),  issuerData.getPrivateKey(), "admin".toCharArray(), chainList);
 		keyStoreWriter.saveKeyStore("keystores/admin.jks", "admin".toCharArray());
 
 		// save to db
 		csr.setStatus(CsrStatus.APPROVED);
+
+		Optional<CertificateRevocation> certificateRevocation = certificateRevocationRepository
+				.findByUserEmail(csr.getEmail());
+		if (certificateRevocation.isPresent()) {
+			certificateRevocationRepository.delete(certificateRevocation.get());
+		}
+
 		csrService.saveCsr(csr);
 	}
 
@@ -196,7 +208,7 @@ public class CertificateService {
 		return null;
 	}
 
-	public List<CertificateDto> findAllCertificate() {
+	public List<CertificateDto> findAllCertificates() {
 		KeyStoreReader keyStoreReader = new KeyStoreReader();
 		List<CertificateDto> certificatesDto = new ArrayList<>();
 		List<X509Certificate> certificates = keyStoreReader.readAllCertificates(adminService.KEYSTORE_FILE, "admin");
@@ -338,4 +350,11 @@ public class CertificateService {
 			return false;
 		}
 	}
+	public void revokeCertificate(CertificateRevocationDto dto) {
+		CertificateRevocation certificateRevocation = new CertificateRevocation();
+		certificateRevocation.setUserEmail(dto.getEmail());
+		certificateRevocation.setTimestamp(LocalDateTime.now());
+		certificateRevocationRepository.save(certificateRevocation);
+	}
+
 }
