@@ -3,6 +3,7 @@ package com.bsep.admin.pki.controller;
 import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
+import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
@@ -49,13 +50,13 @@ public class PkiController {
 
 	@GetMapping("/csr")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<List<Csr>> findAllCsr() {
-		return ResponseEntity.ok(csrService.findAll());
+	public ResponseEntity<List<CsrDto>> findAllCsr() {
+		return ResponseEntity.ok(csrService.findAllCsr());
 	}
 
-	@GetMapping("/csr")
+	@GetMapping("/csr/{email}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Csr getCsr(@RequestParam String email) {
+	public Csr getCsr(@PathVariable String email) {
 		return csrService.getCsrByUser(email);
 	}
 

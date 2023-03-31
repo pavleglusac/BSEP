@@ -2,12 +2,11 @@ package com.bsep.admin.pki;
 
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.security.*;
 import java.nio.file.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 
 @Service
 public class KeyService {
@@ -47,5 +46,26 @@ public class KeyService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String findPublicKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String filePath = STATIC_PATH_TARGET + "/" + user + "/" + PUBLIC_KEY_FILE_NAME;;
+        File file = new File(filePath);
+        if (file.exists()) {
+            try {
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                FileInputStream fis = new FileInputStream(file);
+                byte[] content = fis.readAllBytes();
+                X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(content);
+                PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+                fis.close();
+                return publicKey.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new RuntimeException("Public key for user " + user + "does not exist");
+        }
+        return "";
     }
 }
