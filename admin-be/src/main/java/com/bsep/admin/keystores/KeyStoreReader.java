@@ -2,16 +2,20 @@ package com.bsep.admin.keystores;
 
 
 import com.bsep.admin.data.IssuerData;
+import com.bsep.admin.pki.dto.CertificateDto;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.*;
 
 public class KeyStoreReader {
 	// KeyStore je Java klasa za citanje specijalizovanih datoteka koje se koriste za cuvanje kljuceva
@@ -121,4 +125,36 @@ public class KeyStoreReader {
 		}
 		return null;
 	}
+
+
+	public List<X509Certificate> readAllCertificates(String keyStoreFile, String password) {
+		try {
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
+			keyStore.load(in, password.toCharArray());
+			List<X509Certificate> certificates = new ArrayList<>();
+			Enumeration<String> aliases = keyStore.aliases();
+			Set<BigInteger> set = new HashSet<>();
+			while (aliases.hasMoreElements()) {
+				String alias = aliases.nextElement();
+				if (keyStore.isKeyEntry(alias)) {
+					Certificate[] cert = keyStore.getCertificateChain(alias);
+					for (Certificate c : cert) {
+						X509Certificate x509Certificate = (X509Certificate) c;
+						BigInteger serialNumber = x509Certificate.getSerialNumber();
+						if (!set.contains(serialNumber)) {
+							set.add(serialNumber);
+							certificates.add(x509Certificate);
+						}
+					}
+				}
+			}
+			return certificates;
+		} catch (KeyStoreException | FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (CertificateException | IOException | NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
 }

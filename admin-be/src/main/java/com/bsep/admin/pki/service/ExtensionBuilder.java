@@ -54,14 +54,14 @@ public class ExtensionBuilder {
 		boolean[] keyUsage = new boolean[9];
 		for (CertificateOptionDto option : options) {
 			switch (option.getName()) {
-				case "Digital signature" -> keyUsage[0] = Boolean.parseBoolean(option.getValue());
-				case "Non repudiation" -> keyUsage[1] = Boolean.parseBoolean(option.getValue());
-				case "Key encipherment" -> keyUsage[2] = Boolean.parseBoolean(option.getValue());
-				case "Data encipherment" -> keyUsage[3] = Boolean.parseBoolean(option.getValue());
-				case "Key agreement" -> keyUsage[4] = Boolean.parseBoolean(option.getValue());
-				case "Certificate signing" -> keyUsage[5] = Boolean.parseBoolean(option.getValue());
-				case "CRL sign" -> keyUsage[6] = Boolean.parseBoolean(option.getValue());
-				case "Encipher only" -> keyUsage[7] = Boolean.parseBoolean(option.getValue());
+				case "Encipher only" -> keyUsage[0] = Boolean.parseBoolean(option.getValue());
+				case "CRL sign" -> keyUsage[1] = Boolean.parseBoolean(option.getValue());
+				case "Certificate signing" -> keyUsage[2] = Boolean.parseBoolean(option.getValue());
+				case "Key agreement" -> keyUsage[3] = Boolean.parseBoolean(option.getValue());
+				case "Data encipherment" -> keyUsage[4] = Boolean.parseBoolean(option.getValue());
+				case "Key encipherment" -> keyUsage[5] = Boolean.parseBoolean(option.getValue());
+				case "Non repudiation" -> keyUsage[6] = Boolean.parseBoolean(option.getValue());
+				case "Digital signature" -> keyUsage[7] = Boolean.parseBoolean(option.getValue());
 				case "Decipher only" -> keyUsage[8] = Boolean.parseBoolean(option.getValue());
 			}
 		}

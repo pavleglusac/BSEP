@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Certificate } from 'src/app/model/certificate';
 import { CertificateComponent } from '../certificate/certificate.component';
+import { CertificateService } from 'src/app/services/certificate.service';
 
 @Component({
   selector: 'app-certificates',
@@ -10,20 +11,28 @@ import { CertificateComponent } from '../certificate/certificate.component';
   imports: [CommonModule, CertificateComponent],
   standalone: true,
 })
-export class CertificatesComponent {
+export class CertificatesComponent implements OnInit {
   certificates: Certificate[] = [];
 
-  constructor() {
-    for (let i = 0; i < 4; i++) {
-      this.certificates.push({
-        algorithm: 'SHA256withRSA',
-        csrId: 'pera@gmail.com',
-        hierarchyLevel: 3,
-        validityStart: '2021-01-01',
-        extensions: [],
-        validityEnd: '2022-01-01',
-        csr: undefined
-      });
-    }
+  constructor(private certificateService: CertificateService) {
+   
   }
+
+  ngOnInit() {
+    this.certificateService.loadAll().subscribe((certificates: any) => {
+      certificates.forEach((certificate: any) => {
+        certificate.extensions.forEach((extension: any) => {
+          extension.options.forEach((option: any) => {
+            if (option.type === 'checkbox') {
+              option.value = option.value === 'true';
+            } else if (option.type === 'number') {
+              option.value = parseInt(option.value);
+            }
+          });
+        });
+      });
+      this.certificates = certificates;
+    });
+  }
+
 }

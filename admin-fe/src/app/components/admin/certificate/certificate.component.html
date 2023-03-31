@@ -9,7 +9,7 @@
         }
 
     </style>
-    <div class="text-white p-5 flex flex-col justify-center bg-dark">
+    <div class="text-white p-5 flex flex-col justify-start items-center bg-dark min-h-[60vh] min-w-[35vw]">
         <table class="text-lg p-5" style="padding: 5%;">
             <tr>
                 <td>Signature algorithm: </td>
@@ -95,13 +95,14 @@
                 </td>
                 <td>
                     <span>
-                        <button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="bg-white mr-2  hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="editExtension(extension.name)">Edit</button>
-                        <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="removeExtension(extension.name)">Remove</button>
+                        <button *ngIf="!readonly" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="bg-white mr-2  hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="editExtension(extension.name)">Edit</button>
+                        <button *ngIf="readonly" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="bg-white mr-2  hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="editExtension(extension.name)">View</button>
+                        <button *ngIf="!readonly" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="removeExtension(extension.name)">Remove</button>
                     </span>
                 </td>
             </tr>
         </table>
-        <app-edit-extension></app-edit-extension>
+        <app-edit-extension [readonly]="readonly"></app-edit-extension>
         <div class="flex justify-center" *ngIf="!readonly">
             <span class="mt-20">
                 <button class="bg-teal-600 w-40 mr-4 hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="approveCertificate()">Approve</button>

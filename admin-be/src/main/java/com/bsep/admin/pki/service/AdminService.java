@@ -33,9 +33,9 @@ public class AdminService {
 		keyStoreReader = new KeyStoreReader();
 		keyStoreWriter = new KeyStoreWriter();
 
-		chain[2] = createAdminCertificate("CN=Root", 2, null, null);
-		chain[1] = createAdminCertificate("CN=First Intermediate", 1, chain[2], issuerData[2].getPrivateKey());
-		chain[0] = createAdminCertificate("CN=Second Intermediate", 0, chain[1], issuerData[1].getPrivateKey());
+		chain[2] = createAdminCertificate("CN=Root,E=admin@homeguard.com", 2, null, null);
+		chain[1] = createAdminCertificate("CN=First Intermediate,E=admin@homeguard.com", 1, chain[2], issuerData[2].getPrivateKey());
+		chain[0] = createAdminCertificate("CN=Second Intermediate,E=admin@homeguard.com", 0, chain[1], issuerData[1].getPrivateKey());
 
 		keyStoreWriter.loadKeyStore(KEYSTORE_FILE, "admin".toCharArray());
 		keyStoreWriter.writeChain("root", issuerData[2].getPrivateKey(), "admin".toCharArray(), chain);

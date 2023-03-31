@@ -5,6 +5,7 @@ import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
+import lombok.Getter;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,12 @@ public class PkiController {
 	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException {
 		certificateService.processCertificate(cert);
 		return ResponseEntity.ok("Certificate created");
+	}
+
+	@GetMapping("/certificate")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<List<CertificateDto>> findAllCertificate() {
+		return ResponseEntity.ok(certificateService.findAllCertificate());
 	}
 
 }
