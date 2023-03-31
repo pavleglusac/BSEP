@@ -11,6 +11,6 @@ INSERT INTO USERS(ID, EMAIL, IMAGE_URL, NAME, PASSWORD, ROLE, LOGIN_TOKEN, EMAIL
     ('e3661c31-d1a4-47ab-94b6-1c6500dccf26', 'mika@gmail.com', NULL, 'Mika', '$2a$10$Qg.gpYTtZiVMJ6Fs9QbQA.BtCx4106oSj92X.A/Gv7iAEKQXAg.gy', 'ROLE_USER', '$2a$10$u5scz/HdiNRNVIZz2KNyce/Tm7.q6.SdlaslHZLfWTstd6Kb.xgiq', '$2a$10$aPnVG2/OEnl4VAc.Y7znHOnE8J6SfjfULYE4EkDAGMlMjeLuxgkuW', true);
 
 
-INSERT INTO CSR(ID, COMMON_NAME, COUNTRY, GIVEN_NAME, ORGANIZATION, ORGANIZATIONAL_UNIT, SURNAME, EMAIL, STATUS) VALUES
-    ('e3661c31-d1a4-47ab-94b6-1c6500dccf27', 'admin', 'RS', 'Mika', 'HomeGuard', 'HomeGuard', 'Mikic', 'mika@gmail.com', 0),
-    ('e3661c31-d1a4-47ab-94b6-1c6500dccf28', 'pera', 'RS', 'Pera', 'HomeGuard', 'HomeGuard', 'Peric', 'pera@gmail.com', 0);
+INSERT INTO CSR(ID, COMMON_NAME, COUNTRY, GIVEN_NAME, ORGANIZATION, ORGANIZATIONAL_UNIT, SURNAME, EMAIL, CREATED_DATE, STATUS) VALUES
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf27', 'admin', 'RS', 'Mika', 'HomeGuard', 'HomeGuard', 'Mikic', 'mika@gmail.com', '2023-03-31 14:30:00',0),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf28', 'pera', 'RS', 'Pera', 'HomeGuard', 'HomeGuard', 'Peric', 'pera@gmail.com', '2023-03-31 14:30:00',0);
