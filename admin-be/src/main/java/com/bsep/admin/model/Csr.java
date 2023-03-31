@@ -41,7 +41,7 @@ public class Csr {
     private String email;
 
     @Column()
-    private LocalDateTime createdDate;
+    private LocalDateTime creationDate;
 
     @Column(name = "STATUS", nullable = false)
     private CsrStatus status = CsrStatus.PENDING;

@@ -56,7 +56,7 @@ public class CsrService {
 			csr = this.updateCsr(existingCsrOpt.get(), csr, currentTime);
 		} else {
 			csr.setEmail(user.getEmail());
-			csr.setCreatedDate(currentTime);
+			csr.setCreationDate(currentTime);
 		}
 		csrRepository.save(csr);
 	}
@@ -68,7 +68,7 @@ public class CsrService {
 		previousCsr.setOrganization(newCsr.getOrganization());
 		previousCsr.setOrganizationalUnit(newCsr.getOrganizationalUnit());
 		previousCsr.setCountry(newCsr.getCountry());
-		previousCsr.setCreatedDate(currentTime);
+		previousCsr.setCreationDate(currentTime);
 		return previousCsr;
 	}
 
