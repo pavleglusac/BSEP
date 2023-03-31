@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -34,6 +35,12 @@ public class PkiController {
 			throw new RuntimeException("Failed to create CSR");
 		}
 		return ResponseEntity.ok(Map.of("message", "CSR created"));
+	}
+
+	@GetMapping("/csr")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<List<Csr>> findAllCsr() {
+		return ResponseEntity.ok(csrService.findAll());
 	}
 
 }

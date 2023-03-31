@@ -11,6 +11,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,9 @@ public class CsrService {
 	private KeyService keyService;
 	public CsrService() {}
 
+	public List<Csr> findAll() {
+		return this.csrRepository.findAll();
+	}
 	public void processCsr(Csr csr, User user) throws Exception {
 		KeyPair keys = keyService.generateKeys();
 		keyService.storeKeys(keys, user.getEmail());
