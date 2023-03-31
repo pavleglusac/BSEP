@@ -45,8 +45,8 @@ public class CertificateService {
 
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
-
-		IssuerData issuerData = adminService.getAdminIssuerData(0);
+		int len = adminService.getAdminChain().length;
+		IssuerData issuerData = adminService.getAdminIssuerData(len - cert.getHierarchyLevel());
 		SubjectData subjectData = generateSubjectData();
 		JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 		builder = builder.setProvider("BC");
@@ -94,10 +94,10 @@ public class CertificateService {
 
 	private ArrayList<X509Certificate> getChainList(int hierarchyLevel, X509Certificate certificate) {
 		X509Certificate[] chain = adminService.getAdminChain();
-		chain = Arrays.copyOfRange(chain, 0, hierarchyLevel);
+		chain = Arrays.copyOfRange(chain, chain.length - hierarchyLevel, chain.length);
 		ArrayList<X509Certificate> chainList = new ArrayList<>(Arrays.asList(chain));
 		chainList = chainList.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
-		chainList.add(certificate);
+		chainList.add(0, certificate);
 		return chainList;
 	}
 

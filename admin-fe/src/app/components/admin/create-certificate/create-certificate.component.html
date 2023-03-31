@@ -56,6 +56,18 @@
             </tr>
             <tr>
                 <td>
+                    Choose certificate to sign with:
+                </td>
+                <td>
+                    <select name="level" id="level" class="text-black mr-2" [(ngModel)]="hierarchyLevel">
+                        <option value="1">Root</option>
+                        <option value="2">First Intermediate</option>
+                        <option value="3">Second Intermediate</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     Templates:
                 </td>
                 <td>

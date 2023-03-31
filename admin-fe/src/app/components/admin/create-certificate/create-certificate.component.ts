@@ -40,6 +40,7 @@ export class CreateCertificateComponent {
     this.today.getMonth(),
     this.today.getDate()
   );
+  hierarchyLevel: number = 3;
 
   constructor(
     private store: Store<CertificateStateType>,
@@ -80,6 +81,7 @@ export class CreateCertificateComponent {
       validityStart: this.today.toISOString(),
       validityEnd: this.until.toISOString(),
       extensions: extensions,
+      hierarchyLevel: this.hierarchyLevel,
     };
     this.certificateService.approveCertificate(certificate).subscribe({
       next: (data) => {

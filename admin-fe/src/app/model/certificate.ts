@@ -4,4 +4,5 @@ export interface Certificate {
     validityStart: string;
     validityEnd: string;
     extensions: any[];
+    hierarchyLevel: number;
 }
