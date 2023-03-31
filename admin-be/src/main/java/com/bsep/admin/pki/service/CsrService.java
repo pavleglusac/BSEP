@@ -1,8 +1,11 @@
-package com.bsep.admin.pki;
+package com.bsep.admin.pki.service;
 
+import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.User;
+
 import com.bsep.admin.model.Csr;
 
+import com.bsep.admin.pki.KeyService;
 import com.bsep.admin.repository.CsrRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +21,10 @@ import java.util.Optional;
 public class CsrService {
 
 	@Autowired
-	private AdminService adminService;
-	@Autowired
 	private CsrRepository csrRepository;
+
 	@Autowired
 	private KeyService keyService;
-	public CsrService() {}
 
 	public List<Csr> findAll() {
 		return this.csrRepository.findAll();
@@ -51,5 +52,18 @@ public class CsrService {
 		previousCsr.setCountry(newCsr.getCountry());
 		previousCsr.setCreatedDate(currentTime);
 		return previousCsr;
+	}
+
+	public Csr getCsrByUser(String email) {
+		Optional<Csr> csrOpt = this.csrRepository.findByEmail(email);
+		if (csrOpt.isPresent()) {
+			return csrOpt.get();
+		} else {
+			throw new CsrNotFoundException("CSR not found");
+		}
+	}
+
+	public void saveCsr(Csr csr) {
+		this.csrRepository.save(csr);
 	}
 }

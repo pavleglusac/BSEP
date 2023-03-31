@@ -81,6 +81,25 @@ public class KeyStoreReader {
 		return null;
 	}
 
+	public Certificate[] readCertificateChain(String keyStoreFile, String keyStorePass, String alias) {
+		try {
+			// kreiramo instancu KeyStore
+			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
+			// ucitavamo podatke
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
+			ks.load(in, keyStorePass.toCharArray());
+
+			if (ks.isKeyEntry(alias)) {
+				Certificate[] certChain = ks.getCertificateChain(alias);
+				return certChain;
+			}
+		} catch (KeyStoreException | NoSuchProviderException | NoSuchAlgorithmException
+				 | CertificateException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	/**
 	 * Ucitava privatni kljuc is KS fajla
 	 */

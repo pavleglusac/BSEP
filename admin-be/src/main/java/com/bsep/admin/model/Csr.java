@@ -42,4 +42,7 @@ public class Csr {
 
     @Column()
     private LocalDateTime createdDate;
+
+    @Column(name = "STATUS", nullable = false)
+    private CsrStatus status = CsrStatus.PENDING;
 }
