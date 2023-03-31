@@ -8,11 +8,16 @@ import { Observable } from 'rxjs';
 })
 export class CertificateService {
 
+
   constructor(private httpClient: HttpClient) {
 
   }
 
   approveCertificate(certificate: Certificate): Observable<any> {
-    return this.httpClient.post('api/pki/certificate', certificate);
+    return this.httpClient.post('api/pki/certificate', certificate, { responseType: 'text' });
+  }
+
+  loadForUser(email: string) {
+    return this.httpClient.get('api/pki/csr', { params: { email } });
   }
 }

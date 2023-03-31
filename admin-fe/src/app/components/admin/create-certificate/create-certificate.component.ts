@@ -31,6 +31,8 @@ export class CreateCertificateComponent {
   editedExtension = undefined;
   validityAmount = 1;
   validityUnit = 'years';
+  email = '';
+  canProcess = false;
 
   today = new Date();
   until = new Date(
@@ -59,6 +61,9 @@ export class CreateCertificateComponent {
   }
 
   approveCertificate() {
+    if (!this.canProcess) {
+      this.toastr.error('Certificate cannot be created! Load CSR first!');
+    }
     let extensions = [];
     // add extensions from addedExtensions but stringify value field
     for (let i = 0; i < this.addedExtensions.length; i++) {
@@ -71,18 +76,17 @@ export class CreateCertificateComponent {
     }
     let certificate: Certificate = {
       algorithm: 'SHA256withRSA',
-      csrId: '',
+      csrId: this.email,
       validityStart: this.today.toISOString(),
       validityEnd: this.until.toISOString(),
       extensions: extensions,
     };
-    console.log(extensions);
-    
     this.certificateService.approveCertificate(certificate).subscribe({
       next: (data) => {
         this.toastr.success('Certificate successfully created!');
       },
       error: (error) => {
+        this.toastr.error('Error creating certificate!');
         console.log(error);
       },
     });
@@ -116,6 +120,21 @@ export class CreateCertificateComponent {
     this.addedExtensions = templates[this.selectedTemplate].map(
       (extension: string) => _.cloneDeep(extensions[extension])
     );
+  }
+
+  loadForUser() {
+    this.certificateService.loadForUser(this.email).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.toastr.success('Certificate requests loaded!');
+        this.canProcess = true;
+      },
+      error: (error) => {
+        alert('Error loading certificate requests for user!');
+        console.log(error);
+        this.canProcess = false;
+      }
+    });
   }
 
   onTemplateSelected(selectedTemplate: string) {

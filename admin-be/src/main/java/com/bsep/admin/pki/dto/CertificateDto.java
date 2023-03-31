@@ -16,6 +16,10 @@ public class CertificateDto {
 	private LocalDateTime validityEnd;
 	private List<CertificateOptionDto> extensions;
 
+	private String csrId;
+
+	private Integer hierarchyLevel = 3;
+
 	@Override
 	public String toString() {
 		return "CertificateDto [algorithm=" + algorithm + ", validityStart=" + validityStart + ", validityEnd="

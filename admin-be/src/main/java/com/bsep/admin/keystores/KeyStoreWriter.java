@@ -12,6 +12,8 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.List;
 
 public class KeyStoreWriter {
 
@@ -48,6 +50,24 @@ public class KeyStoreWriter {
 	public void write(String alias, PrivateKey privateKey, char[] password, Certificate certificate) {
 		try {
 			keyStore.setKeyEntry(alias, privateKey, password, new Certificate[]{certificate});
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeChain(String alias, PrivateKey privateKey, char[] password, Certificate[] certificates) {
+		try {
+			keyStore.setKeyEntry(alias, privateKey, password, certificates);
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeChain(String alias, PrivateKey privateKey, char[] password, List<X509Certificate> certificates) {
+		try {
+			Certificate[] certs = new Certificate[certificates.size()];
+			certs = certificates.toArray(certs);
+			keyStore.setKeyEntry(alias, privateKey, password, certs);
 		} catch (KeyStoreException e) {
 			e.printStackTrace();
 		}

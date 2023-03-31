@@ -7,6 +7,7 @@ import { EditExtensionAction, EditExtensionActionType } from 'src/app/shared/sto
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as _ from 'lodash';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-extension',
@@ -17,14 +18,22 @@ import * as _ from 'lodash';
 })
 export class EditExtensionComponent {
 
+  changedValue(event: any, index: any, extension: any, type: any) {
+    if (type === 'checkbox') {
+      extension.options[index].value = event.target.checked;
+    } else {
+      extension.options[index].value = event.target.value;
+    }
+  }
+
   extension: any = undefined;
 
   visible: boolean = false;
 
-  constructor(private store: Store<CertificateStateType>) {
+  constructor(private store: Store<CertificateStateType>, private toastr: ToastrService) {
     this.store.select(selectCertificateFeature).subscribe((state: CertificateStateType) => {
       if(!state) return;
-      
+      console.log(state);
       this.extension = _.cloneDeep(state.editedExtension);
       this.visible = state.showEditingModal;
     });
@@ -37,6 +46,7 @@ export class EditExtensionComponent {
 
   updateValue() {
     this.store.dispatch(new EditExtensionAction(EditExtensionActionType.SET, this.extension));
+    this.toastr.info('Extension updated');
   }
 
 }

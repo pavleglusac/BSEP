@@ -4,13 +4,14 @@
             <h1>Extension: {{extension.name}}</h1>
 
             <div class="mb-24">
-                <div *ngFor="let option of extension.options">
+                <div *ngFor="let option of extension.options; let i = index">
                     <div class="flex flex-row">
                         <div class="w-1/2">
                             <p>{{option.name}}</p>
                         </div>
                         <div class="w-1/2 text-black">
-                            <input class="text-black" [type]="option.type" class="w-full" [(ngModel)]="option.value" [checked]="option.value=='true'">
+                            <input *ngIf="option.type == 'checkbox'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [checked]="option.value">
+                            <input *ngIf="option.type == 'number'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [value]="option.value">
                         </div>
                     </div>
                 </div>

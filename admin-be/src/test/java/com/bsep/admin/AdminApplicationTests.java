@@ -27,16 +27,19 @@ class AdminApplicationTests {
 //		System.out.println(generateRandomToken(15));
 //		System.out.println(generateRandomToken(15));
 //		System.out.println(generateRandomToken(15));
+		String randomToken = generateRandomToken(15);
+		System.out.println(randomToken);
+		System.out.println(passwordEncoder.encode(randomToken));
 
 //		System.out.println("-----------------");
 //		System.out.println(passwordEncoder.encode("Rgx>m--in=Yc%UZ"));
-		ASN1ObjectIdentifier asn1ObjectIdentifier = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.3.5");
-		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(asn1ObjectIdentifier);
-		KeyPurposeId[] keyPurposeIds = { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_serverAuth };
-		new ExtendedKeyUsage(
-				new KeyPurposeId[] {
-						KeyPurposeId.id_kp_serverAuth,
-						KeyPurposeId.id_kp_clientAuth});
+//		ASN1ObjectIdentifier asn1ObjectIdentifier = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.3.5");
+//		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(asn1ObjectIdentifier);
+//		KeyPurposeId[] keyPurposeIds = { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_serverAuth };
+//		new ExtendedKeyUsage(
+//				new KeyPurposeId[] {
+//						KeyPurposeId.id_kp_serverAuth,
+//						KeyPurposeId.id_kp_clientAuth});
 //		ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage();
 //		Extension extension = new Extension(Extension.extendedKeyUsage, false, asn1ObjectIdentifier.getEncoded());
 //		System.out.println(extension.getExtnId());

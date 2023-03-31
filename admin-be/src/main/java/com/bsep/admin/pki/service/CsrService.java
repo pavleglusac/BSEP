@@ -1,5 +1,6 @@
 package com.bsep.admin.pki.service;
 
+import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.User;
 
 import com.bsep.admin.model.Csr;
@@ -49,4 +50,16 @@ public class CsrService {
 		return previousCsr;
 	}
 
+	public Csr getCsrByUser(String email) {
+		Optional<Csr> csrOpt = this.csrRepository.findByEmail(email);
+		if (csrOpt.isPresent()) {
+			return csrOpt.get();
+		} else {
+			throw new CsrNotFoundException("CSR not found");
+		}
+	}
+
+	public void saveCsr(Csr csr) {
+		this.csrRepository.save(csr);
+	}
 }
