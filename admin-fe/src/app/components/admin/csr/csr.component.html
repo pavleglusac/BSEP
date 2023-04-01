@@ -1,7 +1,10 @@
 <div class="text-light bg-dark max-w-lg">
-    <div class="text-accent italic font-semibold flex p-4 justify-start border-b border-accent-dark">
+    <div class="text-accent italic font-semibold flex p-4 justify-start items-start border-b border-accent-dark">
        <p> Request No. {{csr!.id}} </p>
-       <button class="bg-gray-700 text-light hover:bg-accent-dark text-sm" (click)="onCreateCertificate()"> Create certificate </button>
+       <div class="flex gap-3 items-start pt-[7px]">
+            <button title="Create certificate" (click)="onCreateCertificate()"> <fa-icon [icon]="createIcon" class="bg-gray-700 text-light hover:bg-accent-dark text-sm p-2"></fa-icon> </button>
+            <button title="Deny certificate" (click)="onDenyCertificate()"><fa-icon [icon]="denyIcon" class="bg-gray-700 text-light hover:bg-accent-dark text-sm p-2 px-[10px]"></fa-icon></button>
+       </div>
     </div>
     <div class="text-light flex flex-col gap-2 p-4">
         <div class="flex gap-2">

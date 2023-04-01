@@ -23,6 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/pki")
@@ -81,6 +82,12 @@ public class PkiController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<String> distributeCertificate(@PathVariable String email) {
 		return ResponseEntity.ok(certificateService.distributeCertificate(email));
+	}
+
+	@DeleteMapping("/csr/{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<Map<String, String>> denyCertificate(@PathVariable UUID id) {
+		return ResponseEntity.ok(Map.of("message", csrService.denyCsr(id)));
 	}
 
 	@Autowired
