@@ -74,4 +74,10 @@ public class PkiController {
 		return ResponseEntity.ok(certificateService.findAllCertificate());
 	}
 
+	@GetMapping("/distribute/{email}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<String> distributeCertificate(@PathVariable String email) {
+		return ResponseEntity.ok(certificateService.distributeCertificate(email));
+	}
+
 }
