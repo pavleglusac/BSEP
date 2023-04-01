@@ -2,20 +2,22 @@ package com.bsep.admin.pki.service;
 
 import com.bsep.admin.data.IssuerData;
 import com.bsep.admin.data.SubjectData;
+import com.bsep.admin.exception.CertificateAlreadyRevokedException;
 import com.bsep.admin.keystores.KeyStoreReader;
 import com.bsep.admin.keystores.KeyStoreWriter;
+import com.bsep.admin.model.CertificateRevocation;
 import com.bsep.admin.model.Csr;
 import com.bsep.admin.model.CsrStatus;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateOptionDto;
+import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import com.bsep.admin.repository.CertificateRevocationRepository;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -25,8 +27,11 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
@@ -35,6 +40,7 @@ import java.security.cert.Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,8 +58,12 @@ public class CertificateService {
 	@Autowired
 	private KeyService keyService;
 
+	@Autowired
+	private CertificateRevocationRepository certificateRevocationRepository;
+
 	BigInteger serialNumber = BigInteger.valueOf(3);
 
+	@Transactional
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
 		int len = adminService.getAdminChain().length;
@@ -84,11 +94,13 @@ public class CertificateService {
 		// save to keystore
 		KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
 		keyStoreWriter.loadKeyStore("keystores/admin.jks", "admin".toCharArray());
-		keyStoreWriter.writeChain(csr.getEmail(),  issuerData.getPrivateKey(),  "admin".toCharArray(), chainList);
+		keyStoreWriter.writeChain(csr.getEmail(),  issuerData.getPrivateKey(), "admin".toCharArray(), chainList);
 		keyStoreWriter.saveKeyStore("keystores/admin.jks", "admin".toCharArray());
 
 		// save to db
 		csr.setStatus(CsrStatus.APPROVED);
+
+		certificateRevocationRepository.deleteByUserEmail(csr.getEmail());
 		csrService.saveCsr(csr);
 	}
 
@@ -243,6 +255,8 @@ public class CertificateService {
 					certificateDto.setHierarchyLevel(3);
 				}
 			}
+			Optional<CertificateRevocation> revocation = certificateRevocationRepository.findByUserEmail(email);
+			certificateDto.setIsRevoked(revocation.isPresent());
 			certificatesDto.add(certificateDto);
 		}
 		return certificatesDto;
@@ -330,7 +344,9 @@ public class CertificateService {
 					x509Certificate.verify(certificateChain[i + 1].getPublicKey());
 				}
 				i++;
-				// TODO: check revocation status
+				Optional<CertificateRevocation> revocation = certificateRevocationRepository
+						.findByUserEmail(getEmailFromCertificate(x509Certificate));
+				if (revocation.isPresent()) return false;
 			}
 			return true;
 		} catch (Exception e) {
@@ -338,4 +354,16 @@ public class CertificateService {
 			return false;
 		}
 	}
+
+	public void revokeCertificate(CertificateRevocationDto dto) {
+		CertificateRevocation certificateRevocation = new CertificateRevocation();
+		certificateRevocation.setUserEmail(dto.getEmail());
+		certificateRevocation.setTimestamp(LocalDateTime.now());
+		try {
+			certificateRevocationRepository.save(certificateRevocation);
+		} catch (DataIntegrityViolationException e) {
+			throw new CertificateAlreadyRevokedException();
+		}
+	}
+
 }

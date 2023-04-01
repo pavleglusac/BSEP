@@ -1,7 +1,17 @@
-<div class="w-[103rem] flex justify-center p-10">
-    <div class="flex flex-wrap gap-10 w-full pl-16">
-        <div *ngFor="let certificate of certificates">
-            <app-certificate [certificate]="certificate" [readonly]="true"  class="min-h-[80vh]"></app-certificate>
+<div class="w-full flex flex-col p-8">
+    <div>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" [checked]="showRevoked" (change)="showRevoked = !showRevoked" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full
+            peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+            after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5
+            after:transition-all dark:border-gray-600 peer-checked:bg-accent"></div>
+            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Show revoked</span>
+          </label>
+    </div>
+    <div class="flex flex-wrap gap-4">
+        <div *ngFor="let certificate of getCertificates()">
+            <app-certificate-card [certificate]="certificate"></app-certificate-card>
         </div>
     </div>
 </div>

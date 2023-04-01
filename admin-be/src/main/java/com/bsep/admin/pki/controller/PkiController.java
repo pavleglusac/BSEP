@@ -1,13 +1,11 @@
 package com.bsep.admin.pki.controller;
 
-import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
+import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
 import com.bsep.admin.service.MailingService;
-import lombok.Getter;
-import org.apache.coyote.Response;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,7 @@ public class PkiController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
-		try{
+		try {
 			csrService.processCsr(csr, user);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create CSR");
@@ -76,6 +74,13 @@ public class PkiController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<CertificateDto>> findAllCertificate() {
 		return ResponseEntity.ok(certificateService.findAllCertificate());
+	}
+
+	@PostMapping(value = "/certificate-revocation", produces = "application/json")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<String> revokeCertificate(@RequestBody CertificateRevocationDto dto, Authentication authentication) {
+		certificateService.revokeCertificate(dto);
+		return ResponseEntity.ok("Certificate revoked");
 	}
 
 	@GetMapping("/distribute/{email}")

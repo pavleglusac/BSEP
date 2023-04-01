@@ -12,6 +12,9 @@ module.exports = {
         "accent": "#18A999",
         "accent-dark": "#117D71",
         "light": "#FDFFFC",
+      },
+      spacing: {
+        "76": "19rem",
       }
     },
   },

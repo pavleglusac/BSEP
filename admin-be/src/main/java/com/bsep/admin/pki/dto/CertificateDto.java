@@ -22,6 +22,8 @@ public class CertificateDto {
 
 	private CsrDto csrDto;
 
+	private Boolean isRevoked;
+
 	@Override
 	public String toString() {
 		return "CertificateDto [algorithm=" + algorithm + ", validityStart=" + validityStart + ", validityEnd="
