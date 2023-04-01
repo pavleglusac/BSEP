@@ -188,11 +188,32 @@ public class CertificateService {
 					e.printStackTrace();
 				}
 			}
+			// get issuer common name
+			String issuerName = certificate.getIssuerX500Principal().getName();
+			String issuerCommonName = readCommonName(issuerName);
+			if (issuerCommonName != null) {
+				if (issuerCommonName.startsWith("Root")) {
+					certificateDto.setHierarchyLevel(1);
+				} else if (issuerCommonName.startsWith("First")) {
+					certificateDto.setHierarchyLevel(2);
+				} else {
+					certificateDto.setHierarchyLevel(3);
+				}
+			}
 			certificatesDto.add(certificateDto);
 		}
 		return certificatesDto;
 	}
 
+	private String readCommonName(String name) {
+		String[] parts = name.split(",");
+		for (String part : parts) {
+			if (part.contains("CN=")) {
+				return part.substring(3);
+			}
+		}
+		return null;
+	}
 
 	private CsrDto readCsrFromRdns(X509Certificate cert) {
 		X500Name x500name = new X500Name(cert.getSubjectX500Principal().getName());
@@ -237,10 +258,15 @@ public class CertificateService {
 
 	public String distributeCertificate(String email) {
 		try{
+			KeyStoreReader keyStoreReader = new KeyStoreReader();
 			String publicKey = this.keyService.findPublicKeyForUser(email);
 			String privateKey = this.keyService.findPrivateKeyForUser(email);
-			//find certificate
+			//find certificate for email
+			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
+			X509Certificate certificate = (X509Certificate) certificateChain[0];
 			//send all info via email
+			System.out.println(certificate);
+
 			return "Certificate, public and private key for user " + email + " are sent via email.";
 		} catch (Exception e) {
 			e.printStackTrace();

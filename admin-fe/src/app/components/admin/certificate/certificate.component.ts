@@ -14,18 +14,21 @@ import {
 } from 'src/app/shared/store/certificate-slice/certificate.actions';
 import { FormsModule } from '@angular/forms';
 import { CertificateService } from 'src/app/services/certificate.service';
-import { Certificate } from 'src/app/model/certificate';
+import { Certificate, Csr } from 'src/app/model/certificate';
 import { Toast, ToastrService } from 'ngx-toastr';
+import { CsrStateType } from 'src/app/shared/store/types';
+import { CsrModalComponent } from "../csr-modal/csr-modal.component";
+import { CsrAction, CsrActionType } from 'src/app/shared/store/csr-slice/csr.actions';
 
 @Component({
-  selector: 'app-certificate',
-  templateUrl: './certificate.component.html',
-  standalone: true,
-  styles: [],
-  imports: [CommonModule, EditExtensionComponent, FormsModule],
+    selector: 'app-certificate',
+    templateUrl: './certificate.component.html',
+    standalone: true,
+    styles: [],
+    imports: [CommonModule, EditExtensionComponent, FormsModule, CsrModalComponent]
 })
 export class CertificateComponent implements OnInit {
-
+  
   @Input() readonly = false;
   @Input() certificate: Certificate | undefined = undefined;
   
@@ -37,21 +40,24 @@ export class CertificateComponent implements OnInit {
   validityUnit = 'years';
   email = '';
   canProcess = false;
-
+  csr: Csr | undefined = undefined;
+  showCsrModal = false;
+  
   today = new Date();
   until = new Date(
     this.today.getFullYear() + 1,
     this.today.getMonth(),
     this.today.getDate()
-  );
-  hierarchyLevel: number = 3;
-
-  constructor(
-    private store: Store<CertificateStateType>,
+    );
+    hierarchyLevel: number = 3;
+    
+    constructor(
+      private store: Store<CertificateStateType>,
+      private csrStore: Store<CsrStateType>,
     private certificateService: CertificateService,
     private toastr: ToastrService
-  ) {
-    this.store
+    ) {
+      this.store
       .select(selectCertificateFeature)
       .subscribe((state: CertificateStateType) => {
         if (!state) return;
@@ -63,18 +69,30 @@ export class CertificateComponent implements OnInit {
           }
         }
       });
-    
 
-  }
-
-  ngOnInit() {
-    if (this.certificate) {
-      this.addedExtensions = this.certificate.extensions;
-      this.today = new Date(this.certificate.validityStart);
-      this.until = new Date(this.certificate.validityEnd);
-      this.hierarchyLevel = this.certificate.hierarchyLevel;
-      this.email = this.certificate.csrId;
+      this.csrStore.select('csr').subscribe((resData: any) => {
+        if(!resData) {
+          return;
+        }
+        this.canProcess = true;
+        this.csr = resData.csr;
+        this.email = resData.csr.email;
+      });
+      
     }
+
+    ngOnInit() {
+      if (this.certificate) {
+        this.addedExtensions = this.certificate.extensions;
+        this.today = new Date(this.certificate.validityStart);
+        this.until = new Date(this.certificate.validityEnd);
+        this.hierarchyLevel = this.certificate.hierarchyLevel;
+        this.email = this.certificate.csrId;
+      }
+    }
+    
+  openCsrModal() {
+    this.showCsrModal = true;
   }
 
   approveCertificate() {
@@ -144,8 +162,10 @@ export class CertificateComponent implements OnInit {
   loadForUser() {
     this.certificateService.loadForUser(this.email).subscribe({
       next: (data) => {
+        console.log(`Loaded certificate requests for user ${this.email}`);
         console.log(data);
         this.toastr.success('Certificate requests loaded!');
+        this.csrStore.dispatch(new CsrAction(CsrActionType.ADD, data as Csr));
         this.canProcess = true;
       },
       error: (error) => {

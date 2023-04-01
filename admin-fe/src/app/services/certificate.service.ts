@@ -18,7 +18,7 @@ export class CertificateService {
   }
 
   loadForUser(email: string) {
-    return this.httpClient.get('api/pki/csr', { params: { email } });
+    return this.httpClient.get(`api/pki/csr/${email}`);
   }
 
   loadAll() {

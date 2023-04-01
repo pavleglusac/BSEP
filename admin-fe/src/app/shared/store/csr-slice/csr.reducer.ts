@@ -25,7 +25,7 @@ export const CsrReducer = (
     case CsrActionType.ADD:
       return {
         ...state,
-        logged: true,
+        csr: action.payload,
       };
     default: {
       return state;
