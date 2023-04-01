@@ -32,6 +32,7 @@ import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -51,11 +52,14 @@ public class CertificateService {
 	@Autowired
 	private KeyService keyService;
 
-	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
+	BigInteger serialNumber = BigInteger.valueOf(3);
+
+	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
 		int len = adminService.getAdminChain().length;
 		IssuerData issuerData = adminService.getAdminIssuerData(len - cert.getHierarchyLevel());
-		SubjectData subjectData = generateSubjectData();
+
+		SubjectData subjectData = csrToSubjectData(csr, cert);
 		JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 		builder = builder.setProvider("BC");
 
@@ -86,6 +90,45 @@ public class CertificateService {
 		// save to db
 		csr.setStatus(CsrStatus.APPROVED);
 		csrService.saveCsr(csr);
+	}
+
+	private SubjectData csrToSubjectData(Csr csr, CertificateDto cert) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		SubjectData subjectData = new SubjectData();
+		SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
+		// convert localdatetime to date
+		Date startDate = Date.from(cert.getValidityStart().atZone(ZoneId.systemDefault()).toInstant());
+		Date endDate = Date.from(cert.getValidityEnd().atZone(ZoneId.systemDefault()).toInstant());
+		String sn = serialNumber.toString();
+		serialNumber = serialNumber.add(BigInteger.ONE);
+		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+		if(csr.getCommonName() != null) {
+			builder.addRDN(BCStyle.CN, csr.getCommonName());
+		}
+		if(csr.getCountry() != null) {
+			builder.addRDN(BCStyle.C, csr.getCountry());
+		}
+		if(csr.getOrganization() != null) {
+			builder.addRDN(BCStyle.O, csr.getOrganization());
+		}
+		if(csr.getOrganizationalUnit() != null) {
+			builder.addRDN(BCStyle.OU, csr.getOrganizationalUnit());
+		}
+		if(csr.getEmail() != null) {
+			builder.addRDN(BCStyle.E, csr.getEmail());
+		}
+		if(csr.getSurname() != null) {
+			builder.addRDN(BCStyle.SURNAME, csr.getSurname());
+		}
+		if(csr.getGivenName() != null) {
+			builder.addRDN(BCStyle.GIVENNAME, csr.getGivenName());
+		}
+		subjectData.setStartDate(startDate);
+		subjectData.setEndDate(endDate);
+		subjectData.setSerialNumber(sn);
+		subjectData.setX500name(builder.build());
+		PublicKey publicKey = keyService.findPublicKeyForUser(csr.getEmail());
+		subjectData.setPublicKey(publicKey);
+		return subjectData;
 	}
 
 	private void processExtensions(X509v3CertificateBuilder certGen, CertificateDto cert) {
@@ -188,11 +231,32 @@ public class CertificateService {
 					e.printStackTrace();
 				}
 			}
+			// get issuer common name
+			String issuerName = certificate.getIssuerX500Principal().getName();
+			String issuerCommonName = readCommonName(issuerName);
+			if (issuerCommonName != null) {
+				if (issuerCommonName.startsWith("Root")) {
+					certificateDto.setHierarchyLevel(1);
+				} else if (issuerCommonName.startsWith("First")) {
+					certificateDto.setHierarchyLevel(2);
+				} else {
+					certificateDto.setHierarchyLevel(3);
+				}
+			}
 			certificatesDto.add(certificateDto);
 		}
 		return certificatesDto;
 	}
 
+	private String readCommonName(String name) {
+		String[] parts = name.split(",");
+		for (String part : parts) {
+			if (part.contains("CN=")) {
+				return part.substring(3);
+			}
+		}
+		return null;
+	}
 
 	private CsrDto readCsrFromRdns(X509Certificate cert) {
 		X500Name x500name = new X500Name(cert.getSubjectX500Principal().getName());
@@ -237,14 +301,41 @@ public class CertificateService {
 
 	public String distributeCertificate(String email) {
 		try{
-			String publicKey = this.keyService.findPublicKeyForUser(email);
+			KeyStoreReader keyStoreReader = new KeyStoreReader();
+			String publicKey = this.keyService.findPublicKeyForUser(email).toString();
 			String privateKey = this.keyService.findPrivateKeyForUser(email);
-			//find certificate
+			//find certificate for email
+			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
+			X509Certificate certificate = (X509Certificate) certificateChain[0];
 			//send all info via email
+			System.out.println(certificate);
+
 			return "Certificate, public and private key for user " + email + " are sent via email.";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Cannot distribute certificate for user " + email;
+		}
+	}
+
+	public Boolean validateCertificate(String email) {
+		try {
+			KeyStoreReader keyStoreReader = new KeyStoreReader();
+			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
+			// validate entire chain
+			int i = 0;
+			for (Certificate certificate : certificateChain) {
+				X509Certificate x509Certificate = (X509Certificate) certificate;
+				x509Certificate.checkValidity();
+				if (i < certificateChain.length - 1) {
+					x509Certificate.verify(certificateChain[i + 1].getPublicKey());
+				}
+				i++;
+				// TODO: check revocation status
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 }
