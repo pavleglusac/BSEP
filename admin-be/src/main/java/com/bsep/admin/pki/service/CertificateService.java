@@ -63,6 +63,7 @@ public class CertificateService {
 
 	BigInteger serialNumber = BigInteger.valueOf(3);
 
+	@Transactional
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
 		int len = adminService.getAdminChain().length;
@@ -353,6 +354,7 @@ public class CertificateService {
 			return false;
 		}
 	}
+
 	public void revokeCertificate(CertificateRevocationDto dto) {
 		CertificateRevocation certificateRevocation = new CertificateRevocation();
 		certificateRevocation.setUserEmail(dto.getEmail());

@@ -1,14 +1,11 @@
 package com.bsep.admin.pki.controller;
 
-import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
 import com.bsep.admin.service.MailingService;
-import lombok.Getter;
-import org.apache.coyote.Response;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
