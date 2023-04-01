@@ -6,6 +6,7 @@ export interface Certificate {
     extensions: any[];
     hierarchyLevel: number;
     csr: Csr | undefined;
+    isRevoked: boolean;
 }
 
 export interface Csr {

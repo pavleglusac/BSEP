@@ -99,6 +99,7 @@ export class CertificateComponent implements OnInit {
       extensions: extensions,
       hierarchyLevel: this.hierarchyLevel,
       csr: undefined,
+      isRevoked: false,
     };
     this.certificateService.approveCertificate(certificate).subscribe({
       next: (data) => {

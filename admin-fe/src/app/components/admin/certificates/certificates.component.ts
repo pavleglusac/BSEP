@@ -14,6 +14,7 @@ import { CertificateCardComponent } from './certificate-card/certificate-card.co
 })
 export class CertificatesComponent implements OnInit {
   certificates: Certificate[] = [];
+  showRevoked: boolean = false;
 
   constructor(private certificateService: CertificateService) {
    
@@ -34,6 +35,14 @@ export class CertificatesComponent implements OnInit {
       });
       this.certificates = certificates;
     });
+  }
+
+  handleRevoke(event: any) {
+  }
+
+  getCertificates(): Certificate[] {
+    const certificates: Certificate[] = this.showRevoked ? this.certificates : this.certificates.filter(x => !x.isRevoked);
+    return certificates;
   }
 
 }

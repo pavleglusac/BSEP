@@ -1,9 +1,6 @@
 package com.bsep.admin.api;
 
-import com.bsep.admin.exception.CsrNotFoundException;
-import com.bsep.admin.exception.InvalidLogin;
-import com.bsep.admin.exception.ResponseError;
-import com.bsep.admin.exception.UserNotFoundException;
+import com.bsep.admin.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,6 +45,12 @@ public class ControllerAdvisor {
 	@ExceptionHandler(InvalidLogin.class)
 	public ResponseError handleInvalidLogin(InvalidLogin e) {
 		return new ResponseError(HttpStatus.UNAUTHORIZED, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(CertificateAlreadyRevokedException.class)
+	public ResponseError handleCertificateAlreadyRevokedException(CertificateAlreadyRevokedException e) {
+		return new ResponseError(HttpStatus.BAD_REQUEST, "This user's certificate has already been revoked");
 	}
 
 }
