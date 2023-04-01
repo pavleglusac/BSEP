@@ -8,7 +8,11 @@ import com.bsep.admin.model.Csr;
 import com.bsep.admin.model.CsrStatus;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateOptionDto;
+import com.bsep.admin.pki.dto.CsrDto;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.*;
@@ -22,12 +26,15 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +48,8 @@ public class CertificateService {
 	@Autowired
 	private CsrService csrService;
 
-
+	@Autowired
+	private KeyService keyService;
 
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
@@ -145,4 +153,98 @@ public class CertificateService {
 		return null;
 	}
 
+	public List<CertificateDto> findAllCertificate() {
+		KeyStoreReader keyStoreReader = new KeyStoreReader();
+		List<CertificateDto> certificatesDto = new ArrayList<>();
+		List<X509Certificate> certificates = keyStoreReader.readAllCertificates(adminService.KEYSTORE_FILE, "admin");
+		ExtensionConverter extensionConverter = new ExtensionConverter();
+		List<String> extensions = Arrays.asList("Basic Constraints", "Key Usage", "Extended Key Usage");
+		for (X509Certificate certificate : certificates) {
+			CertificateDto certificateDto = new CertificateDto();
+			certificateDto.setExtensions(new ArrayList<>());
+			certificateDto.setAlgorithm(certificate.getPublicKey().getAlgorithm());
+			certificateDto.setValidityStart(certificate.getNotBefore()
+													   .toInstant()
+													   .atZone(ZoneId.systemDefault()).toLocalDate()
+													   .atStartOfDay());
+			certificateDto.setValidityEnd(certificate.getNotAfter()
+													 .toInstant()
+													 .atZone(ZoneId.systemDefault()).toLocalDate()
+													 .atStartOfDay());
+			// get email from subject
+			String email = getEmailFromCertificate(certificate);
+			certificateDto.setCsrId(email);
+//			certificateDto.setCsrDto(csrService(email));
+			CsrDto csrDto = readCsrFromRdns(certificate);
+			certificateDto.setCsrId(email);
+			certificateDto.setCsrDto(csrDto);
+			for (String extensionName : extensions) {
+				try {
+					CertificateOptionDto extension = extensionConverter.extensionToCertificateOptionDto(extensionName, certificate);
+					if(extension != null) {
+						certificateDto.getExtensions().add(extension);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			certificatesDto.add(certificateDto);
+		}
+		return certificatesDto;
+	}
+
+
+	private CsrDto readCsrFromRdns(X509Certificate cert) {
+		X500Name x500name = new X500Name(cert.getSubjectX500Principal().getName());
+		RDN[] rdns = x500name.getRDNs();
+		CsrDto csrDto = new CsrDto();
+		for (RDN rdn : rdns) {
+			AttributeTypeAndValue[] atv = rdn.getTypesAndValues();
+			for (AttributeTypeAndValue attributeTypeAndValue : atv) {
+				if (attributeTypeAndValue.getType().equals(BCStyle.CN)) {
+					csrDto.setCommonName(attributeTypeAndValue.getValue().toString());
+				} else if (attributeTypeAndValue.getType().equals(BCStyle.SURNAME)) {
+					csrDto.setSurname(attributeTypeAndValue.getValue().toString());
+				} else if (attributeTypeAndValue.getType().equals(BCStyle.GIVENNAME)) {
+					csrDto.setGivenName(attributeTypeAndValue.getValue().toString());
+				} else if (attributeTypeAndValue.getType().equals(BCStyle.O)) {
+					csrDto.setOrganization(attributeTypeAndValue.getValue().toString());
+				} else if (attributeTypeAndValue.getType().equals(BCStyle.OU)) {
+					csrDto.setOrganizationalUnit(attributeTypeAndValue.getValue().toString());
+				} else if (attributeTypeAndValue.getType().equals(BCStyle.C)) {
+					csrDto.setCountry(attributeTypeAndValue.getValue().toString());
+				} else if (attributeTypeAndValue.getType().equals(BCStyle.E)) {
+					csrDto.setEmail(attributeTypeAndValue.getValue().toString());
+				}
+			}
+		}
+		return csrDto;
+	}
+
+	public String getEmailFromCertificate(X509Certificate cert) {
+		X500Name x500Name = new X500Name(cert.getSubjectX500Principal().getName());
+		RDN[] rdns = x500Name.getRDNs(BCStyle.EmailAddress);
+		if (rdns.length == 0) {
+			return null;
+		}
+		RDN emailAddressRDN = rdns[0];
+		if (emailAddressRDN != null) {
+			return emailAddressRDN.getFirst().getValue().toString();
+		} else {
+			return null;
+		}
+	}
+
+	public String distributeCertificate(String email) {
+		try{
+			String publicKey = this.keyService.findPublicKeyForUser(email);
+			String privateKey = this.keyService.findPrivateKeyForUser(email);
+			//find certificate
+			//send all info via email
+			return "Certificate, public and private key for user " + email + " are sent via email.";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Cannot distribute certificate for user " + email;
+		}
+	}
 }

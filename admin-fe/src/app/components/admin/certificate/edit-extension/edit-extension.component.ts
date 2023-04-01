@@ -18,6 +18,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class EditExtensionComponent {
 
+  @Input() readonly = false;
+
   changedValue(event: any, index: any, extension: any, type: any) {
     if (type === 'checkbox') {
       extension.options[index].value = event.target.checked;

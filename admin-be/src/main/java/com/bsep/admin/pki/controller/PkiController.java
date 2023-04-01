@@ -3,7 +3,9 @@ package com.bsep.admin.pki.controller;
 import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
+import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
+import lombok.Getter;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ import com.bsep.admin.pki.service.CertificateService;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pki")
@@ -34,19 +39,25 @@ public class PkiController {
 
 	@PostMapping("/csr")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<String> createCsr(@RequestBody Csr csr, Authentication authentication) {
+	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
 		try{
 			csrService.processCsr(csr, user);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create CSR");
 		}
-		return ResponseEntity.ok("CSR created");
+		return ResponseEntity.ok(Map.of("message", "CSR created"));
 	}
 
 	@GetMapping("/csr")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Csr getCsr(@RequestParam String email) {
+	public ResponseEntity<List<CsrDto>> findAllCsr() {
+		return ResponseEntity.ok(csrService.findAllCsr());
+	}
+
+	@GetMapping("/csr/{email}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Csr getCsr(@PathVariable String email) {
 		return csrService.getCsrByUser(email);
 	}
 
@@ -55,6 +66,18 @@ public class PkiController {
 	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException {
 		certificateService.processCertificate(cert);
 		return ResponseEntity.ok("Certificate created");
+	}
+
+	@GetMapping("/certificate")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<List<CertificateDto>> findAllCertificate() {
+		return ResponseEntity.ok(certificateService.findAllCertificate());
+	}
+
+	@GetMapping("/distribute/{email}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<String> distributeCertificate(@PathVariable String email) {
+		return ResponseEntity.ok(certificateService.distributeCertificate(email));
 	}
 
 }

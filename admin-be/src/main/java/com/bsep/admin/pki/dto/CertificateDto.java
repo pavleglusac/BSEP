@@ -20,6 +20,8 @@ public class CertificateDto {
 
 	private Integer hierarchyLevel = 3;
 
+	private CsrDto csrDto;
+
 	@Override
 	public String toString() {
 		return "CertificateDto [algorithm=" + algorithm + ", validityStart=" + validityStart + ", validityEnd="

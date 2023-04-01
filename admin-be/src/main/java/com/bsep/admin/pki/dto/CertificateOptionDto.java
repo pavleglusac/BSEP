@@ -13,4 +13,5 @@ public class CertificateOptionDto {
 	private String name;
 	private List<CertificateOptionDto> options;
 	private String value;
+	private String type;
 }

@@ -10,16 +10,16 @@
                             <p>{{option.name}}</p>
                         </div>
                         <div class="w-1/2 text-black">
-                            <input *ngIf="option.type == 'checkbox'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [checked]="option.value">
-                            <input *ngIf="option.type == 'number'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [value]="option.value">
+                            <input [disabled]="readonly" *ngIf="option.type == 'checkbox'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [checked]="option.value">
+                            <input [disabled]="readonly" *ngIf="option.type == 'number'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [value]="option.value">
                         </div>
                     </div>
                 </div>
             </div>
 
             <span>
-                <p-button class="bg-white border text-black mr-4 p-1 mb-2" (click)="updateValue()" >Save</p-button>
-                <p-button class="bg-white border text-black p-1" (click)="hideDialog()" >Close</p-button>
+                <p-button *ngIf="!readonly" class="bg-white border text-black mr-4 p-1 mb-2" (click)="updateValue()" >Save</p-button>
+                <p-button *ngIf="!readonly" class="bg-white border text-black p-1" (click)="hideDialog()" >Close</p-button>
             </span>
         </div>
     </p-dialog>
