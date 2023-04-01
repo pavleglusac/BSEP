@@ -3,12 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { Certificate } from 'src/app/model/certificate';
 import { CertificateComponent } from '../certificate/certificate.component';
 import { CertificateService } from 'src/app/services/certificate.service';
+import { CertificateCardComponent } from './certificate-card/certificate-card.component';
 
 @Component({
   selector: 'app-certificates',
   templateUrl: './certificates.component.html',
   styles: [],
-  imports: [CommonModule, CertificateComponent],
+  imports: [CommonModule, CertificateComponent, CertificateCardComponent],
   standalone: true,
 })
 export class CertificatesComponent implements OnInit {

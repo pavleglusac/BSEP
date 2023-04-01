@@ -18,7 +18,7 @@ public class CertificateRevocation {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @Column()
+    @Column(unique = true)
     private String userEmail;
 
     @Column()

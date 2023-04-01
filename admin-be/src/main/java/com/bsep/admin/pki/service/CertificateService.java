@@ -27,6 +27,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -54,7 +55,7 @@ public class CertificateService {
 	private CertificateRevocationRepository certificateRevocationRepository;
 
 
-
+	@Transactional
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
 		int len = adminService.getAdminChain().length;
@@ -90,11 +91,13 @@ public class CertificateService {
 		// save to db
 		csr.setStatus(CsrStatus.APPROVED);
 
-		Optional<CertificateRevocation> certificateRevocation = certificateRevocationRepository
-				.findByUserEmail(csr.getEmail());
-		if (certificateRevocation.isPresent()) {
-			certificateRevocationRepository.delete(certificateRevocation.get());
-		}
+		certificateRevocationRepository.deleteByUserEmail(csr.getEmail());
+
+//		Optional<CertificateRevocation> certificateRevocation = certificateRevocationRepository
+//				.findByUserEmail(csr.getEmail());
+//		if (certificateRevocation.isPresent()) {
+//			certificateRevocationRepository.delete(certificateRevocation.get());
+//		}
 
 		csrService.saveCsr(csr);
 	}
@@ -164,7 +167,7 @@ public class CertificateService {
 		return null;
 	}
 
-	public List<CertificateDto> findAllCertificates() {
+	public List<CertificateDto> findAllCertificate() {
 		KeyStoreReader keyStoreReader = new KeyStoreReader();
 		List<CertificateDto> certificatesDto = new ArrayList<>();
 		List<X509Certificate> certificates = keyStoreReader.readAllCertificates(adminService.KEYSTORE_FILE, "admin");

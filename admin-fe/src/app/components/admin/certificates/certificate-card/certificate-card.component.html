@@ -1,0 +1,31 @@
+<div class="flex flex-col justify-between bg-dark w-76 text-light text-center py-4 px-4 h-full">
+  <div>
+    <fa-icon [icon]="faCertificate" class="text-3xl text-light"></fa-icon>
+    <div class="text-medium text-lg font-medium">SHA256withRSA</div>
+        
+    <div class="flex justify-around gap-x-3 mt-2">
+        <div class="bg-light text-black font-bold w-fit px-2 rounded-lg">{{ certificate?.validityStart | date: 'dd-MM-yyyy' }}</div>
+        &#10148;
+        <div class="bg-light text-black font-bold w-fit px-2 rounded-lg">{{ certificate?.validityEnd | date: 'dd-MM-yyyy' }}</div>
+    </div>
+
+    <div class="flex justify-between mt-4">
+      <fa-icon [icon]="faUser" class="text-light pr-3"></fa-icon>
+      <div class="font-medium text-sm truncate">{{ certificate?.csrId ? certificate?.csrId : '/' }}</div>
+    </div>
+
+    <div class="flex justify-between mt-1">
+      <fa-icon [icon]="faPenNib" class="text-light pr-3"></fa-icon>
+      <div class="font-medium text-sm truncate">{{ certificate?.hierarchyLevel | certificateHierarchyLevel }}</div>
+    </div>
+  </div>
+
+  <div>
+    <button *ngIf="certificate?.csrId" (click)="revokeCertificate()"
+    class="bg-red-500 active:bg-red-600 text-light font-bold w-full mt-4 py-1 shadow-md">
+      Revoke Certificate
+    </button>
+    <button class="bg-accent-dark text-light font-bold w-full mt-2 py-1 shadow-md">View CSR</button>
+  </div>
+
+</div>
