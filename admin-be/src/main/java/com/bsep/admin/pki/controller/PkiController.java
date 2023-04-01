@@ -7,6 +7,7 @@ import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
 import com.bsep.admin.service.MailingService;
 import lombok.Getter;
+import org.apache.coyote.Response;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +66,7 @@ public class PkiController {
 
 	@PostMapping(value = "/certificate", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException {
+	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		certificateService.processCertificate(cert);
 		return ResponseEntity.ok("Certificate created");
 	}
@@ -88,6 +90,11 @@ public class PkiController {
 	public ResponseEntity<String> sendCertificate(@PathVariable String email) {
 		mailingService.sendTestMail();
 		return ResponseEntity.ok("Certificate sent");
+	}
+
+	@GetMapping("/validate/{email}")
+	public ResponseEntity<Boolean> validateCertificate(@PathVariable String email) {
+		return ResponseEntity.ok(certificateService.validateCertificate(email));
 	}
 
 }

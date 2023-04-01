@@ -44,9 +44,10 @@ public class KeyService {
         }
     }
 
-    public String findPublicKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return this.findKeyForUser(user, PUBLIC_KEY_FILE_NAME).toString();
+    public PublicKey findPublicKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return (PublicKey) this.findKeyForUser(user, PUBLIC_KEY_FILE_NAME);
     }
+
 
     public String findPrivateKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return this.findKeyForUser(user, PRIVATE_KEY_FILE_NAME).toString();

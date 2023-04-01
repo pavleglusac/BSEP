@@ -1,6 +1,7 @@
 package com.bsep.admin.pki.service;
 
 import com.bsep.admin.exception.CsrNotFoundException;
+import com.bsep.admin.model.CsrStatus;
 import com.bsep.admin.model.User;
 
 import com.bsep.admin.model.Csr;
@@ -35,6 +36,7 @@ public class CsrService {
 		List<Csr> csrs = findAll();
 		List<CsrDto> dtos = new ArrayList<>();
 		for (Csr csr : csrs) {
+			if (csr.getStatus() != CsrStatus.PENDING) continue;
 			try{
 				String key = this.findPublicKeyForUser(csr.getEmail());
 				dtos.add(new CsrDto(csr, key));
@@ -43,14 +45,14 @@ public class CsrService {
 		return dtos;
 	}
 	public String findPublicKeyForUser(String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		return this.keyService.findPublicKeyForUser(email);
+		return this.keyService.findPublicKeyForUser(email).toString();
 	}
 	public void processCsr(Csr csr, User user) throws Exception {
 		KeyPair keys = keyService.generateKeys();
 		keyService.storeKeys(keys, user.getEmail());
 		LocalDateTime currentTime = LocalDateTime.now();
 		Optional<Csr> existingCsrOpt = this.csrRepository.findByEmail(user.getEmail());
-		if (existingCsrOpt.isPresent()) {
+		if (existingCsrOpt.isPresent() && existingCsrOpt.get().getStatus() == CsrStatus.PENDING) {
 			csr = this.updateCsr(existingCsrOpt.get(), csr, currentTime);
 		} else {
 			csr.setEmail(user.getEmail());
