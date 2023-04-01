@@ -2,6 +2,7 @@ package com.bsep.admin.pki.service;
 
 import com.bsep.admin.data.IssuerData;
 import com.bsep.admin.data.SubjectData;
+import com.bsep.admin.exception.CertificateAlreadyRevokedException;
 import com.bsep.admin.keystores.KeyStoreReader;
 import com.bsep.admin.keystores.KeyStoreWriter;
 import com.bsep.admin.model.CertificateRevocation;
@@ -26,9 +27,11 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
@@ -97,13 +100,6 @@ public class CertificateService {
 		csr.setStatus(CsrStatus.APPROVED);
 
 		certificateRevocationRepository.deleteByUserEmail(csr.getEmail());
-
-//		Optional<CertificateRevocation> certificateRevocation = certificateRevocationRepository
-//				.findByUserEmail(csr.getEmail());
-//		if (certificateRevocation.isPresent()) {
-//			certificateRevocationRepository.delete(certificateRevocation.get());
-//		}
-
 		csrService.saveCsr(csr);
 	}
 
@@ -258,6 +254,8 @@ public class CertificateService {
 					certificateDto.setHierarchyLevel(3);
 				}
 			}
+			Optional<CertificateRevocation> revocation = certificateRevocationRepository.findByUserEmail(email);
+			certificateDto.setIsRevoked(revocation.isPresent());
 			certificatesDto.add(certificateDto);
 		}
 		return certificatesDto;
@@ -357,7 +355,11 @@ public class CertificateService {
 		CertificateRevocation certificateRevocation = new CertificateRevocation();
 		certificateRevocation.setUserEmail(dto.getEmail());
 		certificateRevocation.setTimestamp(LocalDateTime.now());
-		certificateRevocationRepository.save(certificateRevocation);
+		try {
+			certificateRevocationRepository.save(certificateRevocation);
+		} catch (DataIntegrityViolationException e) {
+			throw new CertificateAlreadyRevokedException();
+		}
 	}
 
 }
