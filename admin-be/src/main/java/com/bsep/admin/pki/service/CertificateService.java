@@ -343,7 +343,9 @@ public class CertificateService {
 					x509Certificate.verify(certificateChain[i + 1].getPublicKey());
 				}
 				i++;
-				// TODO: check revocation status
+				Optional<CertificateRevocation> revocation = certificateRevocationRepository
+						.findByUserEmail(getEmailFromCertificate(x509Certificate));
+				if (revocation.isPresent()) return false;
 			}
 			return true;
 		} catch (Exception e) {
