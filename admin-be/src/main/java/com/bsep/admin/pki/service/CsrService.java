@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CsrService {
@@ -74,7 +75,7 @@ public class CsrService {
 
 	public Csr getCsrByUser(String email) {
 		Optional<Csr> csrOpt = this.csrRepository.findByEmail(email);
-		if (csrOpt.isPresent()) {
+		if (csrOpt.isPresent() && csrOpt.get().getStatus() == CsrStatus.PENDING) {
 			return csrOpt.get();
 		} else {
 			throw new CsrNotFoundException("CSR not found");
@@ -83,5 +84,15 @@ public class CsrService {
 
 	public void saveCsr(Csr csr) {
 		this.csrRepository.save(csr);
+	}
+
+	public String denyCsr(UUID id) {
+		Optional<Csr> csrOpt = this.csrRepository.findById(id);
+		if (csrOpt.isPresent()) {
+			Csr csr = csrOpt.get();
+			csr.setStatus(CsrStatus.REJECTED);
+			this.csrRepository.save(csr);
+			return "Deny Certificate signing request successful.";
+		} throw new RuntimeException("Deny Certificate signing request with id " + id + " unsuccessful.");
 	}
 }

@@ -21,4 +21,15 @@ export class CsrService {
       },
     });
   }
+
+  denyCsr(id: string, successCb: () => void, errorCb: (error: any) => void) {
+    this.http.delete(`api/pki/csr/${id}`).subscribe({
+      next(value: any) {
+        successCb();
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
 }
