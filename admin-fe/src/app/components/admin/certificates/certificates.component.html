@@ -1,7 +1,7 @@
-<div class="w-[103rem] flex justify-center p-10">
-    <div class="flex flex-wrap gap-10 w-full pl-16">
+<div class="w-full flex justify-center p-8">
+    <div class="flex flex-wrap gap-4">
         <div *ngFor="let certificate of certificates">
-            <app-certificate [certificate]="certificate" [readonly]="true"  class="min-h-[80vh]"></app-certificate>
+            <app-certificate-card [certificate]="certificate"></app-certificate-card>
         </div>
     </div>
 </div>

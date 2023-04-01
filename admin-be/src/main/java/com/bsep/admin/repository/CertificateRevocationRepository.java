@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface CertificateRevocationRepository extends JpaRepository<CertificateRevocation, UUID> {
     Optional<CertificateRevocation> findByUserEmail(String userEmail);
+    long deleteByUserEmail(String userEmail);
 }

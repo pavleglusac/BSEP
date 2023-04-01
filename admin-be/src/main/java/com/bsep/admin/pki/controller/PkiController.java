@@ -72,6 +72,12 @@ public class PkiController {
 		return ResponseEntity.ok("Certificate created");
 	}
 
+	@GetMapping("/certificate")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<List<CertificateDto>> findAllCertificate() {
+		return ResponseEntity.ok(certificateService.findAllCertificate());
+	}
+
 	@PostMapping(value = "/certificate-revocation", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<String> revokeCertificate(@RequestBody CertificateRevocationDto dto, Authentication authentication) {

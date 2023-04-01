@@ -6,9 +6,6 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faCheckDouble,
   faCertificate,
-  faTurnDown,
-  faMagnifyingGlass,
-  faArrowsDownToPeople,
   faUserPlus,
   faUserGroup,
   faGear,
