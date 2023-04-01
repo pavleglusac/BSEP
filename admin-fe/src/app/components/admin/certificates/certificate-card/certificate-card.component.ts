@@ -35,7 +35,6 @@ export class CertificateCardComponent {
       this.certificateService.revokeCertificate(this.certificate.csrId).subscribe({
         next: (data) => {
           this.toastr.success('Certificate successfully revoked!');
-          // this.certificateRevoked.emit(this.certificate?.csrId);
           this.certificate!.isRevoked = true;
           this.closeRevokeYesNoModal();
         },
@@ -48,7 +47,21 @@ export class CertificateCardComponent {
   }
 
   validateCertificate(): void {
-    // TODO: implement validation
+    if (this.certificate?.csrId) {
+      this.certificateService.validateCertificate(this.certificate.csrId).subscribe({
+        next: (data) => {
+          console.log(data);
+          if (data)
+            this.toastr.success('Certificate is valid.');
+          else
+            this.toastr.error('Certificate is invalid.');
+        },
+        error: (error) => {
+          this.toastr.error('Error while checking certificate validity!');
+          console.log(error);
+        },
+      });
+    }
   }
 
   distributeCertificate(): void {

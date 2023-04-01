@@ -28,20 +28,19 @@
   </div>
 
   <div class="grid grid-rows-2 grid-cols-2 gap-2 mt-4">
-    <button *ngIf="certificate?.csrId && !certificate?.isRevoked" (click)="showRevokeYesNoModal = true"
-    class="bg-red-500 active:bg-red-600 text-light font-bold w-full py-1 shadow-md">
-      Revoke
-    </button>
-    <div *ngIf="!(certificate?.csrId && !certificate?.isRevoked)"></div>
-    
     <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
       (click)="viewCSR()">View CSR
     </button>
     <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
+      (click)="distributeCertificate()">Distribute
+    </button>
+
+    <button *ngIf="certificate?.csrId" class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
       (click)="validateCertificate()">Validate
     </button>
-    <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
-      (click)="distributeCertificate()">Distribute
+    <button *ngIf="certificate?.csrId && !certificate?.isRevoked" (click)="showRevokeYesNoModal = true"
+    class="bg-red-500 active:bg-red-600 text-light font-bold w-full py-1 shadow-md">
+      Revoke
     </button>
   </div>
 
