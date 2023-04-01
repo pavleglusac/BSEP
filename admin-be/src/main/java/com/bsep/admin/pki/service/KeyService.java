@@ -1,12 +1,10 @@
-package com.bsep.admin.pki;
+package com.bsep.admin.pki.service;
 
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.security.*;
-import java.nio.file.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.*;
 
 @Service
 public class KeyService {
@@ -15,13 +13,11 @@ public class KeyService {
     private static final String PRIVATE_KEY_FILE_NAME = "private_key.pem";
     private static final String PUBLIC_KEY_FILE_NAME = "public_key.pem";
 
-    public KeyPair generateKeys() throws NoSuchAlgorithmException {
+    public KeyPair generateKeys() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        PrivateKey privateKey = keyPair.getPrivate();
-        PublicKey publicKey = keyPair.getPublic();
-        return new KeyPair(publicKey, privateKey);
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+        keyPairGenerator.initialize(2048, random);
+        return keyPairGenerator.generateKeyPair();
     }
 
     public void storeKeys(KeyPair keyPair, String user) throws Exception {
@@ -49,23 +45,37 @@ public class KeyService {
     }
 
     public String findPublicKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String filePath = STATIC_PATH_TARGET + "/" + user + "/" + PUBLIC_KEY_FILE_NAME;;
+        return this.findKeyForUser(user, PUBLIC_KEY_FILE_NAME).toString();
+    }
+
+    public String findPrivateKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return this.findKeyForUser(user, PRIVATE_KEY_FILE_NAME).toString();
+    }
+
+    private Key findKeyForUser(String user, String keyPath) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String filePath = STATIC_PATH_TARGET + "/" + user + "/" + keyPath;;
         File file = new File(filePath);
         if (file.exists()) {
-            try {
+            try (FileInputStream fis = new FileInputStream(file)) {
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                FileInputStream fis = new FileInputStream(file);
                 byte[] content = fis.readAllBytes();
-                X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(content);
-                PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-                fis.close();
-                return publicKey.toString();
+                if (keyPath.equals(PUBLIC_KEY_FILE_NAME)) {
+                    X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(content);
+                    return keyFactory.generatePublic(keySpecPublic);
+                } else{
+                    PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(content);
+                    return keyFactory.generatePrivate(keySpecPrivate);}
             } catch (IOException e) {
                 e.printStackTrace();
+                throw new RuntimeException("Cannot read key for user " + user + ".");
             }
         } else {
-            throw new RuntimeException("Public key for user " + user + "does not exist");
+            throw new RuntimeException("Key for user " + user + " does not exist");
         }
-        return "";
+    }
+    public KeyPair findKeyPairForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        PublicKey publicKey = (PublicKey) this.findKeyForUser(user, PUBLIC_KEY_FILE_NAME);
+        PrivateKey privateKey = (PrivateKey) this.findKeyForUser(user, PRIVATE_KEY_FILE_NAME);
+        return new KeyPair(publicKey, privateKey);
     }
 }

@@ -48,7 +48,8 @@ public class CertificateService {
 	@Autowired
 	private CsrService csrService;
 
-
+	@Autowired
+	private KeyService keyService;
 
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
@@ -231,6 +232,19 @@ public class CertificateService {
 			return emailAddressRDN.getFirst().getValue().toString();
 		} else {
 			return null;
+		}
+	}
+
+	public String distributeCertificate(String email) {
+		try{
+			String publicKey = this.keyService.findPublicKeyForUser(email);
+			String privateKey = this.keyService.findPrivateKeyForUser(email);
+			//find certificate
+			//send all info via email
+			return "Certificate, public and private key for user " + email + " are sent via email.";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Cannot distribute certificate for user " + email;
 		}
 	}
 }

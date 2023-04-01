@@ -1,4 +1,4 @@
-<div class="text-light bg-dark border border-light max-w-lg">
+<div class="text-light bg-dark max-w-lg">
     <div class="text-accent italic font-semibold flex p-4 justify-start border-b border-accent-dark">
        <p> Request No. {{csr!.id}} </p>
        <button class="bg-gray-700 text-light hover:bg-accent-dark text-sm" (click)="onCreateCertificate()"> Create certificate </button>
@@ -30,7 +30,7 @@
         </div>
         <div class="flex gap-2">
             <p class="font-light">Creation date:</p>
-            <p class="font-semibold italic">{{csr!.creationDate}}</p>
+            <p class="font-semibold italic">{{csr!.creationDate.replace('T', ' ')}}</p>
         </div>
         <div class="flex gap-2 flex-col">
             <p class="font-light">Public key:</p>

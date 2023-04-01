@@ -5,7 +5,6 @@ import com.bsep.admin.model.User;
 
 import com.bsep.admin.model.Csr;
 
-import com.bsep.admin.pki.KeyService;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.repository.CsrRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
