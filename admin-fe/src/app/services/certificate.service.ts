@@ -18,11 +18,19 @@ export class CertificateService {
   }
 
   loadForUser(email: string) {
-    return this.httpClient.get('api/pki/csr', { params: { email } });
+    return this.httpClient.get(`api/pki/csr/${email}`);
   }
 
   loadAll() {
     return this.httpClient.get('api/pki/certificate');
+  }
+
+  revokeCertificate(email: string): Observable<any> {
+    return this.httpClient.post('api/pki/certificate-revocation', { email }, { responseType: 'text' });
+  }
+  
+  validateCertificate(email: string): Observable<any> {
+    return this.httpClient.get(`api/pki/validate/${email}`);
   }
 
 }

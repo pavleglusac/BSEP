@@ -17,6 +17,9 @@ export class CsrsComponent implements OnInit {
 
   constructor(private csrService: CsrService, private toastr: ToastrService) {}
   ngOnInit(): void {
+    this.reload();
+  }
+  reload() {
     this.csrService.loadCsrs(
       (csrs) => {
         this.csrs = csrs;

@@ -1,0 +1,56 @@
+<div class="flex flex-col justify-between bg-dark w-76 text-light text-center py-4 px-4 h-full">
+  <div class="flex flex-col text-center items-center">
+    <div class="relative w-1/2 flex justify-center">
+      <fa-icon [icon]="faCertificate" class="text-3xl"
+      [ngClass]="certificate?.isRevoked ? 'text-black' : 'text-light'"></fa-icon>
+      <div *ngIf="certificate?.isRevoked" class="absolute flex justify-center top-1.5 text-red-500 font-bold">
+        REVOKED
+      </div>
+    </div>
+
+    <div class="text-medium text-lg font-medium">SHA256withRSA</div>
+        
+    <div class="flex justify-around gap-x-3 mt-2">
+        <div class="bg-light text-black font-bold w-fit px-2 rounded-lg">{{ certificate?.validityStart | date: 'dd-MM-yyyy' }}</div>
+        &#10148;
+        <div class="bg-light text-black font-bold w-fit px-2 rounded-lg">{{ certificate?.validityEnd | date: 'dd-MM-yyyy' }}</div>
+    </div>
+
+    <div class="flex justify-between mt-4">
+      <fa-icon [icon]="faUser" class="text-light pr-3"></fa-icon>
+      <div class="font-medium text-sm truncate my-auto">{{ certificate?.csrId ? certificate?.csrId : '/' }}</div>
+    </div>
+
+    <div class="flex justify-between mt-1">
+      <fa-icon [icon]="faPenNib" class="text-light pr-3"></fa-icon>
+      <div class="font-medium text-sm truncate my-auto">{{ certificate?.hierarchyLevel | certificateHierarchyLevel }}</div>
+    </div>
+  </div>
+
+  <div class="grid grid-rows-2 grid-cols-2 gap-2 mt-4">
+    <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
+      (click)="viewCSR()">View CSR
+    </button>
+    <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
+      (click)="distributeCertificate()">Distribute
+    </button>
+
+    <button *ngIf="certificate?.csrId" class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
+      (click)="validateCertificate()">Validate
+    </button>
+    <button *ngIf="certificate?.csrId && !certificate?.isRevoked" (click)="showRevokeYesNoModal = true"
+    class="bg-red-500 active:bg-red-600 text-light font-bold w-full py-1 shadow-md">
+      Revoke
+    </button>
+  </div>
+
+</div>
+  
+<div *ngIf="showRevokeYesNoModal">
+  <app-yes-no-modal
+    [title]="'Certificate revocation'"
+    [description]="'Are you sure you want to revoke this certificate?'"
+    (yes)="revokeCertificate()"
+    (no)="closeRevokeYesNoModal()"
+  ></app-yes-no-modal>
+</div>

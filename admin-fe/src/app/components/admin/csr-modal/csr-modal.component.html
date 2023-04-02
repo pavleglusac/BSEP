@@ -1,0 +1,37 @@
+
+<div *ngIf="csr">
+    <p-dialog position="center center" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" class="bg-white h-50" [closable]="true" (onHide)="change()">
+        <div  class="text-light bg-dark max-w-lg border ml-64">
+            <div class="text-light flex flex-col gap-2 p-4">
+                <div class="flex gap-2" *ngIf="csr.commonName">
+                    <p class="font-light">Common name:</p>
+                    <p class="font-semibold italic">{{csr!.commonName}}</p>
+                </div>
+                <div class="flex gap-2" *ngIf="csr.givenName">
+                    <p class="font-light">Given name:</p>
+                    <p class="font-semibold italic">{{csr!.givenName}}</p>
+                </div>
+                <div class="flex gap-2" *ngIf="csr.surname">
+                    <p class="font-light">Surname:</p>
+                    <p class="font-semibold italic">{{csr!.surname}}</p>
+                </div>
+                <div class="flex gap-2" *ngIf="csr.organization">
+                    <p class="font-light">Organization:</p>
+                    <p class="font-semibold italic">{{csr!.organization}}</p>
+                </div>
+                <div class="flex gap-2" *ngIf="csr.organizationalUnit">
+                    <p class="font-light">Organizational unit:</p>
+                    <p class="font-semibold italic">{{csr!.organizationalUnit}}</p>
+                </div>
+                <div class="flex gap-2" *ngIf="csr.country">
+                    <p class="font-light">Country:</p>
+                    <p class="font-semibold italic">{{csr!.country}}</p>
+                </div>
+                <!-- <div class="flex gap-2" *ngIf="csr.creationDate">
+                    <p class="font-light">Creation date:</p>
+                    <p class="font-semibold italic">{{csr!.creationDate.replace('T', ' ')}}</p>
+                </div> -->
+            </div>
+        </div>
+    </p-dialog>
+</div>

@@ -42,6 +42,7 @@ public class ExtensionConverter {
 			return null;
 		}
 		boolean[] keyUsageBits = cert.getKeyUsage();
+		KeyUsage keyUsage = new KeyUsage(1);
 
 		String[] keyUsageNames = {
 				"Digital Signature", "Non Repudiation", "Key Encipherment",
@@ -51,6 +52,7 @@ public class ExtensionConverter {
 		List<CertificateOptionDto> options = new ArrayList<>();
 
 		for (int i = 0; i < keyUsageBits.length; i++) {
+			if(i >= keyUsageNames.length) break;
 			options.add(new CertificateOptionDto(keyUsageNames[i], null, keyUsageBits[i] ? "true" : "false", "checkbox"));
 		}
 
