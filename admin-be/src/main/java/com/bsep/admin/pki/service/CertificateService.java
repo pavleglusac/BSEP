@@ -333,9 +333,13 @@ public class CertificateService {
 
 	public Boolean validateCertificate(String email) {
 		try {
+			System.out.println("Validating certificate for user " + email);
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
 			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
 			// validate entire chain
+			if (certificateChain == null) {
+				return true;
+			}
 			int i = 0;
 			for (Certificate certificate : certificateChain) {
 				X509Certificate x509Certificate = (X509Certificate) certificate;

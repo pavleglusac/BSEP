@@ -3,23 +3,23 @@
         <div class="min-h-[150px] bg-dark text-white border p-2 mb-2 ml-64">
             <h1>Extension: {{extension.name}}</h1>
 
-            <div class="mb-24">
+            <div class="mb-24 mt-4">
                 <div *ngFor="let option of extension.options; let i = index">
                     <div class="flex flex-row">
                         <div class="w-1/2">
                             <p>{{option.name}}</p>
                         </div>
-                        <div class="w-1/2 text-black">
-                            <input [disabled]="readonly" *ngIf="option.type == 'checkbox'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [checked]="option.value">
-                            <input [disabled]="readonly" *ngIf="option.type == 'number'" class="text-black" [type]="option.type" class="w-full" (change)="changedValue($event, i, extension, option.type)" [value]="option.value">
+                        <div class="w-1/2 ">
+                            <input class="w-full h-4 !text-light !bg-gray-700 focus:!bg-accent-dark" [disabled]="readonly" *ngIf="option.type == 'checkbox'" [type]="option.type" (change)="changedValue($event, i, extension, option.type)" [checked]="option.value">                                                   
+                            <input [disabled]="readonly" *ngIf="option.type == 'number'" class="text-black w-full" [type]="option.type" (change)="changedValue($event, i, extension, option.type)" [value]="option.value">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <span>
-                <p-button *ngIf="!readonly" class="bg-white border text-black mr-4 p-1 mb-2" (click)="updateValue()" >Save</p-button>
-                <p-button *ngIf="!readonly" class="bg-white border text-black p-1" (click)="hideDialog()" >Close</p-button>
+            <span class="flex gap-2">
+                <button *ngIf="!readonly" class="text-light hover:bg-accent-dark h-10 w-20 text-sm bg-gray-700 font-semibold p-2 rounded shadow" (click)="updateValue()" >Save</button>
+                <button *ngIf="!readonly" class="text-light hover:bg-accent-dark h-10 w-20 text-sm bg-gray-700 font-semibold p-2 rounded shadow" (click)="hideDialog()" >Close</button>
             </span>
         </div>
     </p-dialog>

@@ -1,11 +1,19 @@
-<div class="w-full border">
+<div class="w-full">
     <style>
         tr {
             height: 50px;
         }
 
         td {
-            min-width: 200px;
+            min-width: 250px;
+        }
+
+        tr td:first-child {
+            font-weight: 250;
+        }
+
+        tr td:nth-child(2) {
+            padding-left: 50px;
         }
 
     </style>
@@ -22,25 +30,27 @@
             <tr *ngIf="!readonly">
                 <td>Validity Period: </td>
                 <td>
-                    <input type="number" min="1" max="10" value="1" class="text-black w-16 mr-2" [(ngModel)]="validityAmount"> 
-                    <select name="period" id="period" class="text-black w-16 mr-2" [(ngModel)]="validityUnit">
-                      <option value="years">Years</option>
-                      <option value="months">Months</option>
-                      <option value="days">Days</option>
-                    </select>
-                    <button (click)="applyValidity()" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border rounded shadow">Apply</button>
+                    <div class="w-full gap-3 flex items-end">
+                        <input type="number" min="1" max="10" value="1" [(ngModel)]="validityAmount" class="w-1/3  bg-transparent border-b h-6"> 
+                        <select name="period" id="period"  [(ngModel)]="validityUnit" class="w-1/3 bg-transparent border-b h-6">
+                          <option value="years">Years</option>
+                          <option value="months">Months</option>
+                          <option value="days">Days</option>
+                        </select>
+                        <button (click)="applyValidity()" class="text-light hover:bg-accent-dark h-10 w-1/3 text-sm bg-gray-700 font-semibold py-2 rounded shadow">Apply</button>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>Validity End: </td>
-                <td><input type="date" class="text-black" [value]="until | date: 'yyyy-MM-dd'" [disabled]="readonly"/></td>
+                <td><input type="date" class=" mr-2 bg-transparent border-b h-6 w-full" [value]="until | date: 'yyyy-MM-dd'" [disabled]="readonly"/></td>
             </tr>
             <tr>
                 <td>
                     CSR:
                 </td>
                 <td>
-                    <button (click)="openCsrModal()" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow">View csr</button>
+                    <button (click)="openCsrModal()" class="text-light hover:bg-accent-dark h-10 w-1/2 text-sm bg-gray-700 font-semibold p-2 rounded shadow">View csr</button>
                 </td>
             </tr>
             <tr>
@@ -52,21 +62,21 @@
                 </td>
                 <td>
                     <span>
-                        <input type="text" class="text-black w-48 mr-4" [(ngModel)]="email" [disabled]="readonly" *ngIf="!readonly">
-                        <button *ngIf="!readonly" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="loadForUser()">Load</button>
+                        <input type="text" class=" mr-2 bg-transparent border-b h-6" [(ngModel)]="email" [disabled]="readonly" *ngIf="!readonly">
+                        <button *ngIf="!readonly" class="text-light hover:bg-accent-dark h-10 w-20 text-sm bg-gray-700 font-semibold p-2 rounded shadow" (click)="loadForUser()">Load</button>
                         <p *ngIf="readonly">{{email}}</p>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td *ngIf="!readonly">
-                    Choose certificate to sign with:
+                    Certificate to sign with:
                 </td>
                 <td *ngIf="readonly">
                     Signed with:
                 </td>
                 <td>
-                    <select name="level" id="level" class="text-black mr-2 p-1 " [(ngModel)]="hierarchyLevel" [disabled]="readonly">
+                    <select name="level" id="level"  class=" mr-2 bg-transparent border-b h-6 font-semibold text-accent w-full" [(ngModel)]="hierarchyLevel" [disabled]="readonly">
                         <option value="1">Root</option>
                         <option value="2">First Intermediate</option>
                         <option value="3">Second Intermediate</option>
@@ -78,11 +88,13 @@
                     Templates:
                 </td>
                 <td>
-                    <select name="template" id="template" class="text-black mr-2" #template (change)="onTemplateSelected(template.value)">
-                        <option>CA</option>
-                        <option>Code Signing</option>
-                    </select>
-                    <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="loadTemplate()">Load template</button>
+                    <div class="w-full gap-3 flex items-end">
+                        <select name="template" id="template" class=" bg-transparent border-b h-6 w-1/2" #template (change)="onTemplateSelected(template.value)">
+                            <option>CA</option>
+                            <option>Code Signing</option>
+                        </select>
+                        <button class="text-light hover:bg-accent-dark h-10 text-sm bg-gray-700 font-semibold p-2 rounded shadow w-1/2" (click)="loadTemplate()">Load template</button>
+                    </div>
                 </td>
             </tr>
             <tr *ngIf="addedExtensions.length > 0">
@@ -95,20 +107,24 @@
                 </td>
                 <td>
                     <span>
-                        <button *ngIf="!readonly" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="bg-white mr-2  hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="editExtension(extension.name)">Edit</button>
-                        <button *ngIf="readonly" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="bg-white mr-2  hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="editExtension(extension.name)">View</button>
-                        <button *ngIf="!readonly" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="removeExtension(extension.name)">Remove</button>
+                        <button *ngIf="!readonly" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="text-light hover:bg-accent-dark h-10 w-16 text-sm bg-gray-700 font-semibold p-2 rounded shadow mr-2" (click)="editExtension(extension.name)">Edit</button>
+                        <button *ngIf="readonly" data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="text-light hover:bg-accent-dark h-10 w-16 text-sm bg-gray-700 font-semibold p-2 rounded shadow" (click)="editExtension(extension.name)">View</button>
+                        <button *ngIf="!readonly" class="text-light hover:bg-accent-dark h-10 w-20 text-sm bg-gray-700 font-semibold p-2 rounded shadow" (click)="removeExtension(extension.name)">Remove</button>
                     </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="flex justify-center" *ngIf="!readonly">
+                        <span class="mt-20">
+                            <button class="bg-teal-600 w-40 hover:bg-gray-100 text-light font-bold py-1 px-1" (click)="approveCertificate()">Approve</button>
+                        </span>
+                    </div>
                 </td>
             </tr>
         </table>
         <app-edit-extension [readonly]="readonly"></app-edit-extension>
-        <div class="flex justify-center" *ngIf="!readonly">
-            <span class="mt-20">
-                <button class="bg-teal-600 w-40 mr-4 hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="approveCertificate()">Approve</button>
-                <button class="bg-amber-600 w-40 hover:bg-gray-100 text-gray-800 font-semibold py-1 px-1 border border-gray-400 rounded shadow" (click)="approveCertificate()">Deny</button>
-            </span>
-        </div>
+
     </div>
     <app-csr-modal [csr]="csr" [(visible)]="showCsrModal"></app-csr-modal>
 </div>
