@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -14,6 +14,7 @@ import {
   faRightFromBracket,
   faFileLines,
 } from '@fortawesome/free-solid-svg-icons';
+import { filter } from 'rxjs';
 
 interface MenuOption {
   title: string;
@@ -83,7 +84,17 @@ export class AdminSidebarComponent {
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    router.events
+    .pipe(filter(e => e instanceof NavigationEnd))
+    .subscribe((event) => {
+      const end = event as NavigationEnd;
+      if (end.url.startsWith('/admin')) {
+        const menusToLookup: MenuOption[] = [...menus['Public Keys'], ...menus.System, ...menus.Users];
+        this.chosenOption = menusToLookup.find((option: MenuOption) => `/${option.link}` === end.url)!;
+      }
+    })
+  }
 
   signOut(): void {
     // TODO: Implement method
