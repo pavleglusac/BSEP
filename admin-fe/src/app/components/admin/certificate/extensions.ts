@@ -98,16 +98,6 @@ export let extensions: Record<string, any> = {
         value: false,
       },
       {
-        name: 'Adobe PDF signing',
-        type: 'checkbox',
-        value: false,
-      },
-      {
-        name: 'TLS Web Client authentication',
-        type: 'checkbox',
-        value: false,
-      },
-      {
         name: 'Any Extended Key Usage',
         type: 'checkbox',
         value: false,

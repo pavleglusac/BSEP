@@ -72,7 +72,7 @@ public class ExtensionConverter {
 		}
 		String[] keyPurposeNames = {
 				"Server Authentication", "Client Authentication", "Code Signing",
-				"Email Protection", "Time Stamping", "OCSP Signing"
+				"Email Protection", "Time Stamping", "OCSP Signing", "Any Extended Key Usage"
 		};
 		HashMap<String, String> keyPurposeOids = new HashMap<>();
 		keyPurposeOids.put(KeyPurposeId.id_kp_serverAuth.toString(), "Server Authentication");
@@ -81,7 +81,7 @@ public class ExtensionConverter {
 		keyPurposeOids.put(KeyPurposeId.id_kp_emailProtection.toString(), "Email Protection");
 		keyPurposeOids.put(KeyPurposeId.id_kp_timeStamping.toString(), "Time Stamping");
 		keyPurposeOids.put(KeyPurposeId.id_kp_OCSPSigning.toString(), "OCSP Signing");
-
+		keyPurposeOids.put(KeyPurposeId.anyExtendedKeyUsage.toString(), "Any Extended Key Usage");
 
 		List<CertificateOptionDto> options = new ArrayList<>();
 		for (String oid : extendedKeyUsage) {

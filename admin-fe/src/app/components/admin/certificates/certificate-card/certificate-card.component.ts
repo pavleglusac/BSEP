@@ -50,7 +50,7 @@ export class CertificateCardComponent {
   ) {}
 
   revokeCertificate(): void {
-    if (this.certificate?.csrId && this.certificate.serialNumber) {
+    if (this.certificate?.csrId && this.certificate.serialNumber !== undefined) {
       this.certificateService.revokeCertificate(this.certificate.csrId, this.certificate.serialNumber).subscribe({
         next: (data) => {
           this.toastr.success('Certificate successfully revoked!');

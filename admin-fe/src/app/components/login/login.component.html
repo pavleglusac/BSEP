@@ -60,7 +60,7 @@
         placeholder-medium caret-medium border-b focus:border-accent
         bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
         [ngClass]="code && code.value ? 'border-light' : 'border-medium'"
-        id="login-code" type="text" placeholder="Your Verification Code"
+        id="login-code" type="password" placeholder="Your Verification Code"
         formControlName="code"
         (input)="errorMessage = ''">
         <div class="h-1">

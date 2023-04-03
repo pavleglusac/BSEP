@@ -80,6 +80,7 @@ public class ExtensionBuilder {
 	}
 
 	private void buildExtendedKeyUsage(List<CertificateOptionDto> options) {
+		System.out.println("Building extended key usage");
 		List<KeyPurposeId> keyPurposeIds = new ArrayList<>();
 		for (CertificateOptionDto option : options) {
 			KeyPurposeId keyPurposeId = switch (option.getName()) {
@@ -89,7 +90,7 @@ public class ExtensionBuilder {
 				case "Email protection" -> KeyPurposeId.id_kp_emailProtection;
 				case "Time stamping" -> KeyPurposeId.id_kp_timeStamping;
 				case "OCSP signing" -> KeyPurposeId.id_kp_OCSPSigning;
-				case "Any extended key usage" -> KeyPurposeId.anyExtendedKeyUsage;
+				case "Any Extended Key Usage" -> KeyPurposeId.anyExtendedKeyUsage;
 				default -> null;
 			};
 			if (keyPurposeId != null && Boolean.parseBoolean(option.getValue())) {

@@ -28,6 +28,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +71,12 @@ public class CertificateService {
 
 	BigInteger serialNumber = BigInteger.valueOf(3);
 
+	public CertificateService() {
+		// find largest serial number of all certificates
+		KeyStoreReader keyStoreReader = new KeyStoreReader();
+		this.serialNumber = keyStoreReader.findBigestSerialNumber("keystores/admin.jks", "admin").add(BigInteger.ONE);
+	}
+
 	@Transactional
 	public void processCertificate(CertificateDto cert) throws OperatorCreationException, CertificateException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		Csr csr = csrService.getCsrByUser(cert.getCsrId());
@@ -106,8 +113,9 @@ public class CertificateService {
 
 		// save to db
 		csr.setStatus(CsrStatus.APPROVED);
-
-		certificateRevocationRepository.deleteByUserEmail(csr.getEmail());
+		if (!userRepository.findByEmail(csr.getEmail()).get().getRole().equals(Role.ROLE_ADMIN)) {
+			certificateRevocationRepository.deleteByUserEmail(csr.getEmail());
+		}
 		csrService.saveCsr(csr);
 	}
 

@@ -42,7 +42,7 @@ public class PkiController {
 	}
 
 	@PostMapping("/csr")
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
 	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
 		try {

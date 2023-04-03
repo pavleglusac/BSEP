@@ -105,6 +105,37 @@ public class KeyStoreReader {
 		return null;
 	}
 
+	public BigInteger findBigestSerialNumber(String keyStoreFile, String keyStorePass) {
+		try {
+			// kreiramo instancu KeyStore
+			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
+			// ucitavamo podatke
+			BigInteger max = new BigInteger("-1");
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
+			ks.load(in, keyStorePass.toCharArray());
+			Enumeration<String> aliases = ks.aliases();
+			while (aliases.hasMoreElements()) {
+				String alias = aliases.nextElement();
+				if (ks.isKeyEntry(alias)) {
+					Certificate[] certChain = ks.getCertificateChain(alias);
+					for (Certificate cert : certChain) {
+						X509Certificate x509Certificate = (X509Certificate) cert;
+						if (x509Certificate.getSerialNumber().compareTo(max) > 0) {
+							max = x509Certificate.getSerialNumber();
+						}
+					}
+				}
+			}
+			return max;
+
+		} catch (KeyStoreException | NoSuchProviderException | NoSuchAlgorithmException
+				 | CertificateException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
 	public Certificate[] readCertificateChainBySerialNumber(String keyStoreFile, String keyStorePass, String serialNumber) {
 		try {
 			ArrayList<Certificate> certChain = new ArrayList<Certificate>();
