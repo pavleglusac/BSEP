@@ -7,11 +7,15 @@ import {
   faUser,
   faPenNib,
 } from '@fortawesome/free-solid-svg-icons';
+import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
 import { Certificate } from 'src/app/model/certificate';
 import { CertificateService } from 'src/app/services/certificate.service';
 import { YesNoModalComponent } from 'src/app/shared/components/modals/yes-no-modal/yes-no-modal.component';
 import { CertificateHierarchyLevelPipe } from 'src/app/shared/pipes/certificate-hierarchy-level.pipe';
+import { EditExtensionAction, EditExtensionActionType } from 'src/app/shared/store/certificate-slice/certificate.actions';
+import { CertificateStateType } from 'src/app/shared/store/certificate-slice/certificate.reducer';
+import { EditExtensionComponent } from '../../certificate/edit-extension/edit-extension.component';
 
 @Component({
   standalone: true,
@@ -20,6 +24,7 @@ import { CertificateHierarchyLevelPipe } from 'src/app/shared/pipes/certificate-
     FontAwesomeModule,
     CertificateHierarchyLevelPipe,
     YesNoModalComponent,
+    EditExtensionComponent,
   ],
   selector: 'app-certificate-card',
   templateUrl: './certificate-card.component.html',
@@ -33,9 +38,12 @@ export class CertificateCardComponent {
   faPenNib: IconDefinition = faPenNib;
   showRevokeYesNoModal: boolean = false;
 
+  editedExtension = undefined;
+
   constructor(
     private certificateService: CertificateService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private store: Store<CertificateStateType>,
   ) {}
 
   revokeCertificate(): void {
@@ -87,5 +95,20 @@ export class CertificateCardComponent {
 
   closeRevokeYesNoModal(): void {
     this.showRevokeYesNoModal = false;
+  }
+
+  showExtensionModal(extension: string) {
+    this.editedExtension = this.certificate?.extensions.filter(
+      (ext: any) => ext.name === extension
+    )[0];
+    this.store.dispatch(
+      new EditExtensionAction(EditExtensionActionType.SET, this.editedExtension)
+    );
+    this.store.dispatch(
+      new EditExtensionAction(
+        EditExtensionActionType.TOGGLE_MODAL,
+        true
+      )
+    );
   }
 }
