@@ -31,7 +31,7 @@
     <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
       (click)="viewCSR()">View CSR
     </button>
-    <button class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
+    <button *ngIf="certificate?.csr?.email && certificate?.csr?.email !== 'admin@homeguard.com'" class="bg-accent-dark text-light font-bold w-full py-1 shadow-md"
       (click)="distributeCertificate()">Distribute
     </button>
 

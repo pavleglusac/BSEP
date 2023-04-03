@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.security.spec.*;
 
 @Service
@@ -12,6 +14,7 @@ public class KeyService {
     final String STATIC_PATH_TARGET = "target/classes/static";
     private static final String PRIVATE_KEY_FILE_NAME = "private_key.pem";
     private static final String PUBLIC_KEY_FILE_NAME = "public_key.pem";
+    private static final String CERTIFICATE_FILE_NAME = "certificate.cer";
 
     public KeyPair generateKeys() throws NoSuchAlgorithmException, NoSuchProviderException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -23,6 +26,28 @@ public class KeyService {
     public void storeKeys(KeyPair keyPair, String user) throws Exception {
         this.storeKeysToFolder(keyPair, user, STATIC_PATH);
         this.storeKeysToFolder(keyPair, user, STATIC_PATH_TARGET);
+    }
+
+    public void storeCertificate(String user, X509Certificate certificate) throws Exception {
+        this.storeCertificateToFolder(certificate, user, STATIC_PATH);
+        this.storeCertificateToFolder(certificate, user, STATIC_PATH_TARGET);
+    }
+
+    public void storeCertificateToFolder(X509Certificate certificate, String user, String path) throws CertificateEncodingException {
+        String folderPath = path + "/" + user;
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        String filePathPrivate = folderPath + "/" + CERTIFICATE_FILE_NAME;
+        try {
+            FileOutputStream fos = new FileOutputStream(filePathPrivate);
+            fos.write(certificate.getEncoded());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     private void storeKeysToFolder(KeyPair keyPair, String user, String path) {
         String folderPath = path + "/" + user;
@@ -48,6 +73,29 @@ public class KeyService {
         return (PublicKey) this.findKeyForUser(user, PUBLIC_KEY_FILE_NAME);
     }
 
+    public File findPublicKeyFileForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String filePath = STATIC_PATH_TARGET + "/" + user + "/" + PUBLIC_KEY_FILE_NAME;
+        File file = new File(filePath);
+        if (file.exists())
+            return file;
+        throw new RuntimeException("Key for user " + user + " does not exist");
+    }
+
+    public File findPrivateKeyFileForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String filePath = STATIC_PATH_TARGET + "/" + user + "/" + PRIVATE_KEY_FILE_NAME;
+        File file = new File(filePath);
+        if (file.exists())
+            return file;
+        throw new RuntimeException("Key for user " + user + " does not exist");
+    }
+
+    public File findCertificateForUser(String user) {
+        String filePath = STATIC_PATH_TARGET + "/" + user + "/" + CERTIFICATE_FILE_NAME;
+        File file = new File(filePath);
+        if (file.exists())
+            return file;
+        throw new RuntimeException("Certificate for user " + user + " does not exist");
+    }
 
     public String findPrivateKeyForUser(String user) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return this.findKeyForUser(user, PRIVATE_KEY_FILE_NAME).toString();
