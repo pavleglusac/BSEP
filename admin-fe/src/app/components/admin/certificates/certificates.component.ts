@@ -16,12 +16,11 @@ export class CertificatesComponent implements OnInit {
   certificates: Certificate[] = [];
   showRevoked: boolean = false;
 
-  constructor(private certificateService: CertificateService) {
-   
-  }
+  constructor(private certificateService: CertificateService) {}
 
   ngOnInit() {
     this.certificateService.loadAll().subscribe((certificates: any) => {
+      console.log(certificates);
       certificates.forEach((certificate: any) => {
         certificate.extensions.forEach((extension: any) => {
           extension.options.forEach((option: any) => {
@@ -37,12 +36,12 @@ export class CertificatesComponent implements OnInit {
     });
   }
 
-  handleRevoke(event: any) {
-  }
+  handleRevoke(event: any) {}
 
   getCertificates(): Certificate[] {
-    const certificates: Certificate[] = this.showRevoked ? this.certificates : this.certificates.filter(x => !x.isRevoked);
+    const certificates: Certificate[] = this.showRevoked
+      ? this.certificates
+      : this.certificates.filter((x) => !x.isRevoked);
     return certificates;
   }
-
 }

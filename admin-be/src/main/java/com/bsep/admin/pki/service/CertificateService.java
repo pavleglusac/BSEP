@@ -13,6 +13,8 @@ import com.bsep.admin.pki.dto.CertificateOptionDto;
 import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.repository.CertificateRevocationRepository;
+import com.bsep.admin.repository.UserRepository;
+import com.bsep.admin.service.MailingService;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
@@ -60,6 +63,12 @@ public class CertificateService {
 
 	@Autowired
 	private CertificateRevocationRepository certificateRevocationRepository;
+
+	@Autowired
+	private MailingService mailingService;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	BigInteger serialNumber = BigInteger.valueOf(3);
 
@@ -232,7 +241,7 @@ public class CertificateService {
 //			certificateDto.setCsrDto(csrService(email));
 			CsrDto csrDto = readCsrFromRdns(certificate);
 			certificateDto.setCsrId(email);
-			certificateDto.setCsrDto(csrDto);
+			certificateDto.setCsr(csrDto);
 			for (String extensionName : extensions) {
 				try {
 					CertificateOptionDto extension = extensionConverter.extensionToCertificateOptionDto(extensionName, certificate);
@@ -315,15 +324,17 @@ public class CertificateService {
 
 	public String distributeCertificate(String email) {
 		try{
+			String user = this.userRepository.findByEmail(email).get().getName();
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
-			String publicKey = this.keyService.findPublicKeyForUser(email).toString();
-			String privateKey = this.keyService.findPrivateKeyForUser(email);
+			File publicKey = this.keyService.findPublicKeyFileForUser(email);
+			File privateKey = this.keyService.findPrivateKeyFileForUser(email);
 			//find certificate for email
 			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
 			X509Certificate certificate = (X509Certificate) certificateChain[0];
 			//send all info via email
-			System.out.println(certificate);
-
+			this.keyService.storeCertificate(email, certificate);
+			File cert = this.keyService.findCertificateForUser(email);
+			mailingService.sendCertificateMail(user, cert, publicKey, privateKey);
 			return "Certificate, public and private key for user " + email + " are sent via email.";
 		} catch (Exception e) {
 			e.printStackTrace();

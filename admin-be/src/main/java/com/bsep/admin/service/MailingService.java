@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,20 +33,21 @@ public class MailingService {
 	}
 
 	@Async
-	public void sendTestMail() {
-		String content = renderTemplate("test.html", Map.of("name", "John"));
-		sendMail("bsepml23@gmail.com", "Test", content);
+	public void sendCertificateMail(String name, File certificate, File publicKey, File privateKey) {
+		String content = renderTemplate("distribution.html", Map.of("name", name));
+		sendMailWithAttachment("bsepml23@gmail.com", "Certificate", content, certificate,publicKey, privateKey);
 	}
 
-	private void sendMailWithAttachment(String to, String subject, String body, File attachment) {
+	private void sendMailWithAttachment(String to, String subject, String body, File cert, File publicKey, File privateKey) {
 		try {
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 			helper.setText(body, true);
 			helper.setTo(to);
 			helper.setSubject(subject);
-			helper.addAttachment(attachment.getName(), attachment);
-
+			helper.addAttachment(cert.getName(), cert);
+			helper.addAttachment(publicKey.getName(), publicKey);
+			helper.addAttachment(privateKey.getName(), privateKey);
 			mailSender.send(mimeMessage);
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

@@ -20,7 +20,7 @@ public class CertificateDto {
 
 	private Integer hierarchyLevel = 3;
 
-	private CsrDto csrDto;
+	private CsrDto csr;
 
 	private Boolean isRevoked;
 

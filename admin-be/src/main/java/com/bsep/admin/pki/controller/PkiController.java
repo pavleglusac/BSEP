@@ -83,25 +83,16 @@ public class PkiController {
 		return ResponseEntity.ok("Certificate revoked");
 	}
 
-	@GetMapping("/distribute/{email}")
+	@GetMapping("certificate/distribute/{email}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> distributeCertificate(@PathVariable String email) {
-		return ResponseEntity.ok(certificateService.distributeCertificate(email));
+	public ResponseEntity<Map<String, String>> distributeCertificate(@PathVariable String email) {
+		return ResponseEntity.ok(Map.of("message", certificateService.distributeCertificate(email)));
 	}
 
 	@DeleteMapping("/csr/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Map<String, String>> denyCertificate(@PathVariable UUID id) {
 		return ResponseEntity.ok(Map.of("message", csrService.denyCsr(id)));
-	}
-
-	@Autowired
-	private MailingService mailingService;
-
-	@GetMapping("/send/{email}")
-	public ResponseEntity<String> sendCertificate(@PathVariable String email) {
-		mailingService.sendTestMail();
-		return ResponseEntity.ok("Certificate sent");
 	}
 
 	@GetMapping("/validate/{email}")
