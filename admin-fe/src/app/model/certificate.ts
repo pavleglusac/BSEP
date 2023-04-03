@@ -1,5 +1,5 @@
 export interface Certificate {
-    serialNumber: number | undefined;
+    serialNumber: string | undefined;
     algorithm: string;
     csrId: string;
     validityStart: string;

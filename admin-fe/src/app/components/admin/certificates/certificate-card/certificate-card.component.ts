@@ -47,21 +47,22 @@ export class CertificateCardComponent {
   }
 
   validateCertificate(): void {
-    if (this.certificate?.csrId) {
-      this.certificateService.validateCertificate(this.certificate.csrId).subscribe({
-        next: (data) => {
-          console.log(data);
-          if (data)
-            this.toastr.success('Certificate is valid.');
-          else
-            this.toastr.error('Certificate is invalid.');
-        },
-        error: (error) => {
-          this.toastr.error('Error while checking certificate validity!');
-          console.log(error);
-        },
-      });
+    if (!this.certificate || this.certificate.serialNumber === undefined) { 
+      return;
     }
+    this.certificateService.validateCertificate(this.certificate.serialNumber).subscribe({
+      next: (data) => {
+        console.log(data);
+        if (data)
+          this.toastr.success('Certificate is valid.');
+        else
+          this.toastr.error('Certificate is invalid.');
+      },
+      error: (error) => {
+        this.toastr.error('Error while checking certificate validity!');
+        console.log(error);
+      },
+    });
   }
 
   distributeCertificate(): void {

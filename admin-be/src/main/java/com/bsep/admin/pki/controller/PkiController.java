@@ -106,9 +106,9 @@ public class PkiController {
 		return ResponseEntity.ok("Certificate sent");
 	}
 
-	@GetMapping("/validate/{email}")
-	public ResponseEntity<Boolean> validateCertificate(@PathVariable String email) {
-		return ResponseEntity.ok(certificateService.validateCertificate(email));
+	@GetMapping("/validate/{serialNumber}")
+	public ResponseEntity<Boolean> validateCertificate(@PathVariable String serialNumber) {
+		return ResponseEntity.ok(certificateService.validateCertificate(serialNumber));
 	}
 
 }

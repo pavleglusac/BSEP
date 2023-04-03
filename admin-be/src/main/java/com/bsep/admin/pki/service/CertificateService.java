@@ -333,24 +333,21 @@ public class CertificateService {
 		}
 	}
 
-	public Boolean validateCertificate(String email) {
+	public Boolean validateCertificate(String serialNumber) {
 		try {
-			System.out.println("Validating certificate for user " + email);
+			System.out.println("Validating certificate for serial number " + serialNumber);
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
-			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
+			Certificate[] certificateChain = keyStoreReader.readCertificateChainBySerialNumber(adminService.KEYSTORE_FILE, "admin", serialNumber);
 			// validate entire chain
-			if (certificateChain == null) {
-				return true;
-			}
 			int i = 0;
 			for (Certificate certificate : certificateChain) {
 				X509Certificate x509Certificate = (X509Certificate) certificate;
 				x509Certificate.checkValidity();
+				if (isCertificateRevoked(x509Certificate)) return false;
 				if (i < certificateChain.length - 1) {
 					x509Certificate.verify(certificateChain[i + 1].getPublicKey());
 				}
 				i++;
-				if (isCertificateRevoked(x509Certificate)) return false;
 			}
 			return true;
 		} catch (Exception e) {
