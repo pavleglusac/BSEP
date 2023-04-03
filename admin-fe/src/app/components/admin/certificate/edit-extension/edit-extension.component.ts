@@ -1,7 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { Store, StoreModule } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { CertificateStateType, selectCertificateFeature } from 'src/app/shared/store/certificate-slice/certificate.reducer';
 import { EditExtensionAction, EditExtensionActionType } from 'src/app/shared/store/certificate-slice/certificate.actions';
 import { CommonModule } from '@angular/common';
@@ -39,6 +39,10 @@ export class EditExtensionComponent {
       this.extension = _.cloneDeep(state.editedExtension);
       this.visible = state.showEditingModal;
     });
+  }
+
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    this.hideDialog();
   }
 
   hideDialog() {

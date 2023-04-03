@@ -31,7 +31,7 @@ export const editCertificateReducer = (
       
       return {
         ...state,
-        showEditingModal: !state.showEditingModal,
+        showEditingModal: action.extension,
       };
     default: {
       return state;
