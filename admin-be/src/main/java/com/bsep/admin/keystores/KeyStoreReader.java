@@ -4,6 +4,7 @@ package com.bsep.admin.keystores;
 import com.bsep.admin.data.IssuerData;
 import com.bsep.admin.pki.dto.CertificateDto;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import java.io.BufferedInputStream;
@@ -90,15 +91,51 @@ public class KeyStoreReader {
 			// kreiramo instancu KeyStore
 			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
 			// ucitavamo podatke
+
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
 			ks.load(in, keyStorePass.toCharArray());
-
 			if (ks.isKeyEntry(alias)) {
 				Certificate[] certChain = ks.getCertificateChain(alias);
 				return certChain;
 			}
 		} catch (KeyStoreException | NoSuchProviderException | NoSuchAlgorithmException
 				 | CertificateException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Certificate[] readCertificateChainBySerialNumber(String keyStoreFile, String keyStorePass, String serialNumber) {
+		try {
+			ArrayList<Certificate> certChain = new ArrayList<Certificate>();
+			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
+			ks.load(in, keyStorePass.toCharArray());
+			// iterate over aliases
+			Enumeration<String> aliases = ks.aliases();
+			while (aliases.hasMoreElements()) {
+				String alias = aliases.nextElement();
+				boolean found = false;
+				if (ks.isKeyEntry(alias)) {
+					Certificate[] chain = ks.getCertificateChain(alias);
+					for (int i = 0; i < chain.length; i++) {
+						X509Certificate x509Cert = (X509Certificate) chain[i];
+						if (x509Cert.getSerialNumber().toString().equals(serialNumber)) {
+							for (int j = i; j < chain.length; j++) {
+								X509Certificate parentCert = (X509Certificate) chain[j];
+								certChain.add(parentCert);
+							}
+							found = true;
+							break;
+						}
+					}
+					if(found) {
+						break;
+					}
+				}
+			}
+			return certChain.toArray(new Certificate[0]);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

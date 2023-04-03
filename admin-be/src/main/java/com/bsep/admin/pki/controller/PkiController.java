@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.bsep.admin.pki.service.CertificateService;
+
+import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -95,9 +97,18 @@ public class PkiController {
 		return ResponseEntity.ok(Map.of("message", csrService.denyCsr(id)));
 	}
 
-	@GetMapping("/validate/{email}")
-	public ResponseEntity<Boolean> validateCertificate(@PathVariable String email) {
-		return ResponseEntity.ok(certificateService.validateCertificate(email));
+	@Autowired
+	private MailingService mailingService;
+
+	@GetMapping("/send/{email}")
+	public ResponseEntity<String> sendCertificate(@PathVariable String email) {
+		mailingService.sendTestMail();
+		return ResponseEntity.ok("Certificate sent");
+	}
+
+	@GetMapping("/validate/{serialNumber}")
+	public ResponseEntity<Boolean> validateCertificate(@PathVariable String serialNumber) {
+		return ResponseEntity.ok(certificateService.validateCertificate(serialNumber));
 	}
 
 }

@@ -39,39 +39,38 @@ export class CertificateCardComponent {
   ) {}
 
   revokeCertificate(): void {
-    if (this.certificate?.csrId) {
-      this.certificateService
-        .revokeCertificate(this.certificate.csrId)
-        .subscribe({
-          next: (data) => {
-            this.toastr.success('Certificate successfully revoked!');
-            this.certificate!.isRevoked = true;
-            this.closeRevokeYesNoModal();
-          },
-          error: (error) => {
-            this.toastr.error('Error revoking certificate!');
-            console.log(error);
-          },
-        });
+    if (this.certificate?.csrId && this.certificate.serialNumber) {
+      this.certificateService.revokeCertificate(this.certificate.csrId, this.certificate.serialNumber).subscribe({
+        next: (data) => {
+          this.toastr.success('Certificate successfully revoked!');
+          this.certificate!.isRevoked = true;
+          this.closeRevokeYesNoModal();
+        },
+        error: (error) => {
+          this.toastr.error('Error revoking certificate!');
+          console.log(error);
+        },
+      });
     }
   }
 
   validateCertificate(): void {
-    if (this.certificate?.csrId) {
-      this.certificateService
-        .validateCertificate(this.certificate.csrId)
-        .subscribe({
-          next: (data) => {
-            console.log(data);
-            if (data) this.toastr.success('Certificate is valid.');
-            else this.toastr.error('Certificate is invalid.');
-          },
-          error: (error) => {
-            this.toastr.error('Error while checking certificate validity!');
-            console.log(error);
-          },
-        });
+    if (!this.certificate || this.certificate.serialNumber === undefined) { 
+      return;
     }
+    this.certificateService.validateCertificate(this.certificate.serialNumber).subscribe({
+      next: (data) => {
+        console.log(data);
+        if (data)
+          this.toastr.success('Certificate is valid.');
+        else
+          this.toastr.error('Certificate is invalid.');
+      },
+      error: (error) => {
+        this.toastr.error('Error while checking certificate validity!');
+        console.log(error);
+      },
+    });
   }
 
   distributeCertificate(): void {

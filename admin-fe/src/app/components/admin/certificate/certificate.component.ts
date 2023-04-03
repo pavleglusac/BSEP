@@ -110,6 +110,7 @@ export class CertificateComponent implements OnInit {
       extensions.push(ext);
     }
     let certificate: Certificate = {
+      serialNumber: undefined,
       algorithm: 'SHA256withRSA',
       csrId: this.email,
       validityStart: this.today.toISOString(),

@@ -23,16 +23,12 @@ export class CertificateService {
     return this.httpClient.get('api/pki/certificate');
   }
 
-  revokeCertificate(email: string): Observable<any> {
-    return this.httpClient.post(
-      'api/pki/certificate-revocation',
-      { email },
-      { responseType: 'text' }
-    );
+  revokeCertificate(email: string, serialNumber: string): Observable<any> {
+    return this.httpClient.post('api/pki/certificate-revocation', { email, serialNumber }, { responseType: 'text' });
   }
-
-  validateCertificate(email: string): Observable<any> {
-    return this.httpClient.get(`api/pki/validate/${email}`);
+  
+  validateCertificate(serialNumber: string): Observable<any> {
+    return this.httpClient.get(`api/pki/validate/${serialNumber}`);
   }
 
   distributeCertificate(

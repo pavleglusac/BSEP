@@ -5,9 +5,7 @@ import com.bsep.admin.data.SubjectData;
 import com.bsep.admin.exception.CertificateAlreadyRevokedException;
 import com.bsep.admin.keystores.KeyStoreReader;
 import com.bsep.admin.keystores.KeyStoreWriter;
-import com.bsep.admin.model.CertificateRevocation;
-import com.bsep.admin.model.Csr;
-import com.bsep.admin.model.CsrStatus;
+import com.bsep.admin.model.*;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateOptionDto;
 import com.bsep.admin.pki.dto.CertificateRevocationDto;
@@ -225,6 +223,7 @@ public class CertificateService {
 		List<String> extensions = Arrays.asList("Basic Constraints", "Key Usage", "Extended Key Usage");
 		for (X509Certificate certificate : certificates) {
 			CertificateDto certificateDto = new CertificateDto();
+			certificateDto.setSerialNumber(certificate.getSerialNumber());
 			certificateDto.setExtensions(new ArrayList<>());
 			certificateDto.setAlgorithm(certificate.getPublicKey().getAlgorithm());
 			certificateDto.setValidityStart(certificate.getNotBefore()
@@ -264,8 +263,7 @@ public class CertificateService {
 					certificateDto.setHierarchyLevel(3);
 				}
 			}
-			Optional<CertificateRevocation> revocation = certificateRevocationRepository.findByUserEmail(email);
-			certificateDto.setIsRevoked(revocation.isPresent());
+			certificateDto.setIsRevoked(isCertificateRevoked(certificate));
 			certificatesDto.add(certificateDto);
 		}
 		return certificatesDto;
@@ -342,26 +340,21 @@ public class CertificateService {
 		}
 	}
 
-	public Boolean validateCertificate(String email) {
+	public Boolean validateCertificate(String serialNumber) {
 		try {
-			System.out.println("Validating certificate for user " + email);
+			System.out.println("Validating certificate for serial number " + serialNumber);
 			KeyStoreReader keyStoreReader = new KeyStoreReader();
-			Certificate[] certificateChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", email);
+			Certificate[] certificateChain = keyStoreReader.readCertificateChainBySerialNumber(adminService.KEYSTORE_FILE, "admin", serialNumber);
 			// validate entire chain
-			if (certificateChain == null) {
-				return true;
-			}
 			int i = 0;
 			for (Certificate certificate : certificateChain) {
 				X509Certificate x509Certificate = (X509Certificate) certificate;
 				x509Certificate.checkValidity();
+				if (isCertificateRevoked(x509Certificate)) return false;
 				if (i < certificateChain.length - 1) {
 					x509Certificate.verify(certificateChain[i + 1].getPublicKey());
 				}
 				i++;
-				Optional<CertificateRevocation> revocation = certificateRevocationRepository
-						.findByUserEmail(getEmailFromCertificate(x509Certificate));
-				if (revocation.isPresent()) return false;
 			}
 			return true;
 		} catch (Exception e) {
@@ -371,14 +364,31 @@ public class CertificateService {
 	}
 
 	public void revokeCertificate(CertificateRevocationDto dto) {
+		User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
 		CertificateRevocation certificateRevocation = new CertificateRevocation();
-		certificateRevocation.setUserEmail(dto.getEmail());
 		certificateRevocation.setTimestamp(LocalDateTime.now());
+		certificateRevocation.setSerialNumber(dto.getSerialNumber());
+		certificateRevocation.setUserEmail(dto.getEmail());
+		certificateRevocation.setUserType(user.getRole().toString());
 		try {
 			certificateRevocationRepository.save(certificateRevocation);
 		} catch (DataIntegrityViolationException e) {
 			throw new CertificateAlreadyRevokedException();
 		}
+	}
+
+	private boolean isCertificateRevoked(X509Certificate certificate) {
+		String email = getEmailFromCertificate(certificate);
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		if (optionalUser.isEmpty()) return false;
+		User user = optionalUser.get();
+		if (user.getRole().equals(Role.ROLE_USER)) {
+			return certificateRevocationRepository.findByUserEmail(email).isPresent();
+		} else if (user.getRole().equals(Role.ROLE_ADMIN)) {
+			return certificateRevocationRepository
+					.findByUserEmailAndSerialNumber(email, certificate.getSerialNumber()).isPresent();
+		}
+		return false;
 	}
 
 }

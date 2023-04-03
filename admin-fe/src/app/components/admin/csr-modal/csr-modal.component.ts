@@ -12,6 +12,7 @@ import { Csr } from 'src/app/model/certificate';
     imports: [CommonModule, DialogModule, CsrComponent]
 })
 export class CsrModalComponent {
+
   change() {
     this.visibleChange.emit(this.visible);
   }
@@ -21,5 +22,10 @@ export class CsrModalComponent {
   @Output() visibleChange = new EventEmitter<boolean>();
 
   @Input() csr: Csr | undefined = undefined;
+
+  hideDialog() {
+    this.visible = false;
+    this.change();
+  }
 
 }

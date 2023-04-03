@@ -1,12 +1,13 @@
 export interface Certificate {
-  algorithm: string;
-  csrId: string;
-  validityStart: string;
-  validityEnd: string;
-  extensions: any[];
-  hierarchyLevel: number;
-  csr: Csr | undefined;
-  isRevoked: boolean;
+    serialNumber: string | undefined;
+    algorithm: string;
+    csrId: string;
+    validityStart: string;
+    validityEnd: string;
+    extensions: any[];
+    hierarchyLevel: number;
+    csr: Csr | undefined;
+    isRevoked: boolean;
 }
 
 export interface Csr {
