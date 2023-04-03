@@ -16,19 +16,21 @@ import { CertificateHierarchyLevelPipe } from 'src/app/shared/pipes/certificate-
 import { EditExtensionAction, EditExtensionActionType } from 'src/app/shared/store/certificate-slice/certificate.actions';
 import { CertificateStateType } from 'src/app/shared/store/certificate-slice/certificate.reducer';
 import { EditExtensionComponent } from '../../certificate/edit-extension/edit-extension.component';
+import { CsrModalComponent } from "../../csr-modal/csr-modal.component";
 
 @Component({
-  standalone: true,
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    CertificateHierarchyLevelPipe,
-    YesNoModalComponent,
-    EditExtensionComponent,
-  ],
-  selector: 'app-certificate-card',
-  templateUrl: './certificate-card.component.html',
-  styles: [],
+    standalone: true,
+    selector: 'app-certificate-card',
+    templateUrl: './certificate-card.component.html',
+    styles: [],
+    imports: [
+        CommonModule,
+        FontAwesomeModule,
+        CertificateHierarchyLevelPipe,
+        YesNoModalComponent,
+        EditExtensionComponent,
+        CsrModalComponent
+    ]
 })
 export class CertificateCardComponent {
   @Input() certificate: Certificate | undefined = undefined;
@@ -39,6 +41,7 @@ export class CertificateCardComponent {
   showRevokeYesNoModal: boolean = false;
 
   editedExtension = undefined;
+  visibleCsrModal: boolean = false;
 
   constructor(
     private certificateService: CertificateService,
@@ -90,7 +93,7 @@ export class CertificateCardComponent {
   }
 
   viewCSR(): void {
-    // TODO: show CSR
+    this.visibleCsrModal = true;
   }
 
   closeRevokeYesNoModal(): void {

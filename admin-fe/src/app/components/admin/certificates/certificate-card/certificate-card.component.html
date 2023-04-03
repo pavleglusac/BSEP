@@ -57,6 +57,8 @@
   </div>
 
 </div>
+
+<app-csr-modal [csr]="certificate?.csr" [(visible)]="visibleCsrModal"></app-csr-modal>
   
 <div *ngIf="showRevokeYesNoModal">
   <app-yes-no-modal

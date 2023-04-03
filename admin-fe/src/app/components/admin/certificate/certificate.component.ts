@@ -28,6 +28,7 @@ import { CsrAction, CsrActionType } from 'src/app/shared/store/csr-slice/csr.act
     imports: [CommonModule, EditExtensionComponent, FormsModule, CsrModalComponent]
 })
 export class CertificateComponent implements OnInit {
+
   
   @Input() readonly = false;
   @Input() certificate: Certificate | undefined = undefined;
@@ -95,7 +96,17 @@ export class CertificateComponent implements OnInit {
     this.showCsrModal = true;
   }
 
+  changeValidityEnd($event: Event) {
+    this.until = new Date((<HTMLInputElement>$event.target).value);
+  }
+
   approveCertificate() {
+    // check if validityStart is before validityEnd
+    if (this.today > this.until) {
+      this.toastr.error('Validity start date must be before validity end date!');
+      return;
+    }
+
     if (!this.canProcess) {
       this.toastr.error('Certificate cannot be created! Load CSR first!');
     }

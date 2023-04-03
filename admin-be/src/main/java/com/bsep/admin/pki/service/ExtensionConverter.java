@@ -37,13 +37,10 @@ public class ExtensionConverter {
 
 	private CertificateOptionDto keyUsageToCertificateOptionDto(X509Certificate cert)  {
 		// convert list of boolean to int by powering 2
-		int keyUsageInt = 0;
 		if (cert.getKeyUsage() == null) {
 			return null;
 		}
 		boolean[] keyUsageBits = cert.getKeyUsage();
-		KeyUsage keyUsage = new KeyUsage(1);
-
 		String[] keyUsageNames = {
 				"Digital Signature", "Non Repudiation", "Key Encipherment",
 				"Data Encipherment", "Key Agreement", "Key Cert Sign",
@@ -54,6 +51,9 @@ public class ExtensionConverter {
 		for (int i = 0; i < keyUsageBits.length; i++) {
 			if(i >= keyUsageNames.length) break;
 			options.add(new CertificateOptionDto(keyUsageNames[i], null, keyUsageBits[i] ? "true" : "false", "checkbox"));
+		}
+		if (keyUsageBits[keyUsageBits.length - 1]) {
+			options.get(options.size() - 1).setValue("true");
 		}
 
 		return new CertificateOptionDto("Key Usage", options, null, "");

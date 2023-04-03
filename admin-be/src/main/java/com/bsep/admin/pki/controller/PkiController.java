@@ -102,7 +102,7 @@ public class PkiController {
 
 	@GetMapping("/send/{email}")
 	public ResponseEntity<String> sendCertificate(@PathVariable String email) {
-		mailingService.sendTestMail();
+//		mailingService.sendTestMail();
 		return ResponseEntity.ok("Certificate sent");
 	}
 

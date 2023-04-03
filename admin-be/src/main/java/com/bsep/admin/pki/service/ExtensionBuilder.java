@@ -68,7 +68,7 @@ public class ExtensionBuilder {
 		int keyUsageInt = 0;
 		for (int i = 0; i < keyUsage.length; i++) {
 			if (keyUsage[i]) {
-				keyUsageInt += Math.pow(2, i);
+				keyUsageInt +=  i == 8 ? 32768 : Math.pow(2, i);
 			}
 		}
 		KeyUsage keyUsageObj = new KeyUsage(keyUsageInt);

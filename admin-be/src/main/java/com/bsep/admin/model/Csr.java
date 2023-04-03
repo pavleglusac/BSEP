@@ -37,7 +37,7 @@ public class Csr {
     @Column()
     private String country;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
 
     @Column()

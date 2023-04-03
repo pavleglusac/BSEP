@@ -52,8 +52,8 @@ public class CsrService {
 		KeyPair keys = keyService.generateKeys();
 		keyService.storeKeys(keys, user.getEmail());
 		LocalDateTime currentTime = LocalDateTime.now();
-		Optional<Csr> existingCsrOpt = this.csrRepository.findByEmail(user.getEmail());
-		if (existingCsrOpt.isPresent() && existingCsrOpt.get().getStatus() == CsrStatus.PENDING) {
+		Optional<Csr> existingCsrOpt = this.csrRepository.findByEmailAndStatus(user.getEmail(), CsrStatus.PENDING);
+		if (existingCsrOpt.isPresent()) {
 			csr = this.updateCsr(existingCsrOpt.get(), csr, currentTime);
 		} else {
 			csr.setEmail(user.getEmail());
@@ -74,12 +74,8 @@ public class CsrService {
 	}
 
 	public Csr getCsrByUser(String email) {
-		Optional<Csr> csrOpt = this.csrRepository.findByEmail(email);
-		if (csrOpt.isPresent() && csrOpt.get().getStatus() == CsrStatus.PENDING) {
-			return csrOpt.get();
-		} else {
-			throw new CsrNotFoundException("CSR not found");
-		}
+		Optional<Csr> csrOpt = this.csrRepository.findByEmailAndStatus(email, CsrStatus.PENDING);
+		return csrOpt.orElseThrow(() -> new CsrNotFoundException("Csr not found"));
 	}
 
 	public void saveCsr(Csr csr) {
@@ -88,11 +84,9 @@ public class CsrService {
 
 	public String denyCsr(UUID id) {
 		Optional<Csr> csrOpt = this.csrRepository.findById(id);
-		if (csrOpt.isPresent()) {
-			Csr csr = csrOpt.get();
-			csr.setStatus(CsrStatus.REJECTED);
-			this.csrRepository.save(csr);
-			return "Deny Certificate signing request successful.";
-		} throw new RuntimeException("Deny Certificate signing request with id " + id + " unsuccessful.");
+		Csr csr = csrOpt.orElseThrow(() -> new RuntimeException("Deny Certificate signing request with id " + id + " unsuccessful."));
+		csr.setStatus(CsrStatus.REJECTED);
+		this.csrRepository.save(csr);
+		return "Deny Certificate signing request successful.";
 	}
 }

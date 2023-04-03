@@ -43,7 +43,7 @@
             </tr>
             <tr>
                 <td>Validity End: </td>
-                <td><input type="date" class=" mr-2 bg-transparent border-b h-6 w-full" [value]="until | date: 'yyyy-MM-dd'" [disabled]="readonly"/></td>
+                <td><input type="date" class=" mr-2 bg-transparent border-b h-6 w-full" [value]="until | date: 'yyyy-MM-dd'" [disabled]="readonly" (change)="changeValidityEnd($event)"/></td>
             </tr>
             <tr>
                 <td>
