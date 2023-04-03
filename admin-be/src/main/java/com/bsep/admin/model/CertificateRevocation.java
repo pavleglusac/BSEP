@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,6 +21,12 @@ public class CertificateRevocation {
 
     @Column(unique = true)
     private String userEmail;
+
+    @Column()
+    private String userType;
+
+    @Column(unique = true)
+    private BigInteger serialNumber;
 
     @Column()
     private LocalDateTime timestamp;

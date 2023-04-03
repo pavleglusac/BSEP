@@ -5,14 +5,13 @@ import com.bsep.admin.data.SubjectData;
 import com.bsep.admin.exception.CertificateAlreadyRevokedException;
 import com.bsep.admin.keystores.KeyStoreReader;
 import com.bsep.admin.keystores.KeyStoreWriter;
-import com.bsep.admin.model.CertificateRevocation;
-import com.bsep.admin.model.Csr;
-import com.bsep.admin.model.CsrStatus;
+import com.bsep.admin.model.*;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateOptionDto;
 import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.repository.CertificateRevocationRepository;
+import com.bsep.admin.repository.UserRepository;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -60,6 +59,9 @@ public class CertificateService {
 
 	@Autowired
 	private CertificateRevocationRepository certificateRevocationRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	BigInteger serialNumber = BigInteger.valueOf(3);
 
@@ -216,6 +218,7 @@ public class CertificateService {
 		List<String> extensions = Arrays.asList("Basic Constraints", "Key Usage", "Extended Key Usage");
 		for (X509Certificate certificate : certificates) {
 			CertificateDto certificateDto = new CertificateDto();
+			certificateDto.setSerialNumber(certificate.getSerialNumber());
 			certificateDto.setExtensions(new ArrayList<>());
 			certificateDto.setAlgorithm(certificate.getPublicKey().getAlgorithm());
 			certificateDto.setValidityStart(certificate.getNotBefore()
@@ -255,8 +258,7 @@ public class CertificateService {
 					certificateDto.setHierarchyLevel(3);
 				}
 			}
-			Optional<CertificateRevocation> revocation = certificateRevocationRepository.findByUserEmail(email);
-			certificateDto.setIsRevoked(revocation.isPresent());
+			certificateDto.setIsRevoked(isCertificateRevoked(certificate));
 			certificatesDto.add(certificateDto);
 		}
 		return certificatesDto;
@@ -348,9 +350,7 @@ public class CertificateService {
 					x509Certificate.verify(certificateChain[i + 1].getPublicKey());
 				}
 				i++;
-				Optional<CertificateRevocation> revocation = certificateRevocationRepository
-						.findByUserEmail(getEmailFromCertificate(x509Certificate));
-				if (revocation.isPresent()) return false;
+				if (isCertificateRevoked(x509Certificate)) return false;
 			}
 			return true;
 		} catch (Exception e) {
@@ -360,14 +360,31 @@ public class CertificateService {
 	}
 
 	public void revokeCertificate(CertificateRevocationDto dto) {
+		User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
 		CertificateRevocation certificateRevocation = new CertificateRevocation();
-		certificateRevocation.setUserEmail(dto.getEmail());
 		certificateRevocation.setTimestamp(LocalDateTime.now());
+		certificateRevocation.setSerialNumber(dto.getSerialNumber());
+		certificateRevocation.setUserEmail(dto.getEmail());
+		certificateRevocation.setUserType(user.getRole().toString());
 		try {
 			certificateRevocationRepository.save(certificateRevocation);
 		} catch (DataIntegrityViolationException e) {
 			throw new CertificateAlreadyRevokedException();
 		}
+	}
+
+	private boolean isCertificateRevoked(X509Certificate certificate) {
+		String email = getEmailFromCertificate(certificate);
+		Optional<User> optionalUser = userRepository.findByEmail(email);
+		if (optionalUser.isEmpty()) return false;
+		User user = optionalUser.get();
+		if (user.getRole().equals(Role.ROLE_USER)) {
+			return certificateRevocationRepository.findByUserEmail(email).isPresent();
+		} else if (user.getRole().equals(Role.ROLE_ADMIN)) {
+			return certificateRevocationRepository
+					.findByUserEmailAndSerialNumber(email, certificate.getSerialNumber()).isPresent();
+		}
+		return false;
 	}
 
 }
