@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String token = readTokenFromRequest(request);
 
+
 		if (request.getRequestURI().equals("/api/auth/login")) {
 			filterChain.doFilter(request, response);
 			return;
@@ -46,6 +48,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		}
 		try {
 			tokenProvider.validateToken(token, TokenType.ACCESS);
+
+			String secretFromToken = tokenProvider.getSecretFromToken(token);
+			String secretFromCookie = readSecretFromCookie(request);
+
+			if (!secretFromToken.equals(secretFromCookie)) {
+				sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid authorization.");
+				return;
+			}
+
 			UUID userId = tokenProvider.getUserIdFromToken(token);
 
 			UserDetails userDetails = customUserDetailsService.loadUserById(userId);
@@ -71,6 +82,19 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 		return null;
 	}
+
+	private String readSecretFromCookie(HttpServletRequest request) {
+		// Reads secret value from cookie
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("secret")) {
+				return cookie.getValue();
+			}
+		}
+		return null;
+	}
+
+
 
 
 	private void sendResponse(HttpServletResponse response, Integer status, String message) throws IOException {

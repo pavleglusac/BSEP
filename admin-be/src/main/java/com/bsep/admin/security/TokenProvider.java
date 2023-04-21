@@ -79,6 +79,15 @@ public class TokenProvider {
 		return UUID.fromString(claims.getSubject());
 	}
 
+	public String getSecretFromToken(String token) {
+		JwtParser parser = Jwts.parserBuilder().setSigningKey(getKey()).build();
+		Claims claims = parser.parseClaimsJws(token).getBody();
+		if (claims.get("secret") == null) {
+			throw new InvalidTokenTypeException("Invalid token type.");
+		}
+		return claims.get("secret").toString();
+	}
+
 	public Claims readClaims(String token) {
 		JwtParser parser = Jwts.parserBuilder().setSigningKey(getKey()).build();
 		return parser.parseClaimsJws(token).getBody();

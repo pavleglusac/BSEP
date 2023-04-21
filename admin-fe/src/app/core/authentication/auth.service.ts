@@ -34,7 +34,7 @@ export class AuthService {
   ) => {
     var that = this;
     this.http
-      .post('api/auth/login', { email, password, loginToken: code })
+      .post('api/auth/login', { email, password, loginToken: code }, {withCredentials: true})
       .subscribe({
         next(value: any) {
           sessionStorage.setItem(environment.tokenName, value.accessToken);

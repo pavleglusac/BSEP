@@ -15,13 +15,15 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    request = request.clone({ url: `${environment.baseUrl}/${request.url}` });
+    request = request.clone({ url: `${environment.baseUrl}/${request.url}`, withCredentials: true });
     const token = sessionStorage.getItem(environment.tokenName);
     if (token) {
       const authReq = request.clone({
         headers: new HttpHeaders({
           Authorization: `Bearer ${token}`,
+
         }),
+
       });
       return next.handle(authReq);
     }
