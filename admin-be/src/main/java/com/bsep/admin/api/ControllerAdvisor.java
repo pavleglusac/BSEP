@@ -50,7 +50,13 @@ public class ControllerAdvisor {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(CertificateAlreadyRevokedException.class)
 	public ResponseError handleCertificateAlreadyRevokedException(CertificateAlreadyRevokedException e) {
-		return new ResponseError(HttpStatus.BAD_REQUEST, "This user's certificate has already been revoked");
+		return new ResponseError(HttpStatus.BAD_REQUEST, "This user's certificate has already been revoked.");
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidRoleException.class)
+	public ResponseError handleInvalidRoleException(InvalidRoleException e) {
+		return new ResponseError(HttpStatus.BAD_REQUEST, "Given role is invalid.");
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
