@@ -48,8 +48,8 @@ const menus = {
       icon: faUserPlus,
     },
     {
-      title: 'All users',
-      link: '',
+      title: 'Users',
+      link: 'admin/users',
       icon: faUserGroup,
     },
   ],
