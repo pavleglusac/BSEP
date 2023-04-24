@@ -27,6 +27,8 @@ public class TokenProvider {
 
 	private AppProperties appProperties;
 
+	private final Long ACCESS_TOKEN_EXPIRATION = 60L * 60L;
+
 	public TokenProvider(AppProperties appProperties) {
 		this.appProperties = appProperties;
 	}
@@ -35,7 +37,7 @@ public class TokenProvider {
 		User user = (User) authentication.getPrincipal();
 
 		Instant now = Instant.now();
-		Instant expiresAt = now.plusSeconds(3600);
+		Instant expiresAt = now.plusSeconds(ACCESS_TOKEN_EXPIRATION);
 
 		return Jwts.builder()
 				   	.setSubject(user.getId().toString())

@@ -8,18 +8,22 @@ import com.bsep.admin.model.Role;
 import com.bsep.admin.model.User;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.security.CustomAuthenticationToken;
+import com.bsep.admin.security.TokenManager;
 import com.bsep.admin.security.TokenProvider;
 import com.bsep.admin.service.MailingService;
 import com.bsep.admin.util.Trie;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.security.SecureRandom;
 import java.util.Objects;
@@ -150,5 +154,30 @@ public class AuthService {
 		} else {
 			throw new RuntimeException("Invalid token");
 		}
+	}
+
+	@Autowired
+	TokenManager tokenManager;
+
+	public void logout(User user, HttpServletRequest request, HttpServletResponse response) {
+		// remove cookie with secret
+		Cookie cookie = new Cookie("secret", "");
+		cookie.setPath("/");
+		cookie.setSecure(false);
+		cookie.setHttpOnly(true);
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
+		String token = readTokenFromRequest(request);
+		tokenManager.invalidateToken(token);
+
+	}
+
+
+	private String readTokenFromRequest(HttpServletRequest request) {
+		String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+		if (StringUtils.hasLength(authHeader) && authHeader.startsWith("Bearer "))
+			return authHeader.substring(7);
+
+		return null;
 	}
 }

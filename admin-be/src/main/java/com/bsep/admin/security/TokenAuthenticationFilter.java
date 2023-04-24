@@ -32,9 +32,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
+	@Autowired
+	private TokenManager tokenManager;
+
 	private String[] ignoredUrls = {
 			"/api/auth/login",
 	};
+
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -51,6 +55,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		}
 		try {
 			tokenProvider.validateToken(token, TokenType.ACCESS);
+			if(!tokenManager.isTokenValid(token)) {
+				sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid authorization.");
+				return;
+			}
 
 			String secretFromToken = tokenProvider.getSecretFromToken(token);
 			String secretFromCookie = readSecretFromCookie(request);
