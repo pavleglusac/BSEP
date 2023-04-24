@@ -53,4 +53,10 @@ public class ControllerAdvisor {
 		return new ResponseError(HttpStatus.BAD_REQUEST, "This user's certificate has already been revoked");
 	}
 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseError handleRuntimeException(RuntimeException e) {
+		return new ResponseError(HttpStatus.BAD_REQUEST, e.getMessage());
+	}
+
 }
