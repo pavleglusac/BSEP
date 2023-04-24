@@ -38,6 +38,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String name = customAuthenticationToken.getName();
 		String password = customAuthenticationToken.getCredentials().toString();
 		String loginToken = customAuthenticationToken.getLoginToken().toString();
+		String secret = customAuthenticationToken.getSecret().toString();
 
 		User user = (User) customUserDetailsService.loadUserByUsername(name);
 		if (user == null) {
@@ -50,7 +51,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			throw new InvalidLogin("Login failed. Account is locked.");
 		}
 		if (passwordEncoder.matches(password, user.getPassword()) && passwordEncoder.matches(loginToken, user.getLoginToken())) {
-			return new CustomAuthenticationToken(user, password, loginToken, user.getAuthorities());
+			return new CustomAuthenticationToken(user, password, loginToken, secret, user.getAuthorities());
 		}
 		// reduce number of login attempts
 		user.setLoginAttempts(user.getLoginAttempts() + 1);

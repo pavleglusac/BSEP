@@ -36,7 +36,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String token = readTokenFromRequest(request);
 
-
 		if (request.getRequestURI().equals("/api/auth/login")) {
 			filterChain.doFilter(request, response);
 			return;
@@ -53,6 +52,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 			String secretFromCookie = readSecretFromCookie(request);
 
 			if (!secretFromToken.equals(secretFromCookie)) {
+				System.out.println("Secrets don't match!");
+//				System.out.println("Secret from token: " + secretFromToken);
+//				System.out.println("Secret from cookie: " + secretFromCookie);
 				sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid authorization.");
 				return;
 			}
@@ -66,6 +68,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			filterChain.doFilter(request, response);
 		} catch (InvalidTokenTypeException e) {
+			e.printStackTrace();
 			sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid token type.");
 		} catch (InvalidAccessTokenException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
 			sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
@@ -93,8 +96,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		}
 		return null;
 	}
-
-
 
 
 	private void sendResponse(HttpServletResponse response, Integer status, String message) throws IOException {

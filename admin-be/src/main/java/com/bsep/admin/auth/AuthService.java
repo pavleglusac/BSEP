@@ -41,10 +41,10 @@ public class AuthService {
 				secret
 		));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String accessToken = tokenProvider.createAccessToken(authentication);
+		String accessToken = tokenProvider.createAccessToken(authentication, secret);
 		Long expiresAt = tokenProvider.readClaims(accessToken).getExpiration().getTime();
 		// add cookie with secret
-		Cookie cookie = new Cookie("kuki", secret);
+		Cookie cookie = new Cookie("secret", secret);
 		cookie.setPath("/");
 		cookie.setSecure(false);
 		cookie.setHttpOnly(true);

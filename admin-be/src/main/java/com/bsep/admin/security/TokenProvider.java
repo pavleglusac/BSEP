@@ -31,19 +31,20 @@ public class TokenProvider {
 		this.appProperties = appProperties;
 	}
 
-	public String createAccessToken(Authentication authentication) {
+	public String createAccessToken(Authentication authentication, String secret) {
 		User user = (User) authentication.getPrincipal();
 
 		Instant now = Instant.now();
 		Instant expiresAt = now.plusSeconds(3600);
 
 		return Jwts.builder()
-				   .setSubject(user.getId().toString())
-				   .setIssuedAt(Date.from(now))
-				   .claim("type", TokenType.ACCESS)
-				   .setExpiration(Date.from(expiresAt))
-				   .signWith(getKey())
-				   .compact();
+				   	.setSubject(user.getId().toString())
+				   	.setIssuedAt(Date.from(now))
+				   	.claim("type", TokenType.ACCESS)
+					.claim("secret", secret)
+				   	.setExpiration(Date.from(expiresAt))
+				   	.signWith(getKey())
+				   	.compact();
 	}
 
 	public String createEmailVerificationToken(User user) {
@@ -83,7 +84,7 @@ public class TokenProvider {
 		JwtParser parser = Jwts.parserBuilder().setSigningKey(getKey()).build();
 		Claims claims = parser.parseClaimsJws(token).getBody();
 		if (claims.get("secret") == null) {
-			throw new InvalidTokenTypeException("Invalid token type.");
+			throw new InvalidAccessTokenException("Invalid token.");
 		}
 		return claims.get("secret").toString();
 	}
