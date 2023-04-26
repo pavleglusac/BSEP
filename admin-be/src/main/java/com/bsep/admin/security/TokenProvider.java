@@ -27,23 +27,26 @@ public class TokenProvider {
 
 	private AppProperties appProperties;
 
+	private final Long ACCESS_TOKEN_EXPIRATION = 60L * 60L;
+
 	public TokenProvider(AppProperties appProperties) {
 		this.appProperties = appProperties;
 	}
 
-	public String createAccessToken(Authentication authentication) {
+	public String createAccessToken(Authentication authentication, String secret) {
 		User user = (User) authentication.getPrincipal();
 
 		Instant now = Instant.now();
-		Instant expiresAt = now.plusSeconds(3600);
+		Instant expiresAt = now.plusSeconds(ACCESS_TOKEN_EXPIRATION);
 
 		return Jwts.builder()
-				   .setSubject(user.getId().toString())
-				   .setIssuedAt(Date.from(now))
-				   .claim("type", TokenType.ACCESS)
-				   .setExpiration(Date.from(expiresAt))
-				   .signWith(getKey())
-				   .compact();
+				   	.setSubject(user.getId().toString())
+				   	.setIssuedAt(Date.from(now))
+				   	.claim("type", TokenType.ACCESS)
+					.claim("secret", secret)
+				   	.setExpiration(Date.from(expiresAt))
+				   	.signWith(getKey())
+				   	.compact();
 	}
 
 	public String createEmailVerificationToken(User user) {
@@ -77,6 +80,15 @@ public class TokenProvider {
 		Claims claims = parser.parseClaimsJws(token).getBody();
 
 		return UUID.fromString(claims.getSubject());
+	}
+
+	public String getSecretFromToken(String token) {
+		JwtParser parser = Jwts.parserBuilder().setSigningKey(getKey()).build();
+		Claims claims = parser.parseClaimsJws(token).getBody();
+		if (claims.get("secret") == null) {
+			throw new InvalidAccessTokenException("Invalid token.");
+		}
+		return claims.get("secret").toString();
 	}
 
 	public Claims readClaims(String token) {

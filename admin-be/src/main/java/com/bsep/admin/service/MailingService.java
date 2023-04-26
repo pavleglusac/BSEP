@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +39,16 @@ public class MailingService {
 	public void sendCertificateMail(String name, File certificate, File publicKey, File privateKey) {
 		String content = renderTemplate("distribution.html", Map.of("name", name));
 		sendMailWithAttachment("bsepml23@gmail.com", "Certificate", content, certificate,publicKey, privateKey);
+	}
+
+	@Async
+	public void sendVerificationMail(String name, String email, String emailVerificationToken, String loginToken) {
+		String encodedEmailToken = URLEncoder.encode(emailVerificationToken, StandardCharsets.UTF_8);
+		String content = renderTemplate("verification.html", Map.of("name", name,
+				"email", email,
+				"verificationToken", encodedEmailToken,
+				"loginToken", loginToken));
+		sendMail("bsepml23@gmail.com", "Verification", content);
 	}
 
 	private void sendMailWithAttachment(String to, String subject, String body, File cert, File publicKey, File privateKey) {
@@ -96,7 +109,7 @@ public class MailingService {
 			target = "\\{\\{ " + entry.getKey() + " \\}\\}";
 			renderedValue = entry.getValue();
 
-			message = message.replaceAll(target, renderedValue);
+			message = message.replaceAll(target, Matcher.quoteReplacement(renderedValue));
 		}
 
 		return message;
