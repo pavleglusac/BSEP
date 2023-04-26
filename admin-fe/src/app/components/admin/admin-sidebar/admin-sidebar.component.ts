@@ -43,7 +43,7 @@ const menus = {
   Users: [
     {
       title: 'Register',
-      link: '',
+      link: 'admin/register',
       icon: faUserPlus,
     },
     {
@@ -86,14 +86,20 @@ export class AdminSidebarComponent {
 
   constructor(private router: Router) {
     router.events
-    .pipe(filter(e => e instanceof NavigationEnd))
-    .subscribe((event) => {
-      const end = event as NavigationEnd;
-      if (end.url.startsWith('/admin')) {
-        const menusToLookup: MenuOption[] = [...menus['Public Keys'], ...menus.System, ...menus.Users];
-        this.chosenOption = menusToLookup.find((option: MenuOption) => `/${option.link}` === end.url)!;
-      }
-    })
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((event) => {
+        const end = event as NavigationEnd;
+        if (end.url.startsWith('/admin')) {
+          const menusToLookup: MenuOption[] = [
+            ...menus['Public Keys'],
+            ...menus.System,
+            ...menus.Users,
+          ];
+          this.chosenOption = menusToLookup.find(
+            (option: MenuOption) => `/${option.link}` === end.url
+          )!;
+        }
+      });
   }
 
   signOut(): void {
