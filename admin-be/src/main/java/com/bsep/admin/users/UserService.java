@@ -30,7 +30,7 @@ public class UserService {
         } catch (Exception e) {
             throw new InvalidRoleException();
         }
-        Page<User> userPage = userRepository.searchWithRole(query, roleSet, onlyLocked, PageRequest.of(page, amount));
+        Page<User> userPage = userRepository.search(query, roleSet, onlyLocked, PageRequest.of(page, amount));
         return convertUserPageToDtoPage(userPage);
     }
 
@@ -47,6 +47,6 @@ public class UserService {
             dto.setLocked(!user.isAccountNonLocked());
             userDisplayDtos.add(dto);
         }
-        return new PageImpl<>(userDisplayDtos, userPage.getPageable(), userPage.getTotalPages());
+        return new PageImpl<>(userDisplayDtos, userPage.getPageable(), userPage.getTotalElements());
     }
 }

@@ -5,5 +5,5 @@ export interface User {
   emailVerified: boolean;
   imageUrl: string;
   role: string;
-  isLocked: boolean;
+  locked: boolean;
 }

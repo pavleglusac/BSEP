@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	@Query("SELECT u FROM User u WHERE " +
 			"(u.name LIKE %:query% OR u.email LIKE %:query%) " +
 			"AND u.role IN :roles AND (u.loginAttempts >= 3 OR (u.loginAttempts < 3 AND :onlyLocked = false))")
-	Page<User> searchWithRole(
+	Page<User> search(
 			@Param("query") String query,
 			@Param("roles") EnumSet<Role> roles,
 			@Param("onlyLocked") boolean onlyLocked,
