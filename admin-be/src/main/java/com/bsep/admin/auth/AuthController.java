@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -35,9 +37,9 @@ public class AuthController {
 
 	@PostMapping("/register")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> register(@RequestBody RegistrationRequest loginRequest, HttpServletResponse response) {
+	public ResponseEntity<Map<String, String>> register(@RequestBody RegistrationRequest loginRequest, HttpServletResponse response) {
 		authService.register(loginRequest, response);
-		return ResponseEntity.ok("Registered");
+		return ResponseEntity.ok(Map.of("message", "User successfully registered. Please check your email for verification."));
 	}
 
 	@GetMapping("/verify")
