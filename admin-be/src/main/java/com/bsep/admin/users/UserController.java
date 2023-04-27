@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -29,6 +28,13 @@ public class UserController {
             @RequestParam(required = false, defaultValue = "false") boolean onlyLocked
             ) {
         return ResponseEntity.ok(userService.search(query, page, amount, roles, onlyLocked));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Map<String, String>> delete(@PathVariable UUID id) {
+        userService.delete(id);
+        return ResponseEntity.ok(Map.of("message", "User successfully deleted."));
     }
 
 }

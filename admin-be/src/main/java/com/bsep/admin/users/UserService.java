@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 
@@ -48,5 +49,11 @@ public class UserService {
             userDisplayDtos.add(dto);
         }
         return new PageImpl<>(userDisplayDtos, userPage.getPageable(), userPage.getTotalElements());
+    }
+
+    public void delete(UUID id) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 }

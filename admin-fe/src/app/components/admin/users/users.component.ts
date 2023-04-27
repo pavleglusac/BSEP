@@ -33,7 +33,7 @@ export class UsersComponent {
 
   search(query: string, roles: string[] | null = null, onlyLocked: boolean = false): void {
     this.lastSearch = { query, roles, onlyLocked };
-    this.userService.searchUsers(query, this.page - 1, amountPerPage, roles, onlyLocked).subscribe((retval: any) => {
+    this.userService.search(query, this.page - 1, amountPerPage, roles, onlyLocked).subscribe((retval: any) => {
       if (retval) {
         this.users = retval.content;
         this.pageInfo = retval;

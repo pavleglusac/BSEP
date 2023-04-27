@@ -9,7 +9,7 @@ import { RegisterUser } from '../model/user';
 export class UserService {
   constructor(private httpClient: HttpClient) {}
 
-  searchUsers(
+  search(
     query: string,
     page: number,
     amount: number,
@@ -28,6 +28,21 @@ export class UserService {
     errorCb: (error: any) => void
   ) {
     this.httpClient.post(`api/auth/register`, registerDto).subscribe({
+      next(value: any) {
+        successCb(value.message);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
+  delete(
+    id: string, 
+    successCb: (message: string) => void,
+    errorCb: (error: any) => void
+  ) {
+    this.httpClient.delete(`api/users/${id}`).subscribe({
       next(value: any) {
         successCb(value.message);
       },
