@@ -4,6 +4,7 @@ import { CertificateComponent } from './certificate/certificate.component';
 import { CertificatesComponent } from './certificates/certificates.component';
 import { CreateCertificateComponent } from './create-certificate/create-certificate.component';
 import { CsrsComponent } from './csrs/csrs.component';
+import { UsersComponent } from './users/users.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -22,6 +23,10 @@ export const ADMIN_ROUTES: Route[] = [
         path: 'certificates',
         component: CertificatesComponent,
       },
+      {
+        path: 'users',
+        component: UsersComponent,
+      }
     ],
   },
 

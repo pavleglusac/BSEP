@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -118,8 +117,8 @@ public class AuthService {
 	private void createUser(RegistrationRequest registrationRequest) {
 		User user = new User();
 
-		if (Objects.equals(registrationRequest.getRole(), "ROLE_TENNANT")) {
-			user.setRole(Role.ROLE_TENNANT);
+		if (Objects.equals(registrationRequest.getRole(), "ROLE_TENANT")) {
+			user.setRole(Role.ROLE_TENANT);
 		} else if (Objects.equals(registrationRequest.getRole(), "ROLE_LANDLORD")) {
 			user.setRole(Role.ROLE_LANDLORD);
 		} else {

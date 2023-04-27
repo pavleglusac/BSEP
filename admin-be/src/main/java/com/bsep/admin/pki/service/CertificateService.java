@@ -390,7 +390,8 @@ public class CertificateService {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		if (optionalUser.isEmpty()) return false;
 		User user = optionalUser.get();
-		if (user.getRole().equals(Role.ROLE_USER)) {
+		if (user.getRole().equals(Role.ROLE_USER) || user.getRole().equals(Role.ROLE_TENANT)
+				|| user.getRole().equals(Role.ROLE_LANDLORD)) {
 			return certificateRevocationRepository.findByUserEmail(email).isPresent();
 		} else if (user.getRole().equals(Role.ROLE_ADMIN)) {
 			return certificateRevocationRepository

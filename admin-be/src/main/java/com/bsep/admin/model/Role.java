@@ -4,7 +4,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public enum Role {
 	ROLE_USER,
-	ROLE_TENNANT,
+	ROLE_TENANT,
 	ROLE_LANDLORD,
 	ROLE_ADMIN;
 
