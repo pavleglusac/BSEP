@@ -11,10 +11,11 @@ export class RegisterUser {
   name: string = '';
   email: string = '';
   password: string = '';
-  confirmPassword: string = '';
-  role: Role = Role.HOMEOWNER;
+  confirmPassword?: string = '';
+  role: Role = Role.Tenant;
 }
 
 enum Role {
-  HOMEOWNER,
+  Tenant = 'ROLE_TENANT',
+  Landlord = 'ROLE_LANDLORD',
 }

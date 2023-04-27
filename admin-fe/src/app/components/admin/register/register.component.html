@@ -72,8 +72,9 @@
             <select class="appearance-none block w-full text-white tracking-wide
             placeholder-medium caret-medium border-b focus:border-accent
             bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300 border-medium"
-            autofocus="autofocus"> 
-            <option>Homeowner</option>
+            autofocus="autofocus" [(ngModel)]="user.role"> 
+            <option value="ROLE_TENANT" class="text-dark">Tenant</option>
+            <option value = 'ROLE_LANDLORD' class="text-dark">Landlord</option>
             </select>
         </div>
 

@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RegisterUser } from '../../../model/user';
 import { FormsModule } from '@angular/forms';
+import { UserService } from 'src/app/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -14,9 +16,19 @@ export class RegisterComponent {
   user = new RegisterUser();
   errors = new RegisterUser();
 
+  constructor(
+    private userService: UserService,
+    private toastr: ToastrService
+  ) {}
   onSubmit = () => {
-    console.log(this.user);
-    if (!this.valid()) {
+    if (this.valid()) {
+      this.userService.register(
+        this.user,
+        (message: string) => {
+          this.toastr.success(message);
+        },
+        (err) => this.toastr.error(err.message)
+      );
     }
   };
 
@@ -28,7 +40,7 @@ export class RegisterComponent {
       valid = false;
     } else this.errors.email = '';
     if (
-      !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{12,20}$/.test(
+      !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+])[0-9a-zA-Z!@#$%^&*()_+@]{12,20}$/.test(
         this.user.password
       )
     ) {

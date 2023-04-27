@@ -27,7 +27,7 @@ export const ADMIN_ROUTES: Route[] = [
       {
         path: 'users',
         component: UsersComponent,
-      }
+      },
       {
         path: 'register',
         component: RegisterComponent,
