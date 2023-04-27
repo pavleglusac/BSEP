@@ -19,8 +19,8 @@ export class UserSearchComponent {
   faSearch: IconDefinition = faSearch;
 
   query: string = '';
-  selectedRoles: string[] = ['ROLE_ADMIN', 'ROLE_USER'];
-  allRoles: string[] = ['ROLE_ADMIN', 'ROLE_USER'];
+  selectedRoles: string[] = ['ROLE_ADMIN', 'ROLE_TENANT', 'ROLE_LANDLORD'];
+  allRoles: string[] = ['ROLE_ADMIN', 'ROLE_TENANT', 'ROLE_LANDLORD'];
   onlyLocked: boolean = false;
 
   selectRole(event: any, role: string): void {

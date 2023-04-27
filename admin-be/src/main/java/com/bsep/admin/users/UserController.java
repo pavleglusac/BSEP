@@ -25,7 +25,7 @@ public class UserController {
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam int page,
             @RequestParam int amount,
-            @RequestParam(required = false, defaultValue = "ROLE_USER,ROLE_ADMIN") List<String> roles,
+            @RequestParam(required = false, defaultValue = "ROLE_ADMIN,ROLE_TENANT,ROLE_LANDLORD") List<String> roles,
             @RequestParam(required = false, defaultValue = "false") boolean onlyLocked
             ) {
         return ResponseEntity.ok(userService.search(query, page, amount, roles, onlyLocked));
