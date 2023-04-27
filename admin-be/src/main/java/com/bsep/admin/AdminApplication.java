@@ -2,6 +2,7 @@ package com.bsep.admin;
 
 import com.bsep.admin.config.AppProperties;
 import com.bsep.admin.repository.UserRepository;
+import com.bsep.admin.util.Trie;
 import jakarta.annotation.PostConstruct;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.io.File;
 import java.security.Security;
 
 @SpringBootApplication
@@ -22,6 +24,9 @@ public class AdminApplication {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private Trie trie;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -34,9 +39,24 @@ public class AdminApplication {
 
 	@PostConstruct
 	public void init() {
-		// show all users one by one in for loop
 		Security.addProvider(new BouncyCastleProvider());
-		userRepository.findAll().forEach(System.out::println);
+	}
+
+	// fill trie with all common passwords txt file
+	@PostConstruct
+	public void fillTrie() {
+		try {
+			File file = new File("src/main/resources/common_passwords.txt");
+			java.util.Scanner scanner = new java.util.Scanner(file);
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				trie.insert(line);
+			}
+			scanner.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

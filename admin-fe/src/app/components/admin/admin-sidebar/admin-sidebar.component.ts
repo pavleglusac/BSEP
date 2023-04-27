@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -47,8 +48,8 @@ const menus = {
       icon: faUserPlus,
     },
     {
-      title: 'All users',
-      link: '',
+      title: 'Users',
+      link: 'admin/users',
       icon: faUserGroup,
     },
   ],
@@ -84,7 +85,7 @@ export class AdminSidebarComponent {
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private http: HttpClient) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((event) => {
@@ -103,7 +104,11 @@ export class AdminSidebarComponent {
   }
 
   signOut(): void {
-    // TODO: Implement method
+    localStorage.removeItem('token');
+    // accept plain text response
+    this.http.post('api/auth/logout', {}, {responseType: 'text'}).subscribe(() => {
+      window.location.href = '/';
+    });
   }
 
   navigate(option: MenuOption) {
