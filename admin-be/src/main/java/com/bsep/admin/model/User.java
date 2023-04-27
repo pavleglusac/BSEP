@@ -34,6 +34,8 @@ public class User implements UserDetails {
 
 	private String password;
 
+	private Boolean deleted = false;
+
 	@Column(name = "LOGIN_TOKEN")
 	private String loginToken;
 
@@ -45,6 +47,7 @@ public class User implements UserDetails {
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
