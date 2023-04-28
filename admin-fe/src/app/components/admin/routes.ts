@@ -6,6 +6,7 @@ import { CreateCertificateComponent } from './create-certificate/create-certific
 import { CsrsComponent } from './csrs/csrs.component';
 import { UsersComponent } from './users/users.component';
 import { RegisterComponent } from './register/register.component';
+import { SettingsComponent } from './settings/settings.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -31,6 +32,14 @@ export const ADMIN_ROUTES: Route[] = [
       {
         path: 'register',
         component: RegisterComponent,
+      },
+      {
+        path: 'settings',
+        component: SettingsComponent,
+      },
+      {
+        path: 'settings/:email',
+        component: SettingsComponent,
       },
     ],
   },

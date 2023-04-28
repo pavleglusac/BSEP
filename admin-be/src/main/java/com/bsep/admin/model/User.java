@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.security.AuthProvider;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -45,6 +46,9 @@ public class User implements UserDetails {
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
+	@OneToMany()
+	private List<RealEstate> realEstates;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
