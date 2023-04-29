@@ -51,4 +51,21 @@ export class UserService {
       },
     });
   }
+
+  changeRole(
+    id: string,
+    newRole: string, 
+    successCb: (message: string) => void,
+    errorCb: (error: any) => void
+  ) {
+    this.httpClient.patch(`api/users/roles/${id}`, { newRole })
+    .subscribe({
+      next(value: any) {
+        successCb(value.message);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
 }
