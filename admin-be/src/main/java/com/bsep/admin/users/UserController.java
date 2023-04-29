@@ -1,5 +1,6 @@
 package com.bsep.admin.users;
 
+import com.bsep.admin.users.dto.RoleChangeDto;
 import com.bsep.admin.users.dto.UserDisplayDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,13 @@ public class UserController {
     public ResponseEntity<Map<String, String>> delete(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.ok(Map.of("message", "User successfully deleted."));
+    }
+
+    @PatchMapping("/roles/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Map<String, String>> changeRole(@PathVariable UUID id, @RequestBody RoleChangeDto dto) {
+        userService.changeRole(id, dto);
+        return ResponseEntity.ok(Map.of("message", "Role successfully changed."));
     }
 
 }

@@ -22,6 +22,8 @@ export class UserEntryComponent {
   faTrash: IconDefinition = faTrash;
   faUserEdit: IconDefinition = faUserEdit;
   showDeleteModal: boolean = false;
+  showRoleChangeModal: boolean = false;
+  roleChangeModalDescription: string = '';
 
   constructor(
     private userService: UserService,
@@ -40,14 +42,35 @@ export class UserEntryComponent {
       },
       (err) => this.toastr.error(err.message));
     this.closeDeleteModal();
-    location.reload();
+    setTimeout(() => {
+      location.reload();
+    }, 500)
   }
   
   closeDeleteModal(): void {
     this.showDeleteModal = false;
   }
 
-  handleChangeRole(): void {
-    
+  closeRoleChangeModal(): void {
+    this.showRoleChangeModal = false; 
+  }
+
+  handleRoleChange(): void {
+    this.showRoleChangeModal = true;
+    this.roleChangeModalDescription = `Are you sure you want to change this user\'s role to ${this.user.role === 'ROLE_TENANT' ? 'LANDLORD' : 'TENANT'}?`;
+  }
+
+  sendRoleChangeRequest(): void {
+    this.userService.changeRole(
+      this.user.id,
+      this.user.role === 'ROLE_TENANT' ? 'ROLE_LANDLORD' : 'ROLE_TENANT',
+      (message: string) => {
+        this.toastr.success(message);
+      },
+      (err) => this.toastr.error(err.message));
+    this.closeRoleChangeModal();
+    setTimeout(() => {
+      location.reload();
+    }, 500)
   }
 }
