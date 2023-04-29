@@ -74,6 +74,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 			UUID userId = tokenProvider.getUserIdFromToken(token);
 
 			UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+
+			if (userDetails == null) {
+				sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid authorization.");
+				return;
+			}
+
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
