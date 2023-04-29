@@ -52,8 +52,6 @@ public class UserService {
     }
 
     public void delete(UUID id) {
-        User user = userRepository.findById(id).orElseThrow();
-        user.setDeleted(true);
-        userRepository.save(user);
+        userRepository.deleteById(id);
     }
 }
