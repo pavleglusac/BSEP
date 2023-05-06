@@ -4,6 +4,7 @@ import com.bsep.admin.exception.InvalidRoleException;
 import com.bsep.admin.model.Role;
 import com.bsep.admin.model.User;
 import com.bsep.admin.repository.UserRepository;
+import com.bsep.admin.users.dto.RoleChangeDto;
 import com.bsep.admin.users.dto.UserDisplayDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 
@@ -48,5 +50,25 @@ public class UserService {
             userDisplayDtos.add(dto);
         }
         return new PageImpl<>(userDisplayDtos, userPage.getPageable(), userPage.getTotalElements());
+    }
+
+    public void delete(UUID id) {
+        userRepository.deleteById(id);
+    }
+
+    public void changeRole(UUID id, RoleChangeDto dto) {
+        User user = userRepository.findById(id).orElseThrow();
+        Role role;
+        try {
+            role = Role.valueOf(dto.getNewRole());
+        } catch (Exception e) {
+            throw new InvalidRoleException();
+        }
+        if (EnumSet.of(Role.ROLE_TENANT, Role.ROLE_LANDLORD).contains(role)) {
+            user.setRole(role);
+            userRepository.save(user);
+        } else {
+            throw new InvalidRoleException();
+        }
     }
 }

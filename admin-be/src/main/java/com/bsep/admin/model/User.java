@@ -3,10 +3,11 @@ package com.bsep.admin.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.AuthProvider;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.UUID;
 @Table(name = "USERS")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE USERS SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class User implements UserDetails {
 
 	@Id
@@ -34,6 +37,8 @@ public class User implements UserDetails {
 	private Integer loginAttempts = 0;
 
 	private String password;
+
+	private Boolean deleted = Boolean.FALSE;
 
 	@Column(name = "LOGIN_TOKEN")
 	private String loginToken;

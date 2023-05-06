@@ -10,12 +10,15 @@ import {
   faHouseMedical,
   faArrowDownUpAcrossLine,
 } from '@fortawesome/free-solid-svg-icons';
+import { ToastrService } from 'ngx-toastr';
 import { User } from 'src/app/model/user';
+import { UserService } from 'src/app/services/user.service';
+import { YesNoModalComponent } from 'src/app/shared/components/modals/yes-no-modal/yes-no-modal.component';
 
 @Component({
   selector: 'app-user-entry',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule, YesNoModalComponent],
   templateUrl: './user-entry.component.html',
   styles: [],
 })
@@ -25,14 +28,61 @@ export class UserEntryComponent {
   faTrash: IconDefinition = faTrash;
   faUserEdit: IconDefinition = faUserEdit;
   faHouse: IconDefinition = faHouseMedical;
+  showDeleteModal: boolean = false;
+  showRoleChangeModal: boolean = false;
+  roleChangeModalDescription: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private toastr: ToastrService,
+    private router: Router
+  ) { }
 
-  handleDelete(): void {}
+  handleDelete(): void {
+    this.showDeleteModal = true;
+  }
 
-  handleChangeRole(): void {}
+  sendDeletionRequest(): void {
+    this.userService.delete(
+      this.user.id,
+      (message: string) => {
+        this.toastr.success(message);
+      },
+      (err) => this.toastr.error(err.message));
+    this.closeDeleteModal();
+    setTimeout(() => {
+      location.reload();
+    }, 500)
+  }
+  
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+  }
 
+  closeRoleChangeModal(): void {
+    this.showRoleChangeModal = false; 
+  }
+  
   handleRealEstate(): void {
     this.router.navigate([`admin/settings/${this.user!.email}`]);
+  }
+
+  handleRoleChange(): void {
+    this.showRoleChangeModal = true;
+    this.roleChangeModalDescription = `Are you sure you want to change this user\'s role to ${this.user.role === 'ROLE_TENANT' ? 'LANDLORD' : 'TENANT'}?`;
+  }
+
+  sendRoleChangeRequest(): void {
+    this.userService.changeRole(
+      this.user.id,
+      this.user.role === 'ROLE_TENANT' ? 'ROLE_LANDLORD' : 'ROLE_TENANT',
+      (message: string) => {
+        this.toastr.success(message);
+      },
+      (err) => this.toastr.error(err.message));
+    this.closeRoleChangeModal();
+    setTimeout(() => {
+      location.reload();
+    }, 500)
   }
 }

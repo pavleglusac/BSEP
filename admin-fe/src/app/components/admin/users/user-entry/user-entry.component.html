@@ -25,9 +25,14 @@
   </div>
   
   <!-- actions -->
-  <div class="flex my-auto gap-x-4">
-    <button class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto pl-1" (click)="handleDelete()">
-      <fa-icon [icon]="faUserEdit" class="text-light my-auto"></fa-icon>
+  <div class="flex justify-end my-auto gap-x-4">
+    <button *ngIf="['ROLE_TENANT', 'ROLE_LANDLORD'].includes(user.role)"
+    class="bg-accent hover:bg-opacity-90 active:bg-accent-dark
+    h-10 shrink-0 my-auto px-4" (click)="handleRoleChange()">
+      <div class="flex justify-center items-center gap-x-2 mx-auto">
+        <fa-icon [icon]="faUserEdit" class="text-light my-auto"></fa-icon>
+        <div class="text-light font-medium my-auto">CHANGE ROLE</div>
+      </div>
     </button>
     <button class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto" (click)="handleRealEstate()">
       <fa-icon [icon]="faHouse" class="text-light my-auto"></fa-icon>
@@ -37,4 +42,22 @@
     </button>
   </div>
 
+</div>
+
+<div *ngIf="showDeleteModal">
+  <app-yes-no-modal
+    [title]="'User deletion'"
+    [description]="'Are you sure you want to delete this user?'"
+    (yes)="sendDeletionRequest()"
+    (no)="closeDeleteModal()"
+  ></app-yes-no-modal>
+</div>
+
+<div *ngIf="showRoleChangeModal">
+  <app-yes-no-modal
+    [title]="'Role change'"
+    [description]="roleChangeModalDescription"
+    (yes)="sendRoleChangeRequest()"
+    (no)="closeRoleChangeModal()"
+  ></app-yes-no-modal>
 </div>
