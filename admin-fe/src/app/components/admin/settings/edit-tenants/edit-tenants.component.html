@@ -1,0 +1,29 @@
+<p-dialog position="center" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" class="bg-white h-50" [closable]="true" (onHide)="change()">
+    <div  class="text-light bg-dark max-w-lg border ml-64">
+        <div class="text-light flex flex-col gap-2 p-4 justify-start">
+            <div class="flex flex-col gap-3">
+                <div class="font-semibold text-light uppercase self-start mb-3" *ngIf="tenants && tenants.length > 0">
+                    tenants
+                </div>
+                <div *ngFor="let tenant of tenants" class="flex gap-2">
+                    <img src="/assets/images/default_pfp.png" alt="profile picture" class="w-10 h-10 rounded-full my-auto border-black">
+                    <div class="flex flex-col">
+                        <p class="text-light font-medium">{{tenant.name}}</p>
+                        <p class="text-medium text-sm">{{tenant.email}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between mt-7 mb-3">
+                <input placeholder="Enter new tenant's email"
+                class="w-[80%] appearance-none block text-white tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 duration-300 border-light"
+                [(ngModel)] = "newTenantEmail"/>
+                <button class="bg-accent hover:bg-accent-dark text-light p-1 px-2" (click)="onAdd()">
+                    <fa-icon [icon]="faAdd" class="text-light my-auto"></fa-icon>
+                </button>
+            </div>
+            <div class="flex gap-3 self-end">
+                <button class=" hover:bg-accent text-sm bg-gray-700 font-semibold shadow w-20 text-light p-1" (click)="hideDialog()" >Close</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>

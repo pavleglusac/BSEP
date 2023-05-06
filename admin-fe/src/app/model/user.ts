@@ -15,7 +15,15 @@ export class RegisterUser {
   role: Role = Role.Tenant;
 }
 
+export class Tenant {
+  id: string = '';
+  name: string = '';
+  email: string = '';
+  imageUrl: string = '';
+}
+
 enum Role {
   Tenant = 'ROLE_TENANT',
   Landlord = 'ROLE_LANDLORD',
 }
+

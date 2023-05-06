@@ -31,7 +31,7 @@ export class SettingsComponent implements OnInit {
 
   email: string | null = '';
   realEstates: RealEstate[] | null = null;
-  newRealEstate: RealEstate = new RealEstate('', '');
+  newRealEstate: RealEstate = new RealEstate('','', '', '', []);
   errorEmail: string = '';
   errorName: string = '';
   errorAddress: string = '';
@@ -79,7 +79,7 @@ export class SettingsComponent implements OnInit {
   };
 
   handleCancel = () => {
-    this.newRealEstate = new RealEstate('', '');
+    this.newRealEstate = new RealEstate('','', '', '', []);
     this.showAddRealEstate = false;
   };
 

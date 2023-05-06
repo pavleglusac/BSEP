@@ -8,15 +8,12 @@ import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Data
 @Table(name = "USERS")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE USERS SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
@@ -52,9 +49,9 @@ public class User implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
-	@OneToMany()
-	private List<RealEstate> realEstates;
-
+	public List<RealEstate> getRealEstates() {
+		return new ArrayList<>();
+	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.singletonList(this.role.toAuthority());
