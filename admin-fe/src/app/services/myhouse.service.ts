@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RealEstate } from '../model/myHouse';
+import { Tenant } from '../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +47,22 @@ export class MyhouseService {
     errorCb: (error: any) => void
   ) {
     this.http.put(`api/myhouse/realestate/${email}`, realEstate).subscribe({
+      next(req: any) {
+        successCb(req);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
+  addNewTenant(
+    email: string,
+    realEstateId: string,
+    successCb: (tenant: Tenant) => void,
+    errorCb: (error: any) => void
+  ) {
+    this.http.post(`api/myhouse/tenant`, {email, realEstateId}).subscribe({
       next(req: any) {
         successCb(req);
       },

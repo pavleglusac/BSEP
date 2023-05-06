@@ -1,7 +1,12 @@
+import { Tenant } from "./user";
+
 export class RealEstate {
   constructor(
+    public id: string,
     public name: string,
     public address: string,
+    public landlord: string,
+    public tenants: Tenant[],
     public devices?: Device[]
   ) {}
 }

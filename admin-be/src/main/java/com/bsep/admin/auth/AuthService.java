@@ -4,7 +4,9 @@ import com.bsep.admin.auth.dto.LoginRequest;
 import com.bsep.admin.auth.dto.RegistrationRequest;
 import com.bsep.admin.auth.dto.TokenResponse;
 import com.bsep.admin.exception.UserNotFoundException;
+import com.bsep.admin.model.Landlord;
 import com.bsep.admin.model.Role;
+import com.bsep.admin.model.Tenant;
 import com.bsep.admin.model.User;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.security.CustomAuthenticationToken;
@@ -115,11 +117,12 @@ public class AuthService {
 	}
 
 	private void createUser(RegistrationRequest registrationRequest) {
-		User user = new User();
-
+		User user;
 		if (Objects.equals(registrationRequest.getRole(), "ROLE_TENANT")) {
+			user = new Tenant();
 			user.setRole(Role.ROLE_TENANT);
 		} else if (Objects.equals(registrationRequest.getRole(), "ROLE_LANDLORD")) {
+			user = new Landlord();
 			user.setRole(Role.ROLE_LANDLORD);
 		} else {
 			throw new RuntimeException("Invalid role");
