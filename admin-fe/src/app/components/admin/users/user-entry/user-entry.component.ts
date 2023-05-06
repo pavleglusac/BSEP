@@ -61,6 +61,8 @@ export class UserEntryComponent {
 
   closeRoleChangeModal(): void {
     this.showRoleChangeModal = false; 
+  }
+  
   handleRealEstate(): void {
     this.router.navigate([`admin/settings/${this.user!.email}`]);
   }
