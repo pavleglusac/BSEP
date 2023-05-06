@@ -56,7 +56,7 @@ const menus = {
   System: [
     {
       title: 'Settings',
-      link: '',
+      link: 'admin/settings',
       icon: faGear,
     },
     {
@@ -106,9 +106,11 @@ export class AdminSidebarComponent {
   signOut(): void {
     localStorage.removeItem('token');
     // accept plain text response
-    this.http.post('api/auth/logout', {}, {responseType: 'text'}).subscribe(() => {
-      window.location.href = '/';
-    });
+    this.http
+      .post('api/auth/logout', {}, { responseType: 'text' })
+      .subscribe(() => {
+        window.location.href = '/';
+      });
   }
 
   navigate(option: MenuOption) {

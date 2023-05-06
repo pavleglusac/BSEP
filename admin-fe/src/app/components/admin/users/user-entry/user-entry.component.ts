@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faLock, faTrash, faUserEdit } from '@fortawesome/free-solid-svg-icons';
+import {
+  faLock,
+  faTrash,
+  faUserEdit,
+  faHouseMedical,
+  faArrowDownUpAcrossLine,
+} from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
 import { User } from 'src/app/model/user';
 import { UserService } from 'src/app/services/user.service';
@@ -13,21 +20,22 @@ import { YesNoModalComponent } from 'src/app/shared/components/modals/yes-no-mod
   standalone: true,
   imports: [CommonModule, FontAwesomeModule, YesNoModalComponent],
   templateUrl: './user-entry.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class UserEntryComponent {
   @Input() user!: User;
   faLock: IconDefinition = faLock;
   faTrash: IconDefinition = faTrash;
   faUserEdit: IconDefinition = faUserEdit;
+  faHouse: IconDefinition = faHouseMedical;
   showDeleteModal: boolean = false;
   showRoleChangeModal: boolean = false;
   roleChangeModalDescription: string = '';
 
   constructor(
     private userService: UserService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) { }
 
   handleDelete(): void {
@@ -53,6 +61,8 @@ export class UserEntryComponent {
 
   closeRoleChangeModal(): void {
     this.showRoleChangeModal = false; 
+  handleRealEstate(): void {
+    this.router.navigate([`admin/settings/${this.user!.email}`]);
   }
 
   handleRoleChange(): void {

@@ -1,0 +1,17 @@
+<div class="py-2 flex justify-between">
+    <div class="flex flex-col gap-1 text-light">
+        <input class="font-semibold " [(ngModel)] = "realEstate.name" [disabled]="!editable" [ngClass]="editable ? 'editable' : 'not-editable'"/>
+        <input class="font-light text-sm" [(ngModel)] = "realEstate.address" [disabled]="!editable" [ngClass]="editable ? 'editable' : 'not-editable'"/>
+    </div>
+    <div class="flex gap-3">
+        <button title="Edit real estate" *ngIf="!editable" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto" (click)="edit()">
+            <fa-icon [icon]="faEdit" class="text-light my-auto"></fa-icon>
+        </button>
+        <button title="Save real estate" *ngIf="editable" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto" (click)="save()">
+            <fa-icon [icon]="faSave" class="text-light my-auto"></fa-icon>
+        </button>
+        <button title="Edit devices" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto">
+            <fa-icon [icon]="faDevices" class="text-light my-auto"></fa-icon>
+        </button>
+    </div>
+</div>

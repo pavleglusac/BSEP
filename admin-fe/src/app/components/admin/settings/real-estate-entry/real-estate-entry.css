@@ -1,0 +1,7 @@
+.not-editable {
+    @apply bg-transparent focus:outline-none
+}
+
+.editable {
+    @apply appearance-none block w-full text-white tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 duration-300 border-light
+}
