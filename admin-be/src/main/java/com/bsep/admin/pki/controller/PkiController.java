@@ -42,7 +42,7 @@ public class PkiController {
 	}
 
 	@PostMapping("/csr")
-	@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('WRITE_CSR')")
 	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
 		try {
@@ -54,45 +54,45 @@ public class PkiController {
 	}
 
 	@GetMapping("/csr")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('READ_CSR')")
 	public ResponseEntity<List<CsrDto>> findAllCsr() {
 		return ResponseEntity.ok(csrService.findAllCsr());
 	}
 
 	@GetMapping("/csr/{email}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('READ_CSR')")
 	public Csr getCsr(@PathVariable String email) {
 		return csrService.getCsrByUser(email);
 	}
 
 	@PostMapping(value = "/certificate", produces = "application/json")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		certificateService.processCertificate(cert);
 		return ResponseEntity.ok("Certificate created");
 	}
 
 	@GetMapping("/certificate")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<List<CertificateDto>> findAllCertificate() {
 		return ResponseEntity.ok(certificateService.findAllCertificate());
 	}
 
 	@PostMapping(value = "/certificate-revocation", produces = "application/json")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<String> revokeCertificate(@RequestBody CertificateRevocationDto dto, Authentication authentication) {
 		certificateService.revokeCertificate(dto);
 		return ResponseEntity.ok("Certificate revoked");
 	}
 
 	@GetMapping("certificate/distribute/{email}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<Map<String, String>> distributeCertificate(@PathVariable String email) {
 		return ResponseEntity.ok(Map.of("message", certificateService.distributeCertificate(email)));
 	}
 
 	@DeleteMapping("/csr/{id}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<Map<String, String>> denyCertificate(@PathVariable UUID id) {
 		return ResponseEntity.ok(Map.of("message", csrService.denyCsr(id)));
 	}

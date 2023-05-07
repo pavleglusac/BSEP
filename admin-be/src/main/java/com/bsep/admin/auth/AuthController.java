@@ -30,13 +30,13 @@ public class AuthController {
 	}
 
 	@GetMapping("/privileged")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public String privileged() {
 		return "Privileged";
 	}
 
 	@PostMapping("/register")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('WRITE_USER')")
 	public ResponseEntity<Map<String, String>> register(@RequestBody RegistrationRequest loginRequest, HttpServletResponse response) {
 		authService.register(loginRequest, response);
 		return ResponseEntity.ok(Map.of("message", "User successfully registered. Please check your email for verification."));

@@ -47,7 +47,7 @@ public class MyHouseService {
 
     public RealEstateDto addRealEstate(String email, RealEstateDto realEstateDto) {
         User user = getUser(email);
-        if (user.getRole() != Role.ROLE_LANDLORD) {
+        if (!user.hasRole("ROLE_LANDLORD")) {
             throw new RuntimeException("User must be landlord in order to add new real estate.");
         }
         Landlord landlord = (Landlord) user;
@@ -66,7 +66,7 @@ public class MyHouseService {
             throw new RuntimeException("User does not have permission to have real estates");
         }
 
-        if (user.getRole() == Role.ROLE_TENANT || user.getRole() == Role.ROLE_LANDLORD) {
+        if (user.hasRole("ROLE_TENANT") || user.hasRole("ROLE_LANDLORD")) {
             return user;
         }
         throw new RuntimeException("User does not have permission to have real estates");
@@ -90,7 +90,7 @@ public class MyHouseService {
 
     public TenantDto addTenant(AddTenantDto addTenantDto) {
         User user = getUser(addTenantDto.getEmail());
-        if (user.getRole() != Role.ROLE_TENANT || !user.getEmailVerified())
+        if (!user.hasRole("ROLE_TENANT") || !user.getEmailVerified())
             throw new RuntimeException("User does not have permission to be tenant for real estate.");
         Tenant tenant = (Tenant) user;
         Optional<RealEstate> realEstateOpt = realEstateRepository.findById(addTenantDto.getRealEstateId());

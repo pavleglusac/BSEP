@@ -20,7 +20,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('READ_USER')")
     public ResponseEntity<Page<UserDisplayDto>> search(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam int page,
@@ -32,14 +32,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('WRITE_USER')")
     public ResponseEntity<Map<String, String>> delete(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.ok(Map.of("message", "User successfully deleted."));
     }
 
     @PatchMapping("/roles/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('WRITE_USER')")
     public ResponseEntity<Map<String, String>> changeRole(@PathVariable UUID id, @RequestBody RoleChangeDto dto) {
         userService.changeRole(id, dto);
         return ResponseEntity.ok(Map.of("message", "Role successfully changed."));
