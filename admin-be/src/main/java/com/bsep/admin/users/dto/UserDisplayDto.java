@@ -12,6 +12,6 @@ public class UserDisplayDto {
     private String email;
     private boolean emailVerified;
     private String imageUrl;
-    private Role role;
+    private String role;
     private boolean isLocked;
 }

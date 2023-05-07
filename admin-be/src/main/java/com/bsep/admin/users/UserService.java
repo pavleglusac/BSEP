@@ -1,8 +1,11 @@
 package com.bsep.admin.users;
 
 import com.bsep.admin.exception.InvalidRoleException;
+import com.bsep.admin.model.Landlord;
 import com.bsep.admin.model.Role;
+import com.bsep.admin.model.Tenant;
 import com.bsep.admin.model.User;
+import com.bsep.admin.repository.RoleRepository;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.users.dto.RoleChangeDto;
 import com.bsep.admin.users.dto.UserDisplayDto;
@@ -12,10 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 
@@ -24,10 +24,14 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    public RoleRepository roleRepository;
+
     public Page<UserDisplayDto> search(String query, int page, int amount, List<String> roles, boolean onlyLocked) {
-        EnumSet<Role> roleSet = EnumSet.noneOf(Role.class);
+        Set<Role> roleSet = new HashSet<>();
+//        EnumSet<Role> roleSet = EnumSet.noneOf(Role.class);
         try {
-            List<Role> rolesList = roles.stream().map(x -> Role.valueOf(x)).toList();
+            List<Role> rolesList = roles.stream().map(x -> roleRepository.findByName(x).orElseThrow()).toList();
             roleSet.addAll(rolesList);
         } catch (Exception e) {
             throw new InvalidRoleException();
@@ -43,7 +47,7 @@ public class UserService {
             dto.setId(user.getId());
             dto.setName(user.getName());
             dto.setEmail(user.getEmail());
-            dto.setRole(user.getRole());
+            dto.setRole(user.getRoles().get(0).getName());
             dto.setEmailVerified(user.getEmailVerified());
             dto.setImageUrl(user.getImageUrl());
             dto.setLocked(!user.isAccountNonLocked());
@@ -60,14 +64,25 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow();
         Role role;
         try {
-            role = Role.valueOf(dto.getNewRole());
+            role = roleRepository.findByName(dto.getNewRole()).orElseThrow();
         } catch (Exception e) {
             throw new InvalidRoleException();
         }
-        if (EnumSet.of(Role.ROLE_TENANT, Role.ROLE_LANDLORD).contains(role)) {
-            user.setRole(role);
-            userRepository.save(user);
-        } else {
+        if (Objects.equals(role.getName(), "ROLE_TENANT")) {
+            Tenant tenant = new Tenant(user);
+            tenant.getRoles().clear();
+            tenant.getRoles().add(role);
+            userRepository.deleteById(user.getId());
+            userRepository.save(tenant);
+        }
+        else if (Objects.equals(role.getName(), "ROLE_LANDLORD")) {
+            Landlord landlord = new Landlord(user);
+            landlord.getRoles().clear();
+            landlord.getRoles().add(role);
+            userRepository.deleteById(user.getId());
+            userRepository.save(landlord);
+        }
+        else {
             throw new InvalidRoleException();
         }
     }

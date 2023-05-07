@@ -65,4 +65,10 @@ public class ControllerAdvisor {
 		return new ResponseError(HttpStatus.BAD_REQUEST, e.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(ForbiddenRealEstateAction.class)
+	public ResponseError handleForbiddenRealEstateAction(ForbiddenRealEstateAction e) {
+		return new ResponseError(HttpStatus.FORBIDDEN, e.getMessage());
+	}
+
 }

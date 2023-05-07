@@ -2,7 +2,7 @@
     <div  class="text-light bg-dark max-w-lg border ml-64">
         <div class="text-light flex flex-col gap-2 p-4 justify-start">
             <div class="flex flex-col gap-3">
-                <div class="font-semibold text-light uppercase self-start mb-3" *ngIf="tenants && tenants.length > 0">
+                <div class="font-semibold text-light uppercase self-start mb-3">
                     tenants
                 </div>
                 <div *ngFor="let tenant of tenants" class="flex gap-2">
@@ -17,7 +17,7 @@
                 <input placeholder="Enter new tenant's email"
                 class="w-[80%] appearance-none block text-white tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 duration-300 border-light"
                 [(ngModel)] = "newTenantEmail"/>
-                <button class="bg-accent hover:bg-accent-dark text-light p-1 px-2" (click)="onAdd()">
+                <button title="Add tenant" class="bg-accent hover:bg-accent-dark text-light p-1 px-2" (click)="onAdd()">
                     <fa-icon [icon]="faAdd" class="text-light my-auto"></fa-icon>
                 </button>
             </div>

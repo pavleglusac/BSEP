@@ -19,6 +19,9 @@ public class Tenant extends User{
     @ManyToOne()
     private RealEstate realEstate;
 
+    public Tenant(User user) {
+        super(user.getId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getLoginAttempts(), user.getPassword(), user.getDeleted(), user.getLoginToken(), user.getEmailVerified(), user.getEmailVerificationToken(), user.getRoles());
+    }
     @Override
     public List<RealEstate> getRealEstates() {
         List<RealEstate> realEstates = new ArrayList<>();
