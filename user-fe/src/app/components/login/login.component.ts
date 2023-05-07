@@ -9,11 +9,15 @@ import {
   LoggedUserActionType,
 } from 'src/app/shared/store/logged-user-slice/logged-user.actions';
 import { tokenName } from 'src/app/shared/constants';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
 })
 export class LoginComponent {
   page: number = 1;
