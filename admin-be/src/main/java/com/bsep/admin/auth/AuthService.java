@@ -65,6 +65,7 @@ public class AuthService {
 				loginRequest.getLoginToken(),
 				secret
 		));
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String accessToken = tokenProvider.createAccessToken(authentication, secret);
 		Long expiresAt = tokenProvider.readClaims(accessToken).getExpiration().getTime();

@@ -54,6 +54,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			return new CustomAuthenticationToken(user, password, loginToken, secret, user.getAuthorities());
 		}
 		// reduce number of login attempts
+		System.out.println("Ovo se pozove ako je pogresio sifru");
 		user.setLoginAttempts(user.getLoginAttempts() + 1);
 		// if number of login attempts is 0, disable user
 		if (user.getLoginAttempts() >= 3) {
