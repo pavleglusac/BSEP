@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -36,7 +36,8 @@ export class UserEntryComponent {
     private userService: UserService,
     private toastr: ToastrService,
     private router: Router
-  ) { }
+  ) {}
+  
 
   handleDelete(): void {
     this.showDeleteModal = true;
@@ -69,7 +70,7 @@ export class UserEntryComponent {
 
   handleRoleChange(): void {
     this.showRoleChangeModal = true;
-    this.roleChangeModalDescription = `Are you sure you want to change this user\'s role to ${this.user.role === 'ROLE_TENANT' ? 'LANDLORD' : 'TENANT'}?`;
+    this.roleChangeModalDescription = `Are you sure you want to change this user\'s role to ${this.user.role === 'ROLE_TENANT' ? 'LANDLORD' : 'TENANT'}? You will lose all your real estates.`;
   }
 
   sendRoleChangeRequest(): void {

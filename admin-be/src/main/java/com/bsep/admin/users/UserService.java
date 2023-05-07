@@ -1,7 +1,9 @@
 package com.bsep.admin.users;
 
 import com.bsep.admin.exception.InvalidRoleException;
+import com.bsep.admin.model.Landlord;
 import com.bsep.admin.model.Role;
+import com.bsep.admin.model.Tenant;
 import com.bsep.admin.model.User;
 import com.bsep.admin.repository.RoleRepository;
 import com.bsep.admin.repository.UserRepository;
@@ -45,7 +47,7 @@ public class UserService {
             dto.setId(user.getId());
             dto.setName(user.getName());
             dto.setEmail(user.getEmail());
-            dto.setRole(user.getRoles().get(0));
+            dto.setRole(user.getRoles().get(0).getName());
             dto.setEmailVerified(user.getEmailVerified());
             dto.setImageUrl(user.getImageUrl());
             dto.setLocked(!user.isAccountNonLocked());
@@ -66,11 +68,21 @@ public class UserService {
         } catch (Exception e) {
             throw new InvalidRoleException();
         }
-        if (!Objects.equals(role.getName(), "ROLE_ADMIN")) {
-            user.getRoles().clear();
-            user.getRoles().add(role);
-            userRepository.save(user);
-        } else {
+        if (Objects.equals(role.getName(), "ROLE_TENANT")) {
+            Tenant tenant = new Tenant(user);
+            tenant.getRoles().clear();
+            tenant.getRoles().add(role);
+            userRepository.deleteById(user.getId());
+            userRepository.save(tenant);
+        }
+        else if (Objects.equals(role.getName(), "ROLE_LANDLORD")) {
+            Landlord landlord = new Landlord(user);
+            landlord.getRoles().clear();
+            landlord.getRoles().add(role);
+            userRepository.deleteById(user.getId());
+            userRepository.save(landlord);
+        }
+        else {
             throw new InvalidRoleException();
         }
     }

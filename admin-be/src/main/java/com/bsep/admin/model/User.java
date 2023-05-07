@@ -2,6 +2,7 @@ package com.bsep.admin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -16,6 +17,7 @@ import java.util.*;
 @Table(name = "USERS")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
+@AllArgsConstructor
 @SQLDelete(sql = "UPDATE USERS SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 public class User implements UserDetails {
