@@ -23,6 +23,8 @@ export class UserSearchComponent {
   allRoles: string[] = ['ROLE_ADMIN', 'ROLE_TENANT', 'ROLE_LANDLORD'];
   onlyLocked: boolean = false;
 
+  showQueryError: boolean = false;
+
   selectRole(event: any, role: string): void {
     if (event.target.checked) {
       this.selectedRoles.push(role);
@@ -32,6 +34,13 @@ export class UserSearchComponent {
   }
 
   handleSearch(): void {
-    this.parent.search(this.query, this.selectedRoles, this.onlyLocked);
+    if (this.isQueryValid())
+      this.parent.search(this.query, this.selectedRoles, this.onlyLocked);
+    else
+      this.showQueryError = true;
+  }
+
+  isQueryValid(): boolean {
+    return /^[a-zA-Z0-9.@\s]*$/.test(this.query);
   }
 }

@@ -1,5 +1,6 @@
 package com.bsep.admin.users;
 
+import com.bsep.admin.exception.InvalidQueryException;
 import com.bsep.admin.exception.InvalidRoleException;
 import com.bsep.admin.model.Landlord;
 import com.bsep.admin.model.Role;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 
@@ -27,9 +29,13 @@ public class UserService {
     @Autowired
     public RoleRepository roleRepository;
 
+    private static final Pattern regex = Pattern.compile("^[\\w.@\\s]*$");
+
     public Page<UserDisplayDto> search(String query, int page, int amount, List<String> roles, boolean onlyLocked) {
+        if (!regex.matcher(query).matches()) {
+            throw new InvalidQueryException();
+        }
         Set<Role> roleSet = new HashSet<>();
-//        EnumSet<Role> roleSet = EnumSet.noneOf(Role.class);
         try {
             List<Role> rolesList = roles.stream().map(x -> roleRepository.findByName(x).orElseThrow()).toList();
             roleSet.addAll(rolesList);

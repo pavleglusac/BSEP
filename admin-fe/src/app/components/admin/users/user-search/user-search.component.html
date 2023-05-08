@@ -10,7 +10,9 @@
         <input class="appearance-none block w-full text-white tracking-wide
         placeholder-medium caret-medium border-b focus:border-accent
         bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
-        [ngClass]="query ? 'border-light' : 'border-medium'" [(ngModel)]="query"
+        [ngClass]="query && !showQueryError ? 'border-light' : 'border-medium'"
+        [ngClass]="showQueryError ? 'border-red-600' : ''" [(ngModel)]="query"
+        (change)="showQueryError = false"
         [ngModelOptions]="{standalone: true}" id="user-search" type="text" placeholder="Query...">
       </form>
     </div>
