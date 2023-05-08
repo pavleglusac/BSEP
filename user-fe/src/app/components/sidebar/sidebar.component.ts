@@ -11,6 +11,7 @@ import {
   faUser
 } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs';
+import { tokenName } from 'src/app/shared/constants';
 
 interface MenuOption {
   title: string;
@@ -72,13 +73,13 @@ export class SidebarComponent {
   }
 
   signOut(): void {
-    localStorage.removeItem('token');
     // accept plain text response
     this.http
-      .post('api/auth/logout', {}, { responseType: 'text' })
-      .subscribe(() => {
-        window.location.href = '/';
-      });
+    .post('api/auth/logout', {}, { responseType: 'text' })
+    .subscribe(() => {
+      window.location.href = '/';
+      window.sessionStorage.removeItem(tokenName);
+    });
   }
 
   navigate(option: MenuOption) {
