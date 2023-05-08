@@ -23,7 +23,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority('READ_USER')")
+    @PreAuthorize("hasAuthority('SEARCH_USER')")
     public ResponseEntity<Page<UserDisplayDto>> search(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam @Min(0) int page,
