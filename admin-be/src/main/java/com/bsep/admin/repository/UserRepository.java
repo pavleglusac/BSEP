@@ -11,18 +11,19 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 	Optional<User> findByEmail(String email);
 
 	Optional<User> findByEmailVerificationToken(String token);
-	@Query("SELECT u FROM User u WHERE " +
+	@Query("SELECT u FROM User u JOIN u.roles r WHERE " +
 			"(u.name LIKE %:query% OR u.email LIKE %:query%) " +
-			"AND u.role IN :roles AND (u.loginAttempts >= 3 OR (u.loginAttempts < 3 AND :onlyLocked = false))")
+			"AND r IN :roles AND (u.loginAttempts >= 3 OR (u.loginAttempts < 3 AND :onlyLocked = false))")
 	Page<User> search(
 			@Param("query") String query,
-			@Param("roles") EnumSet<Role> roles,
+			@Param("roles") Set<Role> roles,
 			@Param("onlyLocked") boolean onlyLocked,
 			PageRequest pageRequest);
 }

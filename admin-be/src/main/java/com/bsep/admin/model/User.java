@@ -1,6 +1,8 @@
 package com.bsep.admin.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -15,6 +17,7 @@ import java.util.*;
 @Table(name = "USERS")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
+@AllArgsConstructor
 @SQLDelete(sql = "UPDATE USERS SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 public class User implements UserDetails {
@@ -46,15 +49,42 @@ public class User implements UserDetails {
 	@Column(name = "EMAIL_VERIFICATION_TOKEN")
 	private String emailVerificationToken;
 
-	@Enumerated(EnumType.STRING)
-	private Role role;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_role",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+	private List<Role> roles;
 
 	public List<RealEstate> getRealEstates() {
 		return new ArrayList<>();
 	}
+
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.singletonList(this.role.toAuthority());
+		List<GrantedAuthority> permissions = new ArrayList<>(20);
+		for (Role role : this.roles) {
+			permissions.addAll(role.getPrivileges());
+		}
+		return permissions;
+	}
+
+	public Boolean hasAdminRole() {
+		for (Role role : this.roles) {
+			if (role.getName().equals("ROLE_ADMIN")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Boolean hasRole(String roleName) {
+		for (Role role : this.roles) {
+			if (role.getName().equals(roleName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

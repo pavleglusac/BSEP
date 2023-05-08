@@ -113,7 +113,7 @@ public class CertificateService {
 
 		// save to db
 		csr.setStatus(CsrStatus.APPROVED);
-		if (!userRepository.findByEmail(csr.getEmail()).get().getRole().equals(Role.ROLE_ADMIN)) {
+		if (!userRepository.findByEmail(csr.getEmail()).get().hasAdminRole()) {
 			certificateRevocationRepository.deleteByUserEmail(csr.getEmail());
 		}
 		csrService.saveCsr(csr);
@@ -183,8 +183,8 @@ public class CertificateService {
 		KeyStoreReader keyStoreReader = new KeyStoreReader();
 		Certificate[] certChain = keyStoreReader.readCertificateChain(adminService.KEYSTORE_FILE, "admin", alias);
 		return Arrays.stream(certChain)
-					 .map(cert -> (X509Certificate) cert)
-					 .toArray(X509Certificate[]::new);
+				.map(cert -> (X509Certificate) cert)
+				.toArray(X509Certificate[]::new);
 	}
 
 	private SubjectData generateSubjectData() {
@@ -235,13 +235,13 @@ public class CertificateService {
 			certificateDto.setExtensions(new ArrayList<>());
 			certificateDto.setAlgorithm(certificate.getPublicKey().getAlgorithm());
 			certificateDto.setValidityStart(certificate.getNotBefore()
-													   .toInstant()
-													   .atZone(ZoneId.systemDefault()).toLocalDate()
-													   .atStartOfDay());
+					.toInstant()
+					.atZone(ZoneId.systemDefault()).toLocalDate()
+					.atStartOfDay());
 			certificateDto.setValidityEnd(certificate.getNotAfter()
-													 .toInstant()
-													 .atZone(ZoneId.systemDefault()).toLocalDate()
-													 .atStartOfDay());
+					.toInstant()
+					.atZone(ZoneId.systemDefault()).toLocalDate()
+					.atStartOfDay());
 			// get email from subject
 			String email = getEmailFromCertificate(certificate);
 			certificateDto.setCsrId(email);
@@ -377,7 +377,13 @@ public class CertificateService {
 		certificateRevocation.setTimestamp(LocalDateTime.now());
 		certificateRevocation.setSerialNumber(dto.getSerialNumber());
 		certificateRevocation.setUserEmail(dto.getEmail());
-		certificateRevocation.setUserType(user.getRole().toString());
+		String userType = "";
+		if (user.hasAdminRole()) {
+			userType = "ROLE_ADMIN";
+		} else {
+			userType = "ROLE_USER";
+		}
+		certificateRevocation.setUserType(userType);
 		try {
 			certificateRevocationRepository.save(certificateRevocation);
 		} catch (DataIntegrityViolationException e) {
@@ -390,14 +396,12 @@ public class CertificateService {
 		Optional<User> optionalUser = userRepository.findByEmail(email);
 		if (optionalUser.isEmpty()) return false;
 		User user = optionalUser.get();
-		if (user.getRole().equals(Role.ROLE_USER) || user.getRole().equals(Role.ROLE_TENANT)
-				|| user.getRole().equals(Role.ROLE_LANDLORD)) {
+		if (!user.hasAdminRole()) {
 			return certificateRevocationRepository.findByUserEmail(email).isPresent();
-		} else if (user.getRole().equals(Role.ROLE_ADMIN)) {
+		} else  {
 			return certificateRevocationRepository
 					.findByUserEmailAndSerialNumber(email, certificate.getSerialNumber()).isPresent();
 		}
-		return false;
 	}
 
 }

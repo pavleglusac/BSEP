@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
@@ -37,6 +38,7 @@ public class SecurityConfig {
 		AuthenticationManagerBuilder authenticationManagerBuilder =
 				http.getSharedObject(AuthenticationManagerBuilder.class);
 		authenticationManagerBuilder.authenticationProvider(authProvider);
+		authenticationManagerBuilder.parentAuthenticationManager(null);
 		return authenticationManagerBuilder.build();
 	}
 
@@ -47,6 +49,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
 		http
 				.cors()
 					.and()
@@ -55,7 +58,10 @@ public class SecurityConfig {
 					.and()
 				.csrf()
 					.disable()
+				.addFilterAfter(new CspFilter(), HeaderWriterFilter.class)
 				.headers()
+					.xssProtection()
+					.and()
 					.frameOptions().disable()
 					.and()
 				.formLogin()
@@ -73,6 +79,8 @@ public class SecurityConfig {
 					.anyRequest().authenticated();
 
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
 		return http.build();
 	}
 

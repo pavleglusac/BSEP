@@ -8,6 +8,7 @@ import com.bsep.admin.model.Landlord;
 import com.bsep.admin.model.Role;
 import com.bsep.admin.model.Tenant;
 import com.bsep.admin.model.User;
+import com.bsep.admin.repository.RoleRepository;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.security.CustomAuthenticationToken;
 import com.bsep.admin.security.TokenManager;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -51,6 +53,8 @@ public class AuthService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private RoleRepository roleRepository;
 
 	public TokenResponse login(LoginRequest loginRequest, HttpServletResponse response) {
 		String secret = generateRandomToken(20);
@@ -61,6 +65,7 @@ public class AuthService {
 				loginRequest.getLoginToken(),
 				secret
 		));
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String accessToken = tokenProvider.createAccessToken(authentication, secret);
 		Long expiresAt = tokenProvider.readClaims(accessToken).getExpiration().getTime();
@@ -120,10 +125,14 @@ public class AuthService {
 		User user;
 		if (Objects.equals(registrationRequest.getRole(), "ROLE_TENANT")) {
 			user = new Tenant();
-			user.setRole(Role.ROLE_TENANT);
+			ArrayList<Role> roles = new ArrayList<>();
+			roles.add(roleRepository.findByName("ROLE_TENANT").orElseThrow(() -> new RuntimeException("Role not found")));
+			user.setRoles(roles);
 		} else if (Objects.equals(registrationRequest.getRole(), "ROLE_LANDLORD")) {
 			user = new Landlord();
-			user.setRole(Role.ROLE_LANDLORD);
+			ArrayList<Role> roles = new ArrayList<>();
+			roles.add(roleRepository.findByName("ROLE_LANDLORD").orElseThrow(() -> new RuntimeException("Role not found")));
+			user.setRoles(roles);
 		} else {
 			throw new RuntimeException("Invalid role");
 		}
