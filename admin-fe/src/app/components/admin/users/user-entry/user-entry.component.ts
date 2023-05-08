@@ -70,7 +70,7 @@ export class UserEntryComponent {
 
   handleRoleChange(): void {
     this.showRoleChangeModal = true;
-    this.roleChangeModalDescription = `Are you sure you want to change this user\'s role to ${this.user.role === 'ROLE_TENANT' ? 'LANDLORD' : 'TENANT'}? You will lose all your real estates.`;
+    this.roleChangeModalDescription = `Are you sure you want to change this user\'s role to ${this.user.role === 'ROLE_TENANT' ? 'LANDLORD' : 'TENANT'}? They will lose all their real estates.`;
   }
 
   sendRoleChangeRequest(): void {
