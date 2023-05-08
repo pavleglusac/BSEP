@@ -41,7 +41,7 @@ export class RealEstateEntryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.editableRealEstate = this.realEstate;
+    this.editableRealEstate = {...this.realEstate};
   }
 
   edit = () => {
