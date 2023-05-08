@@ -80,7 +80,8 @@ export class UserEntryComponent {
       (message: string) => {
         this.toastr.success(message);
       },
-      (err) => this.toastr.error(err.message));
+      (err) => {
+        this.toastr.error(err.message)});
     this.closeRoleChangeModal();
     setTimeout(() => {
       location.reload();

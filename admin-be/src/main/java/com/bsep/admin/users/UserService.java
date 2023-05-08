@@ -2,10 +2,9 @@ package com.bsep.admin.users;
 
 import com.bsep.admin.exception.InvalidQueryException;
 import com.bsep.admin.exception.InvalidRoleException;
-import com.bsep.admin.model.Landlord;
-import com.bsep.admin.model.Role;
-import com.bsep.admin.model.Tenant;
-import com.bsep.admin.model.User;
+import com.bsep.admin.model.*;
+import com.bsep.admin.myHouse.MyHouseService;
+import com.bsep.admin.repository.RealEstateRepository;
 import com.bsep.admin.repository.RoleRepository;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.users.dto.RoleChangeDto;
@@ -29,6 +28,8 @@ public class UserService {
     @Autowired
     public RoleRepository roleRepository;
 
+    @Autowired
+    public MyHouseService myHouseService;
     private static final Pattern regex = Pattern.compile("^[\\w.@\\s]*$");
 
     public Page<UserDisplayDto> search(String query, int page, int amount, List<String> roles, boolean onlyLocked) {
@@ -63,6 +64,10 @@ public class UserService {
     }
 
     public void delete(UUID id) {
+        User user = userRepository.findById(id).orElseThrow();
+        if (Objects.equals(user.getRoles().get(0).getName(), "ROLE_LANDLORD")) {
+            myHouseService.removeRealEstatesForLandlord(user.getRealEstates());
+        }
         userRepository.deleteById(id);
     }
 
@@ -78,6 +83,7 @@ public class UserService {
             Tenant tenant = new Tenant(user);
             tenant.getRoles().clear();
             tenant.getRoles().add(role);
+            myHouseService.removeRealEstatesForLandlord(user.getRealEstates());
             userRepository.deleteById(user.getId());
             userRepository.save(tenant);
         }

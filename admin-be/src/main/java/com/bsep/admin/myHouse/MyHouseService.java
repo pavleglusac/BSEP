@@ -33,16 +33,34 @@ public class MyHouseService {
     }
 
     private List<RealEstateDto> getRealEstateDtoFromRealEstates(List<RealEstate> realEstates) {
-        return realEstates.stream().map(realEstate -> new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), getLandlordByRealEstate(realEstate), getTenantsByRealEstate(realEstate))).toList();
+        return realEstates.stream().map(realEstate -> new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), getLandlordByRealEstate(realEstate), getTenantsDtoByRealEstate(realEstate))).toList();
     }
 
     private String getLandlordByRealEstate(RealEstate realEstate) {
         return landlordRepository.findByRealEstatesContains(realEstate).getEmail();
     }
 
-    private List<TenantDto> getTenantsByRealEstate(RealEstate realEstate) {
-        List<Tenant> tenants = tenantRepository.findByRealEstate(realEstate);
+    private List<TenantDto> getTenantsDtoByRealEstate(RealEstate realEstate) {
+        List<Tenant> tenants = this.getTenantsByRealEstate(realEstate);
         return tenants.stream().map(tenant -> new TenantDto(tenant.getId(), tenant.getEmail(), tenant.getName(), tenant.getImageUrl())).toList();
+    }
+
+    private List<Tenant> getTenantsByRealEstate(RealEstate realEstate) {
+        return tenantRepository.findByRealEstate(realEstate);
+    }
+
+    public void removeRealEstatesForLandlord(List<RealEstate> realEstates) {
+        List<RealEstate> realEstateCopy = new ArrayList<>(realEstates);
+        for (RealEstate realEstate: realEstateCopy) {
+            Landlord landlord = landlordRepository.findByRealEstatesContains(realEstate);
+            landlord.getRealEstates().remove(realEstate);
+            landlordRepository.save(landlord);
+            List<Tenant> tenants = this.getTenantsByRealEstate(realEstate);
+            tenants.forEach(tenant -> tenant.setRealEstate(null));
+            tenantRepository.saveAll(tenants);
+            realEstateRepository.deleteById(realEstate.getId());
+        }
+
     }
 
     public RealEstateDto addRealEstate(String email, RealEstateDto realEstateDto) {

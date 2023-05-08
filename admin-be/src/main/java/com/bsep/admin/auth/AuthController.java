@@ -54,7 +54,7 @@ public class AuthController {
 	}
 
 	@GetMapping("/my-profile")
-	//TODO PRE AUTHORIZE
+	@PreAuthorize("hasAuthority('READ_PROFILE')")
 	public ResponseEntity<LoggedUserDto> findRealEstatesForUser(Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
 		return ResponseEntity.ok(new LoggedUserDto(user.getId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getRoles().get(0).getName()));

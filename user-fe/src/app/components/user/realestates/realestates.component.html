@@ -1,7 +1,7 @@
 <div class="m-auto flex justify-start"> 
     <div class="py-12 px-20 w-full">
         <p class="font-semibold italic tracking-wide uppercase text-xl  text-primary-violet mb-10">Real estates</p>
-        <div class="bg-secondary-hover bg-opacity-30 p-5 px-10 shadow-lg rounded">
+        <div class="bg-secondary-hover bg-opacity-30 p-5 px-10 shadow-lg rounded" *ngIf="realEstates && realEstates.length > 0">
             <app-real-estate-entry  *ngFor="let realEstate of realEstates" [realEstate] = "realEstate"></app-real-estate-entry> 
         </div>
     </div>

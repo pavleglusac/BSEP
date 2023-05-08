@@ -35,6 +35,8 @@ INSERT INTO PRIVILEGE (name) VALUES ('WRITE_USER');
 INSERT INTO PRIVILEGE (name) VALUES ('READ_REAL_ESTATE');
 INSERT INTO PRIVILEGE (name) VALUES ('WRITE_REAL_ESTATE');
 
+INSERT INTO PRIVILEGE (name) VALUES ('READ_PROFILE');
+
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 1);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 2);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 3);
@@ -42,13 +44,16 @@ INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 4);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 5);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 6);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 7);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 8);
 
 /* Landlord */
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 3);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 4);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 6);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 8);
 
 /* Tenant */
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 3);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 4);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 6);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 8);

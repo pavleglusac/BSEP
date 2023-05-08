@@ -68,6 +68,10 @@ public class ControllerAdvisor {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseError handleRuntimeException(RuntimeException e) {
+		String msg = "Runtime error!";
+		if (e.getMessage() != null && !e.getMessage().isBlank()) {
+			msg = e.getMessage();
+		}
 		return new ResponseError(HttpStatus.BAD_REQUEST, e.getMessage());
 	}
 
