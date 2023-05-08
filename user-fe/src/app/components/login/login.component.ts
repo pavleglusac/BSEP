@@ -54,13 +54,7 @@ export class LoginComponent {
         this.code,
         (token) => {
           {
-            sessionStorage.setItem(tokenName, token);
-            this.store.dispatch(
-              new LoggedUserAction(LoggedUserActionType.LOGIN)
-            );
-            this.loadUser();
-            this.toastr.success('Login successful');
-            this.router.navigate(['/']);
+            this.loadUser(token);
           }
         },
         (error: any) => {
@@ -70,11 +64,23 @@ export class LoginComponent {
     }
   };
 
-  loadUser = () => {
+  loadUser = (token: string) => {
+    sessionStorage.setItem(tokenName, token);
     this.authService.getUser(
-      (user: User) => this.store.dispatch(new LoggedUserAction(LoggedUserActionType.SET_USER, user)),
+      (user: User) => {
+          if (user.role !== 'ROLE_ADMIN') {
+            this.store.dispatch(new LoggedUserAction(LoggedUserActionType.SET_USER, user))
+            this.store.dispatch(new LoggedUserAction(LoggedUserActionType.LOGIN));
+            this.toastr.success('Login successful');
+            this.router.navigate(['/']);
+          } else {
+            sessionStorage.removeItem(tokenName);
+            this.toastr.error('Access id denied.');
+          }
+      },
       (err: any) => this.toastr.error(err.message)
     ); 
+
   };
 
   valid = () => {
