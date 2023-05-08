@@ -6,6 +6,7 @@ import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
 import com.bsep.admin.service.MailingService;
+import jakarta.validation.Valid;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class PkiController {
 
 	@PostMapping(value = "/certificate", produces = "application/json")
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
-	public ResponseEntity<String> createCertificate(@RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
+	public ResponseEntity<String> createCertificate(@Valid @RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		certificateService.processCertificate(cert);
 		return ResponseEntity.ok("Certificate created");
 	}
@@ -80,7 +81,7 @@ public class PkiController {
 
 	@PostMapping(value = "/certificate-revocation", produces = "application/json")
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
-	public ResponseEntity<String> revokeCertificate(@RequestBody CertificateRevocationDto dto, Authentication authentication) {
+	public ResponseEntity<String> revokeCertificate(@Valid @RequestBody CertificateRevocationDto dto, Authentication authentication) {
 		certificateService.revokeCertificate(dto);
 		return ResponseEntity.ok("Certificate revoked");
 	}
