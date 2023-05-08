@@ -1,15 +1,10 @@
 package com.bsep.admin.auth;
 
-import com.bsep.admin.auth.AuthService;
 import com.bsep.admin.auth.dto.LoggedUserDto;
 import com.bsep.admin.auth.dto.LoginRequest;
 import com.bsep.admin.auth.dto.RegistrationRequest;
 import com.bsep.admin.auth.dto.TokenResponse;
-import com.bsep.admin.exception.ForbiddenRealEstateAction;
 import com.bsep.admin.model.User;
-import com.bsep.admin.myHouse.dto.RealEstateDto;
-import com.bsep.admin.users.dto.UserDisplayDto;
-import jakarta.servlet.Registration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,12 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
+@Validated
 @RequestMapping("/api/auth")
 public class AuthController {
 
