@@ -3,6 +3,8 @@ package com.bsep.admin.users;
 import com.bsep.admin.users.dto.RoleChangeDto;
 import com.bsep.admin.users.dto.UserDisplayDto;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,8 @@ public class UserController {
     @PreAuthorize("hasAuthority('READ_USER')")
     public ResponseEntity<Page<UserDisplayDto>> search(
             @RequestParam(required = false, defaultValue = "") String query,
-            @RequestParam int page,
-            @RequestParam int amount,
+            @RequestParam @Min(0) int page,
+            @RequestParam @Min(1) @Max(20) int amount,
             @RequestParam(required = false, defaultValue = "ROLE_ADMIN,ROLE_TENANT,ROLE_LANDLORD") List<String> roles,
             @RequestParam(required = false, defaultValue = "false") boolean onlyLocked
             ) {
