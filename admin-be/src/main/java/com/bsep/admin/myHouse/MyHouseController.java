@@ -7,6 +7,7 @@ import com.bsep.admin.myHouse.dto.RealEstateDto;
 import com.bsep.admin.myHouse.dto.TenantDto;
 import com.bsep.admin.repository.UserRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class MyHouseController {
 
     @GetMapping("/realestate/{email}")
     @PreAuthorize("hasAnyAuthority('READ_REAL_ESTATE', 'WRITE_REAL_ESTATE')")
-    public ResponseEntity<List<RealEstateDto>> findRealEstatesForUser(@PathVariable String email, Authentication authentication) {
+    public ResponseEntity<List<RealEstateDto>> findRealEstatesForUser(@PathVariable @Email String email, Authentication authentication) {
 
         // read principal from token
         User user = (User) authentication.getPrincipal();
@@ -42,13 +43,13 @@ public class MyHouseController {
 
     @PostMapping("/realestate/{email}")
     @PreAuthorize("hasAuthority('WRITE_REAL_ESTATE')")
-    public ResponseEntity<RealEstateDto> addRealEstate(@PathVariable String email,@Valid @RequestBody RealEstateDto realEstateDto) {
+    public ResponseEntity<RealEstateDto> addRealEstate(@PathVariable @Email String email, @Valid @RequestBody RealEstateDto realEstateDto) {
         return ResponseEntity.ok(houseService.addRealEstate(email, realEstateDto));
     }
 
     @PutMapping("/realestate/{email}")
     @PreAuthorize("hasAuthority('WRITE_REAL_ESTATE')")
-    public ResponseEntity<RealEstateDto> editRealEstate(@PathVariable String email,@Valid @RequestBody RealEstateDto realEstateDto) {
+    public ResponseEntity<RealEstateDto> editRealEstate(@PathVariable @Email String email, @Valid @RequestBody RealEstateDto realEstateDto) {
         return ResponseEntity.ok(houseService.editRealEstate(email, realEstateDto));
     }
 
