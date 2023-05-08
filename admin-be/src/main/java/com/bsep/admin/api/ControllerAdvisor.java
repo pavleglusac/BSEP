@@ -60,6 +60,12 @@ public class ControllerAdvisor {
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidQueryException.class)
+	public ResponseError handleInvalidQueryException(InvalidQueryException e) {
+		return new ResponseError(HttpStatus.BAD_REQUEST, "Given query is invalid.");
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseError handleRuntimeException(RuntimeException e) {
 		return new ResponseError(HttpStatus.BAD_REQUEST, e.getMessage());
