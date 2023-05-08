@@ -1,8 +1,10 @@
+import { User } from 'src/app/model/user';
 import { LoggedUserStateType } from '../types';
 import { LoggedUserAction, LoggedUserActionType } from './logged-user.actions';
 
 const initialState: LoggedUserStateType = {
   logged: false,
+  user: null,
 };
 
 export const loggedUserReducer = (
@@ -21,6 +23,11 @@ export const loggedUserReducer = (
         ...state,
         logged: false,
       };
+    case LoggedUserActionType.SET_USER:
+      return {
+        logged: true,
+        user: action.payload as User,
+      }
     default: {
       return state;
     }

@@ -1,0 +1,18 @@
+<div class="py-2 flex justify-between">
+    <div class="flex flex-col gap-1 text-primary-violet">
+        <div class="flex gap-3">
+            <fa-icon [icon]="faLandlord" class=" my-auto"></fa-icon>
+            <p class="font-semibold">{{realEstate.landlord}}</p>
+        </div>
+        <div class="flex gap-3 justify-start ">
+            <p class="font-light">{{realEstate.name}}</p>
+            <p class="">{{realEstate.address}}</p>
+        </div>   
+    </div>
+    <div class="flex gap-3" *ngIf="realEstate.tenants && realEstate.tenants.length > 0">
+        <button (click)="openTenantsModal()" title="Edit tenants" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto">
+            <fa-icon [icon]="faTenants" class="text-primary-violet my-auto"></fa-icon>
+        </button>
+    </div>
+</div>
+<app-tenants-modal [tenants]="realEstate.tenants" [(visible)]="showTenantsModal"></app-tenants-modal>

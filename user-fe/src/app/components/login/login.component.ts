@@ -11,6 +11,7 @@ import {
 import { tokenName } from 'src/app/shared/constants';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { User } from 'src/app/model/user';
 
 @Component({
   selector: 'app-login',
@@ -57,6 +58,7 @@ export class LoginComponent {
             this.store.dispatch(
               new LoggedUserAction(LoggedUserActionType.LOGIN)
             );
+            this.loadUser();
             this.toastr.success('Login successful');
             this.router.navigate(['/']);
           }
@@ -66,6 +68,13 @@ export class LoginComponent {
         }
       );
     }
+  };
+
+  loadUser = () => {
+    this.authService.getUser(
+      (user: User) => this.store.dispatch(new LoggedUserAction(LoggedUserActionType.SET_USER, user)),
+      (err: any) => this.toastr.error(err.message)
+    ); 
   };
 
   valid = () => {
