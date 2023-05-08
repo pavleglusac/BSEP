@@ -7,22 +7,15 @@ import { metaReducers } from './local-storage.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login/login.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/http.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.reducer';
-import { HomepageComponent } from './components/homepage/homepage.component';
-import { CsrComponent } from './components/csr/csr.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    HomepageComponent,
-    CsrComponent,
-    SidebarComponent,
   ],
   imports: [
     BrowserModule,

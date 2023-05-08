@@ -1,10 +1,14 @@
 package com.bsep.admin.auth;
 
 import com.bsep.admin.auth.AuthService;
+import com.bsep.admin.auth.dto.LoggedUserDto;
 import com.bsep.admin.auth.dto.LoginRequest;
 import com.bsep.admin.auth.dto.RegistrationRequest;
 import com.bsep.admin.auth.dto.TokenResponse;
+import com.bsep.admin.exception.ForbiddenRealEstateAction;
 import com.bsep.admin.model.User;
+import com.bsep.admin.myHouse.dto.RealEstateDto;
+import com.bsep.admin.users.dto.UserDisplayDto;
 import jakarta.servlet.Registration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -46,6 +51,13 @@ public class AuthController {
 	public ResponseEntity<String> verify(@RequestParam("token") String token, @RequestParam("email") String email) {
 		authService.verify(email, token);
 		return ResponseEntity.ok("Verified");
+	}
+
+	@GetMapping("/my-profile")
+	//TODO PRE AUTHORIZE
+	public ResponseEntity<LoggedUserDto> findRealEstatesForUser(Authentication authentication) {
+		User user = (User) authentication.getPrincipal();
+		return ResponseEntity.ok(new LoggedUserDto(user.getId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getRoles().get(0).getName()));
 	}
 
 	@PostMapping("/logout")

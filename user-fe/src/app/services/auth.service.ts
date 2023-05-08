@@ -8,6 +8,7 @@ import {
   LoggedUserActionType,
 } from '../shared/store/logged-user-slice/logged-user.actions';
 import { Router } from '@angular/router';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -33,4 +34,17 @@ export class AuthService {
         },
       });
   };
+
+  getUser = (successCb: (user: User) => void, errorCb: (error: any) => void) => {
+    this.http.get('api/auth/my-profile')
+    .subscribe({
+      next(value: any) {
+        console.log(value);
+        successCb(value);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    })
+  }
 }

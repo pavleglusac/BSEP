@@ -4,7 +4,7 @@ import { HomepageComponent } from './components/homepage/homepage.component';
 import { LoginComponent } from './components/login/login.component';
 
 const routes: Routes = [
-  { path: '', component: HomepageComponent },
+  {path: '', loadChildren: () => import('./shared/constants').then(mod => mod.ROUTES)},
   { path: 'login', component: LoginComponent },
 ];
 
@@ -13,3 +13,5 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
+
+

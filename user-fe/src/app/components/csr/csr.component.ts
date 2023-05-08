@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Csr } from 'src/app/model/csr';
 import { CsrService } from 'src/app/services/csr.service';
@@ -7,6 +9,8 @@ import { CsrService } from 'src/app/services/csr.service';
   selector: 'app-csr',
   templateUrl: './csr.component.html',
   styleUrls: ['./csr.component.css'],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
 })
 export class CsrComponent {
   csr: Csr = new Csr();

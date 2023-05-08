@@ -12,7 +12,8 @@ module.exports = {
         }, 
         secondary: {
           white: "#FAFAFA",
-          gray: "#D4D6E4"
+          gray: "#D4D6E4",
+          hover: '#f0f1f5'
         }
     },
     boxShadow: {
