@@ -30,10 +30,10 @@ public class UserService {
 
     @Autowired
     public MyHouseService myHouseService;
-    private static final Pattern regex = Pattern.compile("^[\\w.@\\s]*$");
+    private static final Pattern queryPattern = Pattern.compile("^[\\w.@\\s]*$");
 
     public Page<UserDisplayDto> search(String query, int page, int amount, List<String> roles, boolean onlyLocked) {
-        if (!regex.matcher(query).matches()) {
+        if (!queryPattern.matcher(query).matches()) {
             throw new InvalidQueryException();
         }
         Set<Role> roleSet = new HashSet<>();

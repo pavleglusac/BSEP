@@ -7,6 +7,7 @@ import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
 import com.bsep.admin.service.MailingService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.bouncycastle.operator.OperatorCreationException;
 import com.bsep.admin.model.Csr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.bsep.admin.pki.service.CertificateService;
 
-import java.math.BigInteger;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -62,7 +62,7 @@ public class PkiController {
 
 	@GetMapping("/csr/{email}")
 	@PreAuthorize("hasAuthority('READ_CSR')")
-	public Csr getCsr(@PathVariable String email) {
+	public Csr getCsr(@PathVariable @Email String email) {
 		return csrService.getCsrByUser(email);
 	}
 
@@ -88,7 +88,7 @@ public class PkiController {
 
 	@GetMapping("certificate/distribute/{email}")
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
-	public ResponseEntity<Map<String, String>> distributeCertificate(@PathVariable String email) {
+	public ResponseEntity<Map<String, String>> distributeCertificate(@PathVariable @Email String email) {
 		return ResponseEntity.ok(Map.of("message", certificateService.distributeCertificate(email)));
 	}
 
@@ -102,7 +102,7 @@ public class PkiController {
 	private MailingService mailingService;
 
 	@GetMapping("/send/{email}")
-	public ResponseEntity<String> sendCertificate(@PathVariable String email) {
+	public ResponseEntity<String> sendCertificate(@PathVariable @Email String email) {
 //		mailingService.sendTestMail();
 		return ResponseEntity.ok("Certificate sent");
 	}
