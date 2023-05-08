@@ -52,7 +52,7 @@ export class AuthService {
                 console.log(err);
                 sessionStorage.removeItem(environment.tokenName);
                 that.store.dispatch(new LoggedUserAction(LoggedUserActionType.LOGOUT));
-                errorCb({ message: 'User is not an admin.' });
+                errorCb({ message: 'Incorrect credentials.' });
               },
             });
         },
