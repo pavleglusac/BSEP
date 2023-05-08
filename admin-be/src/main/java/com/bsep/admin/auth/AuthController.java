@@ -8,6 +8,7 @@ import com.bsep.admin.model.User;
 import jakarta.servlet.Registration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +26,7 @@ public class AuthController {
 	// login
 
 	@PostMapping("/login")
-	public TokenResponse login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+	public TokenResponse login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 		return authService.login(loginRequest, response);
 	}
 
@@ -37,7 +38,7 @@ public class AuthController {
 
 	@PostMapping("/register")
 	@PreAuthorize("hasAuthority('WRITE_USER')")
-	public ResponseEntity<Map<String, String>> register(@RequestBody RegistrationRequest loginRequest, HttpServletResponse response) {
+	public ResponseEntity<Map<String, String>> register(@Valid @RequestBody RegistrationRequest loginRequest, HttpServletResponse response) {
 		authService.register(loginRequest, response);
 		return ResponseEntity.ok(Map.of("message", "User successfully registered. Please check your email for verification."));
 	}
