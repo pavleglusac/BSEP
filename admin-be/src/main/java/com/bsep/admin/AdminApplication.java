@@ -1,6 +1,7 @@
 package com.bsep.admin;
 
 import com.bsep.admin.config.AppProperties;
+import com.bsep.admin.repository.GroceryItemRepository;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.util.Trie;
 import jakarta.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,6 +21,7 @@ import java.security.Security;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableMongoRepositories
 @EnableConfigurationProperties(AppProperties.class)
 public class AdminApplication {
 
@@ -57,6 +60,17 @@ public class AdminApplication {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Autowired
+	private GroceryItemRepository groceryItemRepository;
+
+	@PostConstruct
+	public void testMongoDb() {
+		// insert few items
+		groceryItemRepository.save(new com.bsep.admin.model.GroceryItem("1", "Milk", 2, "Dairy"));
+		groceryItemRepository.save(new com.bsep.admin.model.GroceryItem("2", "Bread", 1, "Bakery"));
+		groceryItemRepository.save(new com.bsep.admin.model.GroceryItem("3", "Eggs", 12, "Dairy"));
 	}
 
 }

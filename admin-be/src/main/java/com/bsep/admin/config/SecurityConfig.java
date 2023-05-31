@@ -51,6 +51,10 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
+				.requiresChannel()
+					.anyRequest()
+					.requiresSecure()
+					.and()
 				.cors()
 					.and()
 				.sessionManagement()
