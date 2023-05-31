@@ -73,7 +73,7 @@
           },
           "options": {
             "proxyConfig": "src/proxy.conf.json",
-            "ssl": false,
+            "ssl": true,
             "sslCert": "./certs/localhost.crt",
             "sslKey": "./certs/localhost.key"
           },
