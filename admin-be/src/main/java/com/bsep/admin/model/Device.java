@@ -26,4 +26,5 @@ public class Device {
     private String durationFormat;
 
     private String filterRegex;
+
 }
