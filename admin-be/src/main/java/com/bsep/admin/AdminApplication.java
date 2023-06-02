@@ -1,6 +1,10 @@
 package com.bsep.admin;
 
 import com.bsep.admin.config.AppProperties;
+import com.bsep.admin.model.DeviceType;
+import com.bsep.admin.myHouse.DeviceService;
+import com.bsep.admin.myHouse.RulesService;
+import com.bsep.admin.myHouse.dto.RuleDto;
 import com.bsep.admin.repository.GroceryItemRepository;
 import com.bsep.admin.repository.UserRepository;
 import com.bsep.admin.util.Trie;
@@ -15,6 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -52,15 +57,24 @@ public class AdminApplication {
 	}
 
 
-	@Bean
-	public KieContainer makeContainer() {
-		KieServices kieServices = KieServices.Factory.get();
-		KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
-		KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem);
-//		kieFileSystem.write("src/main/resources/rules.drl", kieServices.getResources().newClassPathResource("rules.drl"));
-		kieBuilder.buildAll();
-		return kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+	@PostConstruct
+	public void startDeviceManager() {
+		// start python script
+		String pythonCommand = "python";
+		String pythonScript = "./devices/device_manager.py";
+		ProcessBuilder processBuilder = new ProcessBuilder(pythonCommand, pythonScript);
+		try {
+			// redirect output to log file
+			processBuilder.redirectOutput(new File("./devices/device_manager.log"));
+
+			Process process = processBuilder.start();
+			Thread.sleep(2000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+
+
 
 	// fill trie with all common passwords txt file
 	@PostConstruct
@@ -81,6 +95,26 @@ public class AdminApplication {
 
 	@Autowired
 	private GroceryItemRepository groceryItemRepository;
+
+	@Autowired
+	private DeviceService deviceService;
+
+	@Autowired
+	private RulesService rulesService;
+
+	@PostConstruct
+	// don't run for test, only for development
+	@Profile("dev")
+	public void testDevices() {
+		deviceService.addDevice("LAMP", "", 1L);
+		RuleDto ruleDto = new RuleDto();
+		ruleDto.setName("Lamp rule");
+		ruleDto.setDeviceType(DeviceType.LAMP);
+		ruleDto.setNum(3);
+		ruleDto.setAlarmText("Lampa se previse ukljucuje");
+		ruleDto.setOperatorNum(">=");
+		rulesService.addRule(ruleDto);
+	}
 
 //	@PostConstruct
 //	public void testMongoDb() {

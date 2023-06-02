@@ -8,7 +8,7 @@ class Lamp(Device):
 
         self.modes = {
             "NORMAL": [[self.state_on, 20], [self.state_off, 20]],
-            "NORMAL_FLICKER": [[self.state_flicker, 20], [self.state_off, 20]],
+            "NORMAL_FLICKER": [ [x, 1] for x in [self.state_on, self.state_off] * 5  ],
             "ALARM_VOLTAGE_DROP": [[self.alarming_voltage_drop, 1]],
             "ALARM_VOLTAGE_SPIKE": [[self.alarming_voltage_spike, 1]],
             "ALARM_OVERHEATING": [[self.alarming_overheating, 1]]

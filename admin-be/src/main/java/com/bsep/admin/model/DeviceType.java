@@ -4,6 +4,6 @@ public enum DeviceType {
     THERMOMETER,
     MOTION_DETECTOR,
     LOCK,
-    LIGHT,
+    LAMP,
     GATE,
 }

@@ -1,6 +1,5 @@
 package com.bsep.admin.model;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,18 +12,13 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("messages")
-public class Message {
-
+@Document("alarms")
+public class Alarm {
     @Id
     private UUID id;
-    private String type;
+    private String name;
     private String text;
-    private Double value;
     private DeviceType deviceType;
     private LocalDateTime timestamp;
-
-    private UUID deviceId;
-    private Boolean read = false;
-
+    private String deviceId;
 }

@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
 from lamp import Lamp
+from gate import Gate
+from motion_detector import MotionDetector
+from thermometer import Thermometer
+from lock import Lock
 
 
 app = FastAPI()
@@ -16,8 +20,26 @@ def read_root():
 
 @app.get("/start_device")
 def start_device(type: str = "", id: str = ""):
-    if type == "lamp":
+    id = id.replace("%2D", "-")
+    if type == "LAMP":
+        # url decode id that is uuid4
         devices[id] = Lamp(id, id)
+        devices[id].pick_a_state()
+        return {"status": "ok"}
+    elif type == "GATE":
+        devices[id] = Gate(id, id)
+        devices[id].pick_a_state()
+        return {"status": "ok"}
+    elif type == "MOTION_DETECTOR":
+        devices[id] = MotionDetector(id, id)
+        devices[id].pick_a_state()
+        return {"status": "ok"}
+    elif type == "THERMOMETER":
+        devices[id] = Thermometer(id, id)
+        devices[id].pick_a_state()
+        return {"status": "ok"}
+    elif type == "LOCK":
+        devices[id] = Lock(id, id)
         devices[id].pick_a_state()
         return {"status": "ok"}
     else:
@@ -37,7 +59,10 @@ def stop_device(id: str = ""):
 @repeat_every(seconds=3)
 def run_states():
     for device in devices.values():
-        device.run_state()
+        try:
+            device.run_state()
+        except Exception as e:
+            print(f"Error running state for device {device.id} {e}")
 
 
 if __name__ == "__main__":

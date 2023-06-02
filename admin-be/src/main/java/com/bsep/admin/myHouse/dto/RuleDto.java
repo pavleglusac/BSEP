@@ -18,4 +18,5 @@ public class RuleDto {
     private Integer num;
     private String operatorNum;
     private String window;
+    private String alarmText;
 }

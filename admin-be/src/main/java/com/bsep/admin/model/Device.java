@@ -14,7 +14,6 @@ import java.util.UUID;
 public class Device {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid")
     private UUID id;
 
@@ -23,7 +22,7 @@ public class Device {
 
     private String filePath;
 
-    private String durationFormat;
+    private Long refreshRate;
 
     private String filterRegex;
 

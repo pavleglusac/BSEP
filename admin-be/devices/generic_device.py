@@ -1,5 +1,7 @@
 import datetime
 from abc import ABC, abstractmethod
+import uuid
+import logging
 
 class Device(ABC):
 
@@ -12,9 +14,16 @@ class Device(ABC):
 
 
     def log(self, type, text, value):
-        with open(f"./logs/{self.id}.log", "a") as f:
+        print(f"Logging message {type} {text} {value}")
+        logging.info(f"Logging message {type} {text} {value}")
+        # create file if not exists
+
+
+        with open(f"./devices/logs/{self.id}.log", "a") as f:
             curr_iso_time = datetime.datetime.now().isoformat()
-            f.write(f"{type},{text},{value},{curr_iso_time}\n")
+            # create new message uuid
+            message_uuid = uuid.uuid4()
+            f.write(f"{message_uuid},{type},{text},{value},{curr_iso_time}\n")
             f.flush()
 
 
