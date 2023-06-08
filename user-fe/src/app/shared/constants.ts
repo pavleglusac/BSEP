@@ -20,15 +20,11 @@ export const ROUTES: Route[] = [
     children: [
       {
         path: '',
-        component: MyprofileComponent,        
+        component: RealEstatesComponent,        
       },
       {
         path: 'csr',
         component: CsrComponent,
-      },
-      {
-        path: 'real-estates',
-        component: RealEstatesComponent,
       },
     ],
   },

@@ -21,10 +21,10 @@ export class RealEstate {
   }
   
   export enum DeviceType {
-    CAMERA,
-    ALARM,
-    SMART_LOCK,
-    SMART_LIGHT,
-    SMART_GATE,
+    THERMOMETER = "THERMOMETER",
+    MOTION_DETECTOR = "MOTION DETECTOR",
+    LOCK = "LOCK",
+    LAMP = "LAMP",
+    GATE = "GATE",
   }
   

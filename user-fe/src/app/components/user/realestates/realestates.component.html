@@ -1,5 +1,17 @@
 <div class="m-auto flex justify-start"> 
-    <div class="py-12 px-20 w-full">
+    <div class="py-16 px-20 w-full">
+
+        <div class="flex items-center gap-3 mb-16 cursor-default">
+            <img src="/assets/images/default_pfp.png" alt="profile picture" class="w-12 h-12 rounded-full border-black shadow-xl">
+            <div class="flex flex-col">
+                <div class="flex gap-2 items-center">
+                    <p class="text-primary-violet font-semibold">{{user?.name}}</p>
+                    <p class="text-primary-gray-dark font-semibold text-sm italic">{{user?.role | slice: 5}}</p>
+                </div>
+                <p class="text-primary-gray-light">{{user?.email}}</p>
+            </div>
+        </div>
+   
         <p class="font-semibold italic tracking-wide uppercase text-xl  text-primary-violet mb-10">Real estates</p>
         <div class="bg-secondary-hover bg-opacity-30 p-5 px-10 shadow-lg rounded" *ngIf="realEstates && realEstates.length > 0">
             <app-real-estate-entry  *ngFor="let realEstate of realEstates" [realEstate] = "realEstate"></app-real-estate-entry> 

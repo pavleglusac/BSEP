@@ -19,3 +19,60 @@ html, body {
 .gray-button {
     @apply bg-primary-gray-light bg-opacity-10 text-primary-violet hover:bg-opacity-25
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 12px;
+}
+  
+  /* Track */
+ 
+::-webkit-scrollbar-track {
+    background: #eae7e7;
+    border-radius: 10px;
+}
+  
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #ccc;  
+    }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    border-radius: 10px;
+    background: #999;  
+    }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hidden-scrollbar::-webkit-scrollbar {
+    display: none;
+    overflow: hidden;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hidden-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  /* selection */
+  ::-moz-selection { /* Code for Firefox */
+    color: rgb(158, 157, 162);
+    background: rgb(205, 206, 209);
+  }
+  
+  ::selection {
+    color: rgb(158, 157, 162);
+    background: rgb(205, 206, 209);
+  }
+
+
+  
+    
+    
+    
+   
+    
+  

@@ -6,9 +6,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faCheckDouble,
-  faHouse,
+  faHouseUser,
   faRightFromBracket,
-  faUser
+  faFileCircleCheck,
+  faEnvelope
 } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs';
 import { tokenName } from 'src/app/shared/constants';
@@ -24,19 +25,24 @@ const menus = {
     {
       title: 'My profile',
       link: '',
-      icon: faUser,
-    },
-    {
-      title: 'Real estates',
-      link: 'real-estates',
-      icon: faHouse,
+      icon: faHouseUser,
     },
   ],
-  'Certificates': [
+  'Other': [
     {
       title: 'Certificate signing request',
       link: 'csr',
       icon: faCheckDouble,
+    },
+    {
+      title: 'Messages',
+      link: 'messages',
+      icon: faEnvelope,
+    },
+    {
+      title: 'Reports',
+      link: 'reports',
+      icon: faFileCircleCheck,
     },
   ],
 };
@@ -62,7 +68,7 @@ export class SidebarComponent {
         const end = event as NavigationEnd;
         if (end.url.startsWith('')) {
           const menusToLookup: MenuOption[] = [
-            ...menus['Certificates'],
+            ...menus['Other'],
             ...menus['User'],
           ];
           this.chosenOption = menusToLookup.find(
