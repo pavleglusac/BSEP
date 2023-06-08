@@ -78,6 +78,13 @@ export class MyhouseService {
     successCb: (value: Device) => void,
     errorCb: (err:any) => void
   ) {
-
+    this.http.post(`api/myhouse/device`, {houseId: id, ...device}).subscribe({
+      next(req: any) {
+        successCb(req);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
   }
 }
