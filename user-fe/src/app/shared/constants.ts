@@ -8,7 +8,7 @@ import { MyprofileComponent } from '../components/user/myprofile/myprofile.compo
 
 export const tokenName = 'access_token';
 
-export const baseUrl = 'http://localhost:8080';
+export const baseUrl = 'https://localhost:8080';
 
 export const key = 'aaaa';
 

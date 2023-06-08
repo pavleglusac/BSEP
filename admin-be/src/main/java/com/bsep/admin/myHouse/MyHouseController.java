@@ -1,8 +1,10 @@
 package com.bsep.admin.myHouse;
 
 import com.bsep.admin.exception.ForbiddenRealEstateAction;
+import com.bsep.admin.model.Device;
 import com.bsep.admin.model.User;
 import com.bsep.admin.myHouse.dto.AddTenantDto;
+import com.bsep.admin.myHouse.dto.DeviceDto;
 import com.bsep.admin.myHouse.dto.RealEstateDto;
 import com.bsep.admin.myHouse.dto.TenantDto;
 import com.bsep.admin.repository.UserRepository;
@@ -25,6 +27,9 @@ public class MyHouseController {
 
     @Autowired
     MyHouseService houseService;
+
+    @Autowired
+    DeviceService deviceService;
 
     @Autowired
     UserRepository userRepository;
@@ -57,5 +62,18 @@ public class MyHouseController {
     @PreAuthorize("hasAuthority('WRITE_REAL_ESTATE')")
     public ResponseEntity<TenantDto> addTenant(@Valid @RequestBody AddTenantDto addTenantDto) {
         return ResponseEntity.ok(houseService.addTenant(addTenantDto));
+    }
+
+    @PostMapping("/device")
+    @PreAuthorize("hasAuthority('WRITE_REAL_ESTATE')")
+    public ResponseEntity<Device> addDevice(@Valid @RequestBody DeviceDto device) {
+        return ResponseEntity.ok(deviceService.addDevice(device));
+    }
+
+    @DeleteMapping("/device/{id}")
+    @PreAuthorize("hasAuthority('WRITE_REAL_ESTATE')")
+    public ResponseEntity<String> deleteDevice(@PathVariable String id) {
+        deviceService.removeDevice(id);
+        return ResponseEntity.ok("Device deleted");
     }
 }

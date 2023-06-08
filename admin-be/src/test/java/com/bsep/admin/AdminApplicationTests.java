@@ -1,62 +1,82 @@
 package com.bsep.admin;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.OIDTokenizer;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
+import com.bsep.admin.model.DeviceType;
+import com.bsep.admin.model.Message;
+import com.bsep.admin.myHouse.RulesService;
+import com.bsep.admin.myHouse.dto.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.annotation.Profile;
 
-import java.io.IOException;
-import java.security.SecureRandom;
+import java.util.UUID;
 
 @SpringBootTest
+@Profile("test")
 class AdminApplicationTests {
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private RulesService rulesService;
 
 	@Test
-	void contextLoads() throws IOException {
-//		System.out.println(generateRandomToken(15));
-//		System.out.println(generateRandomToken(15));
-//		System.out.println(generateRandomToken(15));
-//		System.out.println(generateRandomToken(15));
-		String randomToken = generateRandomToken(15);
-		System.out.println(randomToken);
-		System.out.println(passwordEncoder.encode(randomToken));
+	public void testAddRule() {
+		Rule rule = new Rule();
+		rule.setName("TEST");
+		rule.setNum(3);
+		rule.setOperatorNum(">=");
+		rulesService.addRule(rule);
 
-//		System.out.println("-----------------");
-//		System.out.println(passwordEncoder.encode("Rgx>m--in=Yc%UZ"));
-//		ASN1ObjectIdentifier asn1ObjectIdentifier = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.3.5");
-//		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(asn1ObjectIdentifier);
-//		KeyPurposeId[] keyPurposeIds = { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_serverAuth };
-//		new ExtendedKeyUsage(
-//				new KeyPurposeId[] {
-//						KeyPurposeId.id_kp_serverAuth,
-//						KeyPurposeId.id_kp_clientAuth});
-//		ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage();
-//		Extension extension = new Extension(Extension.extendedKeyUsage, false, asn1ObjectIdentifier.getEncoded());
-//		System.out.println(extension.getExtnId());
+		UUID deviceId = UUID.randomUUID();
 
-	}
+		Message message1 = new Message();
+		UUID uuid = UUID.randomUUID();
+		message1.setId(uuid);
+		message1.setText("Testno pravilo");
+		message1.setType("INFO");
+		message1.setDeviceType(DeviceType.GATE);
+		message1.setDeviceId(deviceId);
+		message1.setValue(20.0);
 
-	public String generateRandomToken(int length) {
-		int leftLimit = 35;
-		int rightLimit = 126;
-		SecureRandom random = new SecureRandom();
-		StringBuilder buffer = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
-			buffer.append((char) randomLimitedInt);
+		Message message2 = new Message();
+		uuid = UUID.randomUUID();
+		message2.setId(uuid);
+		message2.setText("Testno pravilo");
+		message2.setType("INFO");
+		message2.setDeviceType(DeviceType.GATE);
+		message2.setDeviceId(deviceId);
+		message2.setValue(20.0);
+
+		Message message3 = new Message();
+		uuid = UUID.randomUUID();
+		message3.setId(uuid);
+		message3.setText("Testno pravilo");
+		message3.setType("INFO");
+		message3.setDeviceType(DeviceType.GATE);
+		message3.setDeviceId(deviceId);
+		message3.setValue(20.0);
+
+		Message message4 = new Message();
+		uuid = UUID.randomUUID();
+		message4.setId(uuid);
+		message4.setText("Testno pravilo");
+		message4.setType("INFO");
+		message4.setDeviceType(DeviceType.GATE);
+		message4.setDeviceId(deviceId);
+		message4.setValue(20.0);
+
+		rulesService.addMessage(message1);
+		rulesService.addMessage(message2);
+		rulesService.addMessage(message3);
+		rulesService.addMessage(message4);
+
+
+
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
 		}
-		String generatedString = buffer.toString();
-		return generatedString;
 	}
+
 
 }

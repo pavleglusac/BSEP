@@ -69,7 +69,11 @@
           },
           "defaultConfiguration": "development",
           "options": {
-            "port": 4201
+            "port": 4201,
+            "proxyConfig": "src/proxy.conf.json",
+            "ssl": true,
+            "sslCert": "./certs/localhost.crt",
+            "sslKey": "./certs/localhost.key"
           }
         },
         "extract-i18n": {

@@ -51,6 +51,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
+
 				.cors()
 					.and()
 				.sessionManagement()
@@ -71,6 +72,10 @@ public class SecurityConfig {
 				.exceptionHandling()
 					.authenticationEntryPoint(new RestAuthenticationEntryPoint())
 					.and()
+				.requiresChannel()
+				.anyRequest()
+				.requiresSecure()
+				.and()
 				.authorizeHttpRequests()
 					.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
 					.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
