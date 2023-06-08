@@ -26,6 +26,7 @@ public class MyHouseService {
     private TenantRepository tenantRepository;
     @Autowired
     private RealEstateRepository realEstateRepository;
+
     public List<RealEstateDto> findRealEstatesForUser(String email) {
         User user = getUser(email);
         return getRealEstateDtoFromRealEstates(user.getRealEstates());
@@ -33,7 +34,7 @@ public class MyHouseService {
     }
 
     private List<RealEstateDto> getRealEstateDtoFromRealEstates(List<RealEstate> realEstates) {
-        return realEstates.stream().map(realEstate -> new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), getLandlordByRealEstate(realEstate), getTenantsDtoByRealEstate(realEstate))).toList();
+        return realEstates.stream().map(realEstate -> new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), getLandlordByRealEstate(realEstate), getTenantsDtoByRealEstate(realEstate), realEstate.getDevices())).toList();
     }
 
     private String getLandlordByRealEstate(RealEstate realEstate) {
@@ -70,10 +71,11 @@ public class MyHouseService {
         }
         Landlord landlord = (Landlord) user;
         RealEstate realEstate = new RealEstate(realEstateDto.getAddress(), realEstateDto.getName());
+        realEstate.setDevices(new ArrayList<>());
         landlord.getRealEstates().add(realEstate);
         realEstate = realEstateRepository.save(realEstate);
         userRepository.save(user);
-        return new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), email, new ArrayList<>());
+        return new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), email, new ArrayList<>(), new ArrayList<>());
     }
 
     private User getUser(String email) {
@@ -103,7 +105,7 @@ public class MyHouseService {
         realEstate.setAddress(realEstateDto.getAddress());
         realEstate.setName(realEstateDto.getName());
         realEstate = realEstateRepository.save(realEstate);
-        return new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), realEstateDto.getLandlord(), realEstateDto.getTenants());
+        return new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), realEstateDto.getLandlord(), realEstateDto.getTenants(), realEstate.getDevices());
     }
 
     public TenantDto addTenant(AddTenantDto addTenantDto) {

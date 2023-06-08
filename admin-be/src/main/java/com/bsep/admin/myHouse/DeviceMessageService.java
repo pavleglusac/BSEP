@@ -35,7 +35,7 @@ public class DeviceMessageService {
 
     @Scheduled(fixedRate = 1000)
     public void readDeviceData() {
-        System.out.println("Reading device data!!!");
+//        System.out.println("Reading device data!!!");
         timeDevices.forEach((key, value) -> {
             if (secondsPassed % key == 0) {
                 value.forEach(this::readMessagesFromFile);
@@ -59,7 +59,7 @@ public class DeviceMessageService {
                 parseMessageLine(device, line);
                 msgCount++;
             }
-            System.out.println("Read " + msgCount + " messages from file!!!");
+//            System.out.println("Read " + msgCount + " messages from file!!!");
             deviceFilePositions.put(device, file.getFilePointer());
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +78,7 @@ public class DeviceMessageService {
         // if text matches regex
         if (true) {
             Message message = new Message(id, msgType, text, value, device.getType(), timestamp, device.getId(), false);
-//            messageRepository.save(message);
+            messageRepository.save(message);
             rulesService.addMessage(message);
         }
 

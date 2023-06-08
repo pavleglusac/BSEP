@@ -17,6 +17,8 @@ public class Device {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
+    private String name;
+
     @Enumerated(EnumType.STRING)
     private DeviceType type;
 

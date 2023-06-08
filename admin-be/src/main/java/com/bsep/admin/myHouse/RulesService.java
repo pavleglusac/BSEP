@@ -1,7 +1,8 @@
 package com.bsep.admin.myHouse;
 
 import com.bsep.admin.model.Message;
-import com.bsep.admin.myHouse.dto.RuleDto;
+import com.bsep.admin.myHouse.dto.Rule;
+import com.bsep.admin.repository.RuleRepository;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.ReleaseId;
@@ -12,13 +13,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 public class RulesService {
 
     @Autowired
     private AlarmService alarmService;
+
+    @Autowired
+    private RuleRepository ruleRepository;
 
     private List<String> DRL = new ArrayList<>();
 
@@ -84,12 +87,15 @@ public class RulesService {
             queue.poll();
         }
         queue.add(message);
-        System.out.println("\n++++++++++++ Added msg, totasl len " + queue.size() + " ++++++++++++\n");
+//        System.out.println("\n++++++++++++ Added msg, totasl len " + queue.size() + " ++++++++++++\n");
     }
 
 
     public void deleteRule(String ruleName) {
         // find rule in list of rules and delete it
+        Rule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuntimeException("Rule not found!"));
+        ruleRepository.delete(rule);
+
         List<String> resultDRL = new ArrayList<>();
         boolean found = false;
         for (String line : DRL) {
@@ -106,38 +112,52 @@ public class RulesService {
         DRL = resultDRL;
     }
 
-    public void addRule(RuleDto ruleDto) {
+    public void addRule(Rule rule) {
+        List<String> res = buildRuleTemplate(rule);
+
+        // append rule to DRL
+        DRL.addAll(res);
+        // print all rules
+        DRL.forEach(System.out::println);
+
+        ruleRepository.save(rule);
+    }
+
+    public List<Rule> getAllRules() {
+        return ruleRepository.findAll();
+    }
+
+    private List<String> buildRuleTemplate(Rule rule) {
         String templateTextRegex = null;
         String templateOperatorAndValue = null;
         String templateWindow = null;
         String templateOperatorAndNum = null;
         String templateDeviceType = null;
 
-        if (ruleDto.getTextRegex() != null && !ruleDto.getTextRegex().isEmpty()) {
-            templateTextRegex = ", text matches \"" + ruleDto.getTextRegex() + "\"";
+        if (rule.getTextRegex() != null && !rule.getTextRegex().isEmpty()) {
+            templateTextRegex = ", text matches \"" + rule.getTextRegex() + "\"";
         }
 
-        if (ruleDto.getOperatorValue() != null && !ruleDto.getOperatorValue().isEmpty() && ruleDto.getValue() != null) {
-            templateOperatorAndValue = ", " + ruleDto.getOperatorValue() + " " + ruleDto.getValue();
+        if (rule.getOperatorValue() != null && !rule.getOperatorValue().isEmpty() && rule.getValue() != null) {
+            templateOperatorAndValue = ", " + rule.getOperatorValue() + " " + rule.getValue();
         }
 
-        if (ruleDto.getWindow() != null && !ruleDto.getWindow().isEmpty()) {
-            templateWindow = ", over window:time(" + ruleDto.getWindow() + ")";
+        if (rule.getWindow() != null && !rule.getWindow().isEmpty()) {
+            templateWindow = ", over window:time(" + rule.getWindow() + ")";
         }
 
-        if (ruleDto.getOperatorNum() != null && !ruleDto.getOperatorNum().isEmpty() && ruleDto.getNum() != null) {
-            templateOperatorAndNum = ruleDto.getOperatorNum() + " " + ruleDto.getNum();
+        if (rule.getOperatorNum() != null && !rule.getOperatorNum().isEmpty() && rule.getNum() != null) {
+            templateOperatorAndNum = rule.getOperatorNum() + " " + rule.getNum();
         }
 
-        if (ruleDto.getDeviceType() != null) {
-            templateDeviceType = ", deviceType == DeviceType." + ruleDto.getDeviceType();
+        if (rule.getDeviceType() != null) {
+            templateDeviceType = ", deviceType == DeviceType." + rule.getDeviceType();
         }
 
-        System.out.println("OVO SE DESI - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ");
         // add rule to list of rules
         List<String> res = new ArrayList<>();
-        res.add(ruleStartMarker + ruleDto.getName());
-        res.add("rule \"" + ruleDto.getName() + "\"");
+        res.add(ruleStartMarker + rule.getName());
+        res.add("rule \"" + rule.getName() + "\"");
         res.add("when");
         res.add(msgRuleTemplate);
         res.add(accumulateRuleTemplate
@@ -147,7 +167,7 @@ public class RulesService {
                 .replace("{TEMPLATE_WINDOW}", Optional.ofNullable(templateWindow).orElse(""))
                 .replace("{TEMPLATE_OPERATOR_AND_NUM}", Optional.ofNullable(templateOperatorAndNum).orElse("")));
         res.add("then");
-        String then = String.format("alarmService.createAlarm(\"%s\", \"%s\", $mid);", ruleDto.getName(), ruleDto.getAlarmText()) +
+        String then = String.format("alarmService.createAlarm(\"%s\", \"%s\", $mid);", rule.getName(), rule.getAlarmText()) +
             """
 
             for(Object msg : $l) {
@@ -158,18 +178,9 @@ public class RulesService {
         """;
         res.add(then);
         res.add("end");
-        res.add(ruleEndMarker + ruleDto.getName());
-
-        // append rule to DRL
-        DRL.addAll(res);
-
-        // print all rules
-        DRL.forEach(System.out::println);
-
-
+        res.add(ruleEndMarker + rule.getName());
+        return res;
     }
-
-
 
 
 }

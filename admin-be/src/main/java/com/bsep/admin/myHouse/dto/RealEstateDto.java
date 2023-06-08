@@ -1,5 +1,6 @@
 package com.bsep.admin.myHouse.dto;
 
+import com.bsep.admin.model.Device;
 import com.bsep.admin.model.Tenant;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,5 @@ public class RealEstateDto {
     private String landlord;
 
     private List<TenantDto> tenants;
+    private List<Device> devices;
 }
