@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { RealEstate } from '../model/myHouse';
+import { Device, RealEstate } from '../model/myHouse';
 import { Tenant } from '../model/user';
 
 @Injectable({
@@ -70,5 +70,14 @@ export class MyhouseService {
         errorCb(err.error);
       },
     });
+  }
+
+  addNewDevice(
+    id: string,
+    device: Device,
+    successCb: (value: Device) => void,
+    errorCb: (err:any) => void
+  ) {
+
   }
 }

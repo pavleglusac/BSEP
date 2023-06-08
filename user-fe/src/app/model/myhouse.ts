@@ -13,10 +13,11 @@ export class RealEstate {
 
   export class Device {
     constructor(
-      public type: DeviceType,
-      public filePath: string,
-      public durationFormat: string,
-      public filterRegex: string
+      public deviceType: DeviceType,
+      public deviceName: string,
+      public refreshRate: string,
+      public regex: string,
+      public filePath?: string,
     ) {}
   }
   

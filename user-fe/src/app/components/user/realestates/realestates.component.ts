@@ -32,11 +32,11 @@ export class RealEstatesComponent implements OnInit {
         this.realEstates = realEstates;
 
         //ovde
-        this.realEstates.forEach(re => re.devices = [new Device(DeviceType.MOTION_DETECTOR, "filepath", "duration", "filter regex")])
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.THERMOMETER, "filepath", "duration", "filter regex")))
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.LOCK, "filepath", "duration", "filter regex")))
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.LAMP, "filepath", "duration", "filter regex")))
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.GATE, "filepath", "duration", "filter regex")))
+        this.realEstates.forEach(re => re.devices = [new Device(DeviceType.MOTION_DETECTOR, "name", "duration", "filter regex")])
+        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.THERMOMETER, "name", "duration", "filter regex")))
+        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.LOCK, "name", "duration", "filter regex")))
+        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.LAMP, "name", "duration", "filter regex")))
+        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.GATE, "name", "duration", "filter regex", "filepath")))
       
       },
       (err) => this.toastr.error(err.message)

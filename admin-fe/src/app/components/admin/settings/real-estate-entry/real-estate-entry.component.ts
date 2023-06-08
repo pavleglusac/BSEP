@@ -11,16 +11,17 @@ import {
   faUsers
 } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
-import { RealEstate } from 'src/app/model/myHouse';
+import { Device, RealEstate } from 'src/app/model/myHouse';
 import { MyhouseService } from 'src/app/services/myhouse.service';
 import { EditTenantsComponent } from '../edit-tenants/edit-tenants.component';
+import { DevicesModalComponent } from '../devices-modal/devices-modal.component';
 
 @Component({
   selector: 'app-real-estate-entry',
   templateUrl: './real-estate-entry.component.html',
   styleUrls: ['./real-estate-entry.css'],
   standalone: true,
-  imports: [FontAwesomeModule, FormsModule, CommonModule, EditTenantsComponent],
+  imports: [FontAwesomeModule, FormsModule, CommonModule, EditTenantsComponent, DevicesModalComponent],
 })
 export class RealEstateEntryComponent implements OnInit {
   faEdit: IconDefinition = faPenToSquare;
@@ -33,7 +34,9 @@ export class RealEstateEntryComponent implements OnInit {
   @Input() email!: string;
   editable: boolean = false;
   showEditTenantsModal: boolean = false;
+  showDevicesModal : boolean = false
   editableRealEstate: RealEstate = new RealEstate('','', '', '', []);
+
 
   constructor(
     private houseService: MyhouseService,
@@ -84,5 +87,18 @@ export class RealEstateEntryComponent implements OnInit {
     if (this.realEstate.tenants.filter((t) => t.email === tenant.email).length === 0) {
       this.realEstate.tenants.push(tenant);
     }
+  }
+
+  openDeviceModal = () => {
+    this.showDevicesModal = true;
+  }
+
+  addNewDevice = (device: Device) => {
+    this.houseService.addNewDevice(
+      this.realEstate.id,
+      device,
+      (newDevice: Device) => this.realEstate.devices?.push(newDevice),
+      (err: any) => this.toastr.error(err.message)
+    )
   }
 }
