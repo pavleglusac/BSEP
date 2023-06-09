@@ -33,7 +33,7 @@ public class DeviceService {
         device.setName(deviceDto.getDeviceName());
         device.setType(DeviceType.valueOf(deviceDto.getDeviceType()));
         device.setFilterRegex(deviceDto.getRegex());
-        device.setRefreshRate(device.getRefreshRate());
+        device.setRefreshRate(deviceDto.getRefreshRate());
         device.setFilePath("./devices/logs/" + device.getId().toString() + ".log");
         deviceRepository.save(device);
         realEstate.getDevices().add(device);

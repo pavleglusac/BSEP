@@ -1,7 +1,9 @@
-package com.bsep.admin.myHouse;
-
+package com.bsep.admin.service;
+import com.bsep.admin.model.Log;
+import com.bsep.admin.model.LogRule;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.myHouse.dto.Rule;
+import com.bsep.admin.repository.LogRuleRepository;
 import com.bsep.admin.repository.RuleRepository;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
@@ -13,50 +15,52 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
-public class RulesService {
+
+public class LogRulesService {
 
     @Autowired
-    private AlarmService alarmService;
+    private LogAlarmService alarmService;
 
     @Autowired
-    private RuleRepository ruleRepository;
+    private LogRuleRepository ruleRepository;
 
     private List<String> DRL = new ArrayList<>();
 
     private final String DRL_header = """
-            import com.bsep.admin.model.*;
-            import java.util.List;
-            import java.util.ArrayList;
-            import java.util.Date;
-            import java.util.concurrent.TimeUnit;
-            import com.bsep.admin.myHouse.AlarmService;
-            import com.bsep.admin.service.LogAlarmService;
-            global AlarmService alarmService;
-            global LogAlarmService logAlarmService;
-    """;
+        import com.bsep.admin.model.*;
+        import java.util.List;
+        import java.util.ArrayList;
+        import java.util.Date;
+        import java.util.concurrent.TimeUnit;
+        import com.bsep.admin.service.LogAlarmService;
+        import com.bsep.admin.myHouse.AlarmService;
+        global LogAlarmService logAlarmService;
+        global AlarmService alarmService;
+""";
 
     private String ruleStartMarker = "// << ";
     private String ruleEndMarker = "// >> ";
 
     private KieSession kieSession;
 
-    private String msgRuleTemplate = "Message($mid: deviceId, read == false)";
+    private String msgRuleTemplate = "Log(read == false)";
     private String accumulateRuleTemplate = "$l: List() from collect( \n" +
-                                            "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
-                                            "   {TEMPLATE_WINDOW}\n" +
-                                            " )\n" +
-                                            " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";
+            "   Log($m: this, read==false {TEMPLATE_ACTION}{TEMPLATE_DETAILS}{TEMPLATE_IP}{TEMPLATE_TYPE}{TEMPLATE_USERNAMES})" +
+            "   {TEMPLATE_WINDOW}\n" +
+            " )\n" +
+            " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";
 
     // add thread safe queue of messages
-    ArrayDeque<Message> queue = new ArrayDeque<>();
+    ArrayDeque<Log> queue = new ArrayDeque<>();
 
 
 
     @Scheduled(fixedRate = 2000)
     public void fireAllRules() {
-        System.out.println("Firing all rules! Total messages: " + queue.size());
+        System.out.println("Firing all log rules! Total messages: " + queue.size());
         StringBuilder rules = new StringBuilder();
         rules.append(DRL_header);
         DRL.forEach(line -> rules.append(line).append("\n"));
@@ -65,17 +69,17 @@ public class RulesService {
         KieServices kieServices = KieServices.Factory.get();
         KieFileSystem kfs = kieServices.newKieFileSystem();
 
-        kfs.write("src/main/resources/rules.drl", rules.toString());
+        kfs.write("src/main/resources/log_rules.drl", rules.toString());
         kieServices.newKieBuilder(kfs).buildAll();
 
         ReleaseId releaseId = kieServices.getRepository().getDefaultReleaseId();
         KieContainer kieContainer = kieServices.newKieContainer(releaseId);
-        
+
         // The new session now contains the updated rules
         kieSession = kieContainer.newKieSession();
-        kieSession.setGlobal("alarmService", alarmService);
+        kieSession.setGlobal("logAlarmService", alarmService);
 
-        for (Message message : queue) {
+        for (Log message : queue) {
 //            System.out.println("Inserting message: " + message);
             kieSession.insert(message);
         }
@@ -84,7 +88,7 @@ public class RulesService {
     }
 
 
-    public void addMessage(Message message) {
+    public void addMessage(Log message) {
         if (queue.size() > 1000) {
             queue.poll();
         }
@@ -95,7 +99,7 @@ public class RulesService {
 
     public void deleteRule(String ruleName) {
         // find rule in list of rules and delete it
-        Rule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuntimeException("Rule not found!"));
+        LogRule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuntimeException("Rule not found!"));
         ruleRepository.delete(rule);
 
         List<String> resultDRL = new ArrayList<>();
@@ -114,7 +118,7 @@ public class RulesService {
         DRL = resultDRL;
     }
 
-    public void addRule(Rule rule) {
+    public void addRule(LogRule rule) {
         List<String> res = buildRuleTemplate(rule);
 
         // append rule to DRL
@@ -125,23 +129,40 @@ public class RulesService {
         ruleRepository.save(rule);
     }
 
-    public List<Rule> getAllRules() {
+    public List<LogRule> getAllRules() {
         return ruleRepository.findAll();
     }
 
-    private List<String> buildRuleTemplate(Rule rule) {
-        String templateTextRegex = null;
-        String templateOperatorAndValue = null;
+    private List<String> buildRuleTemplate(LogRule rule) {
+        String templateActionRegex = null;
+        String templateDetailsRegex = null;
+        String templateIpAddressRegex = null;
+        String templateUsernamesRegex = null;
+        String templateType = null;
         String templateWindow = null;
         String templateOperatorAndNum = null;
-        String templateDeviceType = null;
 
-        if (rule.getTextRegex() != null && !rule.getTextRegex().isEmpty()) {
-            templateTextRegex = ", text matches \"" + rule.getTextRegex() + "\"";
+        if (rule.getActionRegex() != null && !rule.getActionRegex().isEmpty()) {
+            templateActionRegex = ", action matches \"" + rule.getActionRegex() + "\"";
         }
 
-        if (rule.getOperatorValue() != null && !rule.getOperatorValue().isEmpty() && rule.getValue() != null) {
-            templateOperatorAndValue = ", " + rule.getOperatorValue() + " " + rule.getValue();
+        if (rule.getDetailsRegex() != null && !rule.getDetailsRegex().isEmpty()) {
+            templateDetailsRegex = ", details matches \"" + rule.getDetailsRegex() + "\"";
+        }
+
+        if (rule.getIpAddressRegex() != null && !rule.getIpAddressRegex().isEmpty()) {
+            templateIpAddressRegex = ", ipAddress matches \"" + rule.getIpAddressRegex() + "\"";
+        }
+
+        if (rule.getUsernames() != null && !rule.getUsernames().isEmpty()) {
+            String result = rule.getUsernames().stream()
+                    .map(s -> "\"" + s + "\"")
+                    .collect(Collectors.joining(","));
+            templateUsernamesRegex = ", usernames.containsAll(java.util.Arrays.asList(" + result + "))";
+        }
+
+        if (rule.getLogType() != null && !rule.getLogType().isEmpty()) {
+            templateType = ", type == LogType." + rule.getLogType() + "";
         }
 
         if (rule.getWindow() != null && !rule.getWindow().isEmpty()) {
@@ -152,9 +173,6 @@ public class RulesService {
             templateOperatorAndNum = rule.getOperatorNum() + " " + rule.getNum();
         }
 
-        if (rule.getDeviceType() != null) {
-            templateDeviceType = ", deviceType == DeviceType." + rule.getDeviceType();
-        }
 
         // add rule to list of rules
         List<String> res = new ArrayList<>();
@@ -163,26 +181,29 @@ public class RulesService {
         res.add("when");
         res.add(msgRuleTemplate);
         res.add(accumulateRuleTemplate
-                .replace("{TEMPLATE_DEVICE_TYPE}", Optional.ofNullable(templateDeviceType).map(Objects::toString).orElse(""))
-                .replace("{TEMPLATE_TEXT_REGEX}", Optional.ofNullable(templateTextRegex).orElse(""))
-                .replace("{TEMPLATE_OPERATOR_AND_VALUE}", Optional.ofNullable(templateOperatorAndValue).orElse(""))
+                .replace("{TEMPLATE_ACTION}", Optional.ofNullable(templateActionRegex).orElse(""))
+                .replace("{TEMPLATE_DETAILS}", Optional.ofNullable(templateDetailsRegex).orElse(""))
+                .replace("{TEMPLATE_IP}", Optional.ofNullable(templateIpAddressRegex).orElse(""))
+                .replace("{TEMPLATE_TYPE}", Optional.ofNullable(templateType).orElse(""))
+                .replace("{TEMPLATE_USERNAMES}", Optional.ofNullable(templateUsernamesRegex).orElse(""))
                 .replace("{TEMPLATE_WINDOW}", Optional.ofNullable(templateWindow).orElse(""))
                 .replace("{TEMPLATE_OPERATOR_AND_NUM}", Optional.ofNullable(templateOperatorAndNum).orElse("")));
         res.add("then");
-        String then = String.format("alarmService.createAlarm(\"%s\", \"%s\", $mid);", rule.getName(), rule.getAlarmText()) +
-            """
-
-            for(Object msg : $l) {
-                modify((Message)msg) {
-                    setRead(true)
+        String then = String.format("logAlarmService.createAlarm(\"%s\", \"%s\", $l);", rule.getName(), rule.getAlarmText()) +
+                """
+    
+                for(Object msg : $l) {
+                    modify((Log)msg) {
+                        setRead(true)
+                    }
                 }
-            }
-        """;
+            """;
         res.add(then);
         res.add("end");
         res.add(ruleEndMarker + rule.getName());
         return res;
     }
+
 
 
 }
