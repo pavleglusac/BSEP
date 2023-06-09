@@ -7,6 +7,8 @@ import { CsrsComponent } from './csrs/csrs.component';
 import { UsersComponent } from './users/users.component';
 import { RegisterComponent } from './register/register.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AlarmsComponent } from './alarms/alarms.component';
+import { AddAlarmComponent } from './alarms/add-alarm/add-alarm.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -28,6 +30,14 @@ export const ADMIN_ROUTES: Route[] = [
       {
         path: 'users',
         component: UsersComponent,
+      },
+      {
+        path: 'alarms',
+        component: AlarmsComponent,
+      },
+      {
+        path: 'alarms/new',
+        component: AddAlarmComponent,
       },
       {
         path: 'register',
