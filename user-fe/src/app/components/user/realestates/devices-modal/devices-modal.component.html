@@ -1,0 +1,39 @@
+<p-dialog position="center" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" class="bg-secondary-white h-50" [closable]="true" (onHide)="change()">
+    <div  class=" max-w-lg ml-64 rounded border border-primary-gray-light" style="background: rgb(247, 247, 249);">
+        <div class=" flex flex-col gap-2 p-7 justify-start">
+            <div class="flex flex-col gap-3">
+                <div class="font-semibold text-primary-violet italic tracking-wide uppercase self-start mb-3 text-lg">
+                    devices
+                </div> 
+                <div *ngFor="let device of devices" class="flex flex-col gap-2 mb-5">
+
+                    <span class="flex gap-2 items-start">
+                        <p class="font-semibold text-primary-violet text-sm">{{device.name}}</p>
+                        <p class="font-semibold text-primary-violet text-sm">{{device.type}}</p>
+                    </span>
+                    
+                
+                    <div class="px-2 flex justify-start divide-x-2 text-primary-gray-dark italic overflow-auto whitespace-nowrap">
+                        <span *ngIf="device.filePath" class="flex gap-2 items-center justify-center w-full px-3">
+                            <fa-icon [icon]="faFilePath" class="text-primary-gray-dark my-auto text-xs"></fa-icon>
+                            <p [title]="device.filePath" class="truncate max-w-[100px]">{{device.filePath}}</p>
+                        </span> 
+                      
+                        <span class="flex gap-2 items-start justify-center w-full px-3">
+                            <fa-icon [icon]="faDuration" class="text-primary-gray-dark my-auto text-xs"></fa-icon>
+                            <p>{{device.refreshRate}}</p>
+                        </span> 
+                        <span class="flex gap-2 items-start justify-center w-full px-3">
+                            <fa-icon [icon]="faFilterRegex" class="text-primary-gray-dark my-auto text-xs"></fa-icon>
+                            <p>{{device.filterRegex}}</p>
+                        </span> 
+                    </div>
+                </div>
+
+            </div>
+            <div class="flex gap-3 self-end">
+                <button class="button gray-button" (click)="hideDialog()" >Close</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>

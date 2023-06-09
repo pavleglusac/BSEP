@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { RealEstate } from '../model/myHouse';
+import { Device, RealEstate } from '../model/myHouse';
 import { Tenant } from '../model/user';
 
 @Injectable({
@@ -63,6 +63,22 @@ export class MyhouseService {
     errorCb: (error: any) => void
   ) {
     this.http.post(`api/myhouse/tenant`, {email, realEstateId}).subscribe({
+      next(req: any) {
+        successCb(req);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
+  addNewDevice(
+    id: string,
+    device: Device,
+    successCb: (value: Device) => void,
+    errorCb: (err:any) => void
+  ) {
+    this.http.post(`api/myhouse/device`, {houseId: id, ...device}).subscribe({
       next(req: any) {
         successCb(req);
       },

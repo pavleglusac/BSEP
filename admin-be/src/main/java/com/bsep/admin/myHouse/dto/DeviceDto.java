@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeviceDto {
     String houseId;
-    String deviceName;
-    String deviceType;
-    String regex;
+    String name;
+    String type;
+    String filterRegex;
     Long refreshRate;
 }

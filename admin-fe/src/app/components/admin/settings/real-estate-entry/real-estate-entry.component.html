@@ -19,9 +19,10 @@
         <button (click)="handleEditTenants()" title="Edit tenants" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto">
             <fa-icon [icon]="faTenants" class="text-light my-auto"></fa-icon>
         </button>
-        <button title="Edit devices" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto">
+        <button (click)="openDeviceModal()" title="Edit devices" class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto">
             <fa-icon [icon]="faDevices" class="text-light my-auto"></fa-icon>
         </button>
     </div>
 </div>
 <app-edit-tenants [tenants]="realEstate.tenants" (newTenantAdded)="addNewTenant($event)" [realEstateId]="realEstate.id" [(visible)]="showEditTenantsModal"></app-edit-tenants>
+<app-devices-modal [devices]="realEstate.devices" [(visible)]="showDevicesModal" (addNewDevice)="addNewDevice($event)"></app-devices-modal>

@@ -9,11 +9,9 @@ class Thermometer(Device):
         self.value = 20.0
         self.goal = 20.0
         self.modes = {
-            "NORMAL": [[self.state_normal, 1]],
-            "HIGH_TEMPERATURE": [[self.state_high_temperature, 1]],
-            "LOW_TEMPERATURE": [[self.state_low_temperature, 1]]
+            "NORMAL": [[self.pick_a_state, 1]],
         }
-        self.current_mode = deepcopy(self.modes["NORMAL"])
+        self.current_mode = [[self.pick_a_state, 1]]
         self.current_mode_index = 0
 
     def state_normal(self):
@@ -48,25 +46,34 @@ class Thermometer(Device):
 
     def shift_temperature_to(self, value):
         if self.value < value:
-            self.value += 1.2
+            self.value += 0.3
             return False
         elif self.value > value:
-            self.value -= 1.2
+            self.value -= 0.3
             return False
+        if self.value >= 35:
+            self.state_high_temperature()
+        elif self.value <= -5:
+            self.state_low_temperature()
+        else:
+            self.state_normal()
         return True
 
 
     def pick_a_state(self):
-        states_odds = {
-            "NORMAL": 0.5,
-            "HIGH_TEMPERATURE": 0.25,
-            "LOW_TEMPERATURE": 0.25
+        temperature_odds = {
+            self.shift_to_high: 0.25,
+            self.shift_to_normal: 0.5,
+            self.shift_to_low: 0.25
         }
+        self.current_mode = [[self.pick_a_state, 1]]
+        self.current_mode_index = 0
         if abs(self.goal - self.value) <= 2:
-            picked_state = random.choices(list(states_odds.keys()), list(states_odds.values()))[0]
-            self.current_mode = deepcopy(self.modes[picked_state])
-            func = self.current_mode[0]
-            func()
+            picked_state = random.choices(list(temperature_odds.keys()), list(temperature_odds.values()))[0]
+            # invoke the function
+            picked_state()
+#             func = self.current_mode[0]
+#             func()
         else:
             self.shift_temperature_to(self.goal)
             
