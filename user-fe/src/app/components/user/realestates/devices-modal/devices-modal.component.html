@@ -8,24 +8,24 @@
                 <div *ngFor="let device of devices" class="flex flex-col gap-2 mb-5">
 
                     <span class="flex gap-2 items-start">
-                        <p class="font-semibold text-primary-violet text-sm">{{device.deviceName}}</p>
-                        <p class="font-semibold text-primary-violet text-sm">{{device.deviceType}}</p>
+                        <p class="font-semibold text-primary-violet text-sm">{{device.name}}</p>
+                        <p class="font-semibold text-primary-violet text-sm">{{device.type}}</p>
                     </span>
                     
                 
                     <div class="px-2 flex justify-start divide-x-2 text-primary-gray-dark italic overflow-auto whitespace-nowrap">
-                        <span *ngIf="device.filePath" class="flex gap-2 items-center justify-center w-full">
+                        <span *ngIf="device.filePath" class="flex gap-2 items-center justify-center w-full px-3">
                             <fa-icon [icon]="faFilePath" class="text-primary-gray-dark my-auto text-xs"></fa-icon>
-                            <p class="">{{device.filePath}}</p>
+                            <p [title]="device.filePath" class="truncate max-w-[100px]">{{device.filePath}}</p>
                         </span> 
                       
-                        <span class="flex gap-2 items-start justify-center w-full">
+                        <span class="flex gap-2 items-start justify-center w-full px-3">
                             <fa-icon [icon]="faDuration" class="text-primary-gray-dark my-auto text-xs"></fa-icon>
                             <p>{{device.refreshRate}}</p>
                         </span> 
-                        <span class="flex gap-2 items-start justify-center w-full">
+                        <span class="flex gap-2 items-start justify-center w-full px-3">
                             <fa-icon [icon]="faFilterRegex" class="text-primary-gray-dark my-auto text-xs"></fa-icon>
-                            <p>{{device.regex}}</p>
+                            <p>{{device.filterRegex}}</p>
                         </span> 
                     </div>
                 </div>

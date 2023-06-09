@@ -50,22 +50,23 @@ public class AdminApplication {
 	}
 
 
-	@PostConstruct
-	public void startDeviceManager() {
-		// start python script
-		String pythonCommand = "python";
-		String pythonScript = "./devices/device_manager.py";
-		ProcessBuilder processBuilder = new ProcessBuilder(pythonCommand, pythonScript);
-		try {
-			// redirect output to log file
-			processBuilder.redirectOutput(new File("./devices/device_manager.log"));
-
-			Process process = processBuilder.start();
-//			Thread.sleep(2000);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	@PostConstruct
+//	public void startDeviceManager() {
+//		// start python script
+//		String pythonCommand = "python";
+//		String pythonScript = "./devices/device_manager.py";
+//		ProcessBuilder processBuilder = new ProcessBuilder(pythonCommand, pythonScript);
+//		try {
+//			// redirect output to log file
+////			processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+//			processBuilder.redirectOutput(new File("./devices/device_manager.log"));
+//
+//			Process process = processBuilder.start();
+////			Thread.sleep(2000);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 
 

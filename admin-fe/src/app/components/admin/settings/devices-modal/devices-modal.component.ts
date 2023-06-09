@@ -34,7 +34,7 @@ export class DevicesModalComponent {
   faFilterRegex: IconDefinition = faFilter;
   errors = {name: "", regex: "", refreshRate: ""};
 
-  newDevice = new Device(DeviceType.THERMOMETER, '', '', '');
+  newDevice = new Device(DeviceType.THERMOMETER, '', 1, '');
 
 
   hideDialog() {
@@ -49,20 +49,20 @@ export class DevicesModalComponent {
 
   valid = () => {
     let valid = true;
-    if (!this.newDevice.deviceName) {
+    if (!this.newDevice.name) {
       this.errors.name = "Device's name is required"
       valid = false;
     } else {
       this.errors.name = ''
     }
-    if (!this.newDevice.regex) {
+    if (!this.newDevice.filterRegex) {
       this.errors.regex = "Device's regex is required"
       valid = false;
     } else {
       this.errors.regex = ''
     }
-    if (!this.newDevice.refreshRate) {
-      this.errors.refreshRate = "Device's refresh rate is required"
+    if (!this.newDevice.refreshRate || this.newDevice.refreshRate < 1) {
+      this.errors.refreshRate = "Device's refresh rate must be a positive number"
       valid = false;
     } else {
       this.errors.refreshRate = ''

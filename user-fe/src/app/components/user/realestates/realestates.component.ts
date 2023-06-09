@@ -29,15 +29,7 @@ export class RealEstatesComponent implements OnInit {
     this.houseService.loadRealEstates(
       this.user!.email,
       (realEstates: RealEstate[]) => {
-        this.realEstates = realEstates;
-
-        //ovde
-        this.realEstates.forEach(re => re.devices = [new Device(DeviceType.MOTION_DETECTOR, "name", "duration", "filter regex")])
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.THERMOMETER, "name", "duration", "filter regex")))
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.LOCK, "name", "duration", "filter regex")))
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.LAMP, "name", "duration", "filter regex")))
-        this.realEstates.forEach(re => re.devices!.push(new Device(DeviceType.GATE, "name", "duration", "filter regex", "filepath")))
-      
+        this.realEstates = realEstates;   
       },
       (err) => this.toastr.error(err.message)
     );

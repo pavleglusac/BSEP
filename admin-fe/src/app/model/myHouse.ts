@@ -13,17 +13,18 @@ export class RealEstate {
 
 export class Device {
   constructor(
-    public deviceType: DeviceType,
-    public deviceName: string,
-    public refreshRate: string,
-    public regex: string,
+    public type: DeviceType,
+    public name: string,
+    public refreshRate: number,
+    public filterRegex: string,
     public filePath?: string,
+    public id?: string
   ) {}
 }
 
 export enum DeviceType {
   THERMOMETER = "THERMOMETER",
-  MOTION_DETECTOR = "MOTION DETECTOR",
+  MOTION_DETECTOR = "MOTION_DETECTOR",
   LOCK = "LOCK",    
   LAMP = "LAMP",
   GATE = "GATE",

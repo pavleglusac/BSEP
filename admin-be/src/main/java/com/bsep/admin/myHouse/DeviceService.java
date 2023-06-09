@@ -9,7 +9,6 @@ import com.bsep.admin.repository.RealEstateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -30,10 +29,10 @@ public class DeviceService {
         RealEstate realEstate = realEstateRepository.findById(houseId).orElseThrow(() -> new RuntimeException("Real estate not found"));
         Device device = new Device();
         device.setId(UUID.randomUUID());
-        device.setName(deviceDto.getDeviceName());
-        device.setType(DeviceType.valueOf(deviceDto.getDeviceType()));
-        device.setFilterRegex(deviceDto.getRegex());
-        device.setRefreshRate(device.getRefreshRate());
+        device.setName(deviceDto.getName());
+        device.setType(DeviceType.valueOf(deviceDto.getType()));
+        device.setFilterRegex(deviceDto.getFilterRegex());
+        device.setRefreshRate(deviceDto.getRefreshRate());
         device.setFilePath("./devices/logs/" + device.getId().toString() + ".log");
         deviceRepository.save(device);
         realEstate.getDevices().add(device);

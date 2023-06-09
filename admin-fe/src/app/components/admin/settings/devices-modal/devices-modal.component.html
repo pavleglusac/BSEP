@@ -6,46 +6,47 @@
                     devices
                 </div> 
                 <div *ngFor="let device of devices" class="flex flex-col gap-2 mb-8">
-                    <span class="flex gap-2 items-start">
-                        <p class="font-semibold text-light text-sm">{{device.deviceName}}</p>
-                        <p class="font-base text-medium text-xs">{{device.deviceType}}</p>
+                    <span class="flex gap-2 items-end">
+                        <p class="font-semibold text-light text-sm">{{device.name}}</p>
+                        <p class="font-base text-medium text-xs">{{device.type}}</p>
                     </span>
                 
                     <div class="px-2 divide-x-2 flex text-medium italic overflow-auto whitespace-nowrap">
-                        <span *ngIf="device.filePath" class="flex gap-2 items-start justify-center w-full">
+                      
+                        <span *ngIf="device.filePath" class="flex gap-2 items-start justify-center w-full px-3">
                             <fa-icon [icon]="faFilePath" class="text-medium my-auto text-xs"></fa-icon>
-                            <p class="">{{device.filePath}}</p>
+                            <p [title]="device.filePath" class="truncate max-w-[100px]">{{device.filePath}}</p>
                         </span> 
-                        <span class="flex gap-2 items-start justify-center w-full">
+                        <span class="flex gap-2 items-start justify-center w-full px-3">
                             <fa-icon [icon]="faDuration" class="text-medium my-auto text-xs"></fa-icon>
                             <p>{{device.refreshRate}}</p>
                         </span> 
-                        <span class="flex gap-2 items-start justify-center w-full">
+                        <span class="flex gap-2 items-start justify-center w-full px-3">
                             <fa-icon [icon]="faFilterRegex" class="text-medium my-auto text-xs"></fa-icon>
-                            <p>{{device.regex}}</p>
+                            <p>{{device.filterRegex}}</p>
                         </span> 
                     </div>
                 </div>
 
                 <p class="font-semibold text-medium text-sm">Add new device:</p>
                 <div class="flex gap-2 flex-wrap justify-start gap-y-4">
-                    <select [(ngModel)]="newDevice.deviceType" class="text-sm !w-[40%]">
+                    <select [(ngModel)]="newDevice.type" class="text-sm !w-[40%]">
                         <option value="THERMOMETER">THERMOMETER</option>
-                        <option value="MOTION DETECTOR">MOTION DETECTOR</option>
+                        <option value="MOTION_DETECTOR">MOTION DETECTOR</option>
                         <option value="LOCK">LOCK</option>
                         <option value="LAMP">LAMP</option>
                         <option value="GATE">GATE</option>
                     </select>
                     <span class="relative w-[40%]">
-                        <input [(ngModel)] = "newDevice.deviceName" type="text"  placeholder="Name"/>
+                        <input [(ngModel)] = "newDevice.name" type="text"  placeholder="Name"/>
                         <p class="error">{{errors.name}}</p>
                     </span>
                     <span class="relative w-[40%]">
-                        <input [(ngModel)] = "newDevice.refreshRate" type="text"  placeholder="Refresh rate"/>
+                        <input [(ngModel)] = "newDevice.refreshRate" type="number"  placeholder="Refresh rate"/>
                         <p class="error">{{errors.refreshRate}}</p>
                     </span>
                     <span class="relative w-[40%]">
-                        <input [(ngModel)] = "newDevice.regex" type="text"  placeholder="Regex"/>
+                        <input [(ngModel)] = "newDevice.filterRegex" type="text"  placeholder="Regex"/>
                         <p class="error">{{errors.regex}}</p>
                     </span>
                     <button class="bg-accent hover:bg-accent-dark text-light p-1 px-2 w-[16%]" (click)="handleAddDevice()"> Add </button>

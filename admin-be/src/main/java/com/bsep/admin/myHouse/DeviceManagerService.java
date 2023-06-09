@@ -24,6 +24,7 @@ public class DeviceManagerService {
         try {
             var resp = HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());
             if (resp.statusCode() != 200) {
+                System.out.println(resp.body());
                 throw new RuntimeException("Failed to start device");
             }
         } catch (IOException e) {

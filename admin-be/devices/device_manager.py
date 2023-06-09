@@ -60,8 +60,11 @@ def stop_device(id: str = ""):
 def run_states():
     for device in devices.values():
         try:
+            print(f"Running state for device {device.id}")
             device.run_state()
         except Exception as e:
+            # print stack trace
+            print(e.with_traceback())
             print(f"Error running state for device {device.id} {e}")
 
 
