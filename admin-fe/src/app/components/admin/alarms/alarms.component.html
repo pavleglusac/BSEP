@@ -4,7 +4,7 @@
     <div class="flex justify-end">
       <button class="bg-accent flex gap-x-3 h-10 px-4 hover:bg-opacity-90 active:bg-accent-dark" (click)="toAlarmCreation()">
         <fa-icon [icon]="faPlus" class="text-light my-auto"></fa-icon>
-        <div class="text-light font-medium my-auto">New alarm</div>
+        <div class="text-light font-medium my-auto">New alarm rule</div>
       </button>
     </div>
 
@@ -12,7 +12,7 @@
       
     </div>
     <div *ngIf="alarms.length === 0" class="flex flex-col justify-center h-20 bg-dark">
-      <div class="text-medium text-2xl text-center">No alarms have been created</div>
+      <div class="text-medium text-2xl text-center">No alarm rules have been created</div>
     </div>
 
   </div>

@@ -4,6 +4,7 @@ import com.bsep.admin.model.DeviceType;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.myHouse.RulesService;
 import com.bsep.admin.myHouse.dto.Rule;
+import com.bsep.admin.myHouse.dto.RuleCreationDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +21,7 @@ class AdminApplicationTests {
 
 	@Test
 	public void testAddRule() {
-		Rule rule = new Rule();
+		RuleCreationDto rule = new RuleCreationDto();
 		rule.setName("TEST");
 		rule.setNum(3);
 		rule.setOperatorNum(">=");

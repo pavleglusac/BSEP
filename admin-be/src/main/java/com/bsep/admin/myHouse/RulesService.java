@@ -2,6 +2,7 @@ package com.bsep.admin.myHouse;
 
 import com.bsep.admin.model.Message;
 import com.bsep.admin.myHouse.dto.Rule;
+import com.bsep.admin.myHouse.dto.RuleCreationDto;
 import com.bsep.admin.repository.RuleRepository;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
@@ -112,7 +113,8 @@ public class RulesService {
         DRL = resultDRL;
     }
 
-    public void addRule(Rule rule) {
+    public void addRule(RuleCreationDto ruleCreationDto) {
+        Rule rule = mapRuleDtoToRule(ruleCreationDto);
         List<String> res = buildRuleTemplate(rule);
 
         // append rule to DRL
@@ -121,6 +123,22 @@ public class RulesService {
         DRL.forEach(System.out::println);
 
         ruleRepository.save(rule);
+    }
+
+    private Rule mapRuleDtoToRule(RuleCreationDto dto) {
+        Rule rule = new Rule();
+        rule.setId(UUID.randomUUID());
+        rule.setName(dto.getName());
+        rule.setNum(dto.getNum());
+        rule.setValue(dto.getValue());
+        rule.setWindow(dto.getWindow());
+        rule.setAlarmText(dto.getAlarmText());
+        rule.setDeviceType(dto.getDeviceType());
+        rule.setMessageType(dto.getMessageType());
+        rule.setOperatorNum(dto.getOperatorNum());
+        rule.setOperatorValue(dto.getOperatorValue());
+        rule.setTextRegex(dto.getTextRegex());
+        return rule;
     }
 
     public List<Rule> getAllRules() {

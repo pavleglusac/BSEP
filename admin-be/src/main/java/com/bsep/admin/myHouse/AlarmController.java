@@ -2,6 +2,7 @@ package com.bsep.admin.myHouse;
 
 import com.bsep.admin.model.Alarm;
 import com.bsep.admin.myHouse.dto.Rule;
+import com.bsep.admin.myHouse.dto.RuleCreationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class AlarmController {
 
 
     @PostMapping("/rule")
-    public void addRule(@RequestBody Rule rule) {
+    public void addRule(@RequestBody RuleCreationDto rule) {
         rulesService.addRule(rule);
     }
 
