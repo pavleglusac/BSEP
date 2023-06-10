@@ -3,6 +3,7 @@ package com.bsep.admin.myHouse.dto;
 import com.bsep.admin.model.DeviceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -18,14 +19,10 @@ public class RuleCreationDto {
     @Length(max=32)
     @Pattern(regexp = "^\\w+(?: \\w+)*$")
     private String messageType;
-    @NotBlank
     @Length(max=256)
     private String textRegex;
-    @NotBlank
     private DeviceType deviceType;
-    @NotNull
     private Double value;
-    @NotBlank
     @Pattern(regexp = "^(?:==|>=|<=|>|<)$")
     private String operatorValue;
     @NotNull
@@ -33,7 +30,6 @@ public class RuleCreationDto {
     @NotBlank
     @Pattern(regexp = "^(?:==|>=|<=|>|<)$")
     private String operatorNum;
-    @NotBlank
     @Length(max=32)
     private String window;
     @NotBlank

@@ -1,16 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { ToastrService } from 'ngx-toastr';
+import { AlarmService } from 'src/app/services/alarm.service';
 
 @Component({
   selector: 'app-add-alarm',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule],
   templateUrl: './add-alarm.component.html',
   styles: [
   ]
 })
 export class AddAlarmComponent {
+  faAngleDown: IconDefinition = faAngleDown;
+
   alarmForm = new FormGroup({
     name: new FormControl('', [
       Validators.required,
@@ -35,6 +42,7 @@ export class AddAlarmComponent {
   });
 
   deviceTypes: string[] = [
+    "ALL",
     "THERMOMETER",
     "MOTION_DETECTOR",
     "LOCK",
@@ -73,8 +81,11 @@ export class AddAlarmComponent {
     },
   ]
 
+  enableTextRegex: boolean = false;
+  enableValue: boolean = false;
+  enableWindow: boolean = false;
+
   deviceType: string = this.deviceTypes[0];
-  errorMessage: string = '';
   value: number = 0;
   valueError: string = '';
   operatorValue: string = this.operatorValues[0];
@@ -85,8 +96,51 @@ export class AddAlarmComponent {
   windowValueError: string = '';
   windowUnit: string = '';
 
-  onSubmit(): void {
+  errorMessage: string = '';
 
+  constructor(private alarmService: AlarmService, private toastr: ToastrService) {}
+
+  onSubmit(): void {
+    if (this.isFormValid()) {
+      this.alarmService.addAlarmRule(
+        { 
+          name: this.name?.value!,
+          alarmText: this.alarmText?.value!,
+          messageType: this.messageType?.value!,
+          num: this.num,
+          operatorNum: this.operatorNum,
+          deviceType: this.deviceType === "ALL" ? undefined : this.deviceType,
+          textRegex: this.enableTextRegex ? this.textRegex?.value! : undefined,
+          window: this.enableWindow ? `${this.windowValue}${this.windowUnit}` : undefined,
+          value: this.enableValue ? this.value : undefined,
+          operatorValue: this.enableValue ? this.operatorValue : undefined,
+        }, 
+        () => {
+          this.toastr.success("Success!");
+        },
+        (err) => this.toastr.error(err.message))
+    }
+  }
+
+  isFormValid(): boolean {
+    if (this.name?.invalid || this.alarmText?.invalid || this.messageType?.invalid) {
+      this.alarmForm.markAllAsTouched();
+      return false;
+    }
+    if (this.enableTextRegex && this.textRegex?.invalid) {
+      this.alarmForm.markAllAsTouched();
+      return false;
+    }
+    if (this.enableValue && this.value === null) {
+      return false;
+    }
+    if (this.enableWindow && this.windowValue === null) {
+      return false;
+    }
+    if (this.num === null) {
+      return false;
+    }
+    return true;
   }
 
   get name() {
@@ -106,9 +160,9 @@ export class AddAlarmComponent {
   }
 
   deviceTypeChanged(event: any) {
-    this.deviceType = event.target.value;
+    this.deviceType = event.target.value.toUpperCase().replaceAll(' ', '_');
   }
-
+  
   operatorValueChanged(event: any) {
     this.operatorValue = event.target.value;
   }
@@ -118,19 +172,23 @@ export class AddAlarmComponent {
   }
   
   windowUnitChanged(event: any) {
-    this.windowUnit = event.target.value;
+    this.windowUnit = this.droolsTimeUnits.filter(x => x.name === event.target.value)[0].value;
   }
 
   checkIfValueIsNumber() {
-    this.checkIfNum(this.value, (v: string) => {this.valueError = v})
+    if (this.enableValue) {
+      this.checkIfNum(this.value, (v: string) => {this.valueError = v});
+    }
   }
 
   checkIfNumIsNumber() {
-    this.checkIfNum(this.num, (v: string) => {this.numError = v})
+    this.checkIfNum(this.num, (v: string) => {this.numError = v});
   }
 
   checkIfWindowValueIsNumber() {
-    this.checkIfNum(this.windowValue, (v: string) => {this.windowValueError = v})
+    if (this.enableWindow) {
+      this.checkIfNum(this.windowValue, (v: string) => {this.windowValueError = v});
+    }
   }
 
   checkIfNum(value: number, errorCallback: any) {
