@@ -7,6 +7,7 @@ import { User } from 'src/app/model/user';
 import { MyHouseService } from 'src/app/services/myhouse.service';
 import { StoreType } from 'src/app/shared/store/types';
 import { RealEstateEntryComponent } from './real-estate-entry/real-estate-entry.component';
+import { RealEstateAction, RealEstateActionType } from 'src/app/shared/store/real-estate-slice/real-estate.actions';
 
 @Component({
   selector: 'app-realestates',
@@ -22,6 +23,7 @@ export class RealEstatesComponent implements OnInit {
   constructor(private houseService: MyHouseService, private store: Store<StoreType>, private toastr: ToastrService) {
     store.subscribe(state => {
       this.user = state.loggedUser.user;
+      this.realEstates = state.realEstates.realEstates;
     })
   }
 
@@ -29,7 +31,7 @@ export class RealEstatesComponent implements OnInit {
     this.houseService.loadRealEstates(
       this.user!.email,
       (realEstates: RealEstate[]) => {
-        this.realEstates = realEstates;   
+        this.store.dispatch(new RealEstateAction(RealEstateActionType.SET_REAL_ESTATES, realEstates)); 
       },
       (err) => this.toastr.error(err.message)
     );

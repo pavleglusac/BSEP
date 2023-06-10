@@ -81,4 +81,10 @@ public class ControllerAdvisor {
 		return new ResponseError(HttpStatus.FORBIDDEN, e.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(ForbiddenDeviceAction.class)
+	public ResponseError handleForbiddenDeviceAction(ForbiddenDeviceAction e) {
+		return new ResponseError(HttpStatus.FORBIDDEN, e.getMessage());
+	}
+
 }

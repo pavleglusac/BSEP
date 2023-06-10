@@ -1,0 +1,39 @@
+<div class="m-auto flex justify-start min-h-full max-h-full overflow-auto"> 
+    <div class="flex flex-col p-20 gap-10 w-full">
+        <div class="flex flex-col gap-2">
+            <p class="text-primary-gray-dark text-lg mb-2">Choose real estate and its device to display messages:</p>
+            <div class="flex justify-start items-end gap-5">
+                <select class="input-msg" (change)="selectedRealEstate = getSelectedRealEstate($event.target)">
+                    <option value="" [selected]="true" disabled>Choose real estate</option>
+                    <option *ngFor="let realEstate of realEstates" [value]="realEstate.id">{{realEstate.name}} </option>
+                </select>
+                
+                <select *ngIf="selectedRealEstate" class="input-msg" (change)="selectedDevice = getSelectedDevice(selectedRealEstate, $event.target)">
+                    <option value="" [selected]="true" disabled>Choose device</option>
+                    <option *ngFor="let device of selectedRealEstate.devices" [value]="device.id">{{device.name}} {{device.type}}</option>
+                </select>
+
+                
+                <div class="relative" *ngIf="selectedDevice">
+                    <button title="Filter search" [ngClass]="filter.length > 0 ? 'backdrop-brightness-95' :'' " class="button gray-button !px-2 flex gap-2" (click)="toggleFilter()">
+                        <fa-icon [icon]="faFilter"></fa-icon>
+                        <p>Filter</p>
+                    </button>
+                    
+                    <div *ngIf="openFilter" class="shadow-md z-[1000] max-h-[300px] min-w-[400px] max-w-[400px] overflow-auto absolute top-[50px] left-0 bg-secondary-hover rounded p-4 duration-300 ease-in-out">
+                        <app-filter (applyFilter)="applyFilter($event)" [filter]="filter"></app-filter>
+                    </div>
+                </div>
+
+                <button *ngIf="selectedDevice" class="ml-auto button violet-button place-self-end" (click)="search()">Search</button>
+            </div>
+        </div>
+
+        <p *ngIf="messages && messages.length == 0" class="italic font-semibold text-lg text-primary-violet">There are no messages found</p>
+
+        <div *ngIf="messages && messages.length > 0" class="shadow-lg mb-10">
+            <app-messages-table [messages]="messages" [page]="page" [pageInfo]="pageInfo" (paginationEmmiter)="pagination($event)"></app-messages-table>
+        </div>
+        <p class="min-h-[5px]"></p>
+    </div>
+</div>

@@ -11,6 +11,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/http.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.reducer';
+import { realEstateReducer } from './shared/store/real-estate-slice/real-estate.reducer';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.
     StoreModule.forRoot(
       {
         loggedUser: loggedUserReducer,
+        realEstates: realEstateReducer
       },
       { metaReducers }
     ),
