@@ -6,6 +6,12 @@ from motion_detector import MotionDetector
 from thermometer import Thermometer
 from lock import Lock
 
+import logging
+
+
+logger = logging.getLogger("api")
+logger.setLevel(logging.DEBUG)
+
 
 app = FastAPI()
 
@@ -70,4 +76,5 @@ def run_states():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="localhost", port=5000)

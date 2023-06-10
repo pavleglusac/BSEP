@@ -15,6 +15,7 @@ class Thermometer(Device):
         self.current_mode_index = 0
 
     def state_normal(self):
+        print("State normal")
         self.log("INFO", "Measured temperature", self.value)
 
 
@@ -45,18 +46,20 @@ class Thermometer(Device):
 
 
     def shift_temperature_to(self, value):
-        if self.value < value:
-            self.value += 0.3
-            return False
-        elif self.value > value:
-            self.value -= 0.3
-            return False
         if self.value >= 35:
             self.state_high_temperature()
         elif self.value <= -5:
             self.state_low_temperature()
         else:
             self.state_normal()
+
+
+        if self.value < value:
+            self.value += 0.3
+            return False
+        elif self.value > value:
+            self.value -= 0.3
+            return False
         return True
 
 

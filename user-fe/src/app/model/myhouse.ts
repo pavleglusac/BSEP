@@ -30,3 +30,12 @@ export class RealEstate {
     GATE = "GATE",
   }
   
+
+  export class Message {
+    id: string = "";
+    type: string = "";
+    text: string = "";
+    value: number = 0;
+    timestamp: Date = new Date();
+    deviceId: string = "";
+  }

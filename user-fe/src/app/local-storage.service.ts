@@ -15,6 +15,11 @@ function localStorageSyncReducer(
           decrypt: (state) =>
             CryptoJS.AES.decrypt(state, key).toString(CryptoJS.enc.Utf8),
         },
+        realEstates: {
+          encrypt: (state) => CryptoJS.AES.encrypt(state, key).toString(),
+          decrypt: (state) =>
+            CryptoJS.AES.decrypt(state, key).toString(CryptoJS.enc.Utf8),
+        },
       },
     ],
     rehydrate: true,
