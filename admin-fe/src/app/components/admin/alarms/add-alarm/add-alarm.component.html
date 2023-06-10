@@ -1,7 +1,7 @@
-<div class="m-auto text-light flex justify-center pt-28"> 
-  <div class="bg-dark w-1/2 flex flex-col py-12 px-20 gap-10">
+<div class="m-auto text-light flex justify-center pt-14"> 
+  <div class="bg-dark w-2/3 lg:w-1/2 flex flex-col py-8 px-20 gap-10">
     <form [formGroup]="alarmForm" (submit)="onSubmit()">
-      <div class="flex flex-col gap-y-6 mt-10 mb-12 tracking-wide">
+      <div class="flex flex-col gap-y-6 tracking-wide">
 
         <!-- name -->
         <div class="w-full">
@@ -65,7 +65,7 @@
         <!-- textRegex -->
         <div class="w-full">
           <label class="block tracking-wide text-medium text-xs font-bold mb-1"
-          for="alarm-textRegex">
+          for="alarm-text-regex">
             Text Regex
           </label>
           <input class="appearance-none block w-full text-light tracking-wide
@@ -211,6 +211,31 @@
             </div>
 
         </div>
+
+        <!-- alarmText -->
+        <div class="w-full">
+          <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-alarmText">
+            Alarm Text
+          </label>
+          <input class="appearance-none block w-full text-light tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="alarmText && alarmText.value ? 'border-light' : 'border-medium'"
+            id="alarm-alarmText" type="text" placeholder="Alarm Text" autofocus="autofocus"
+            formControlName="alarmText" (input)="errorMessage = ''">
+          <div class="h-1">
+            <p *ngIf="alarmText && alarmText.invalid && alarmText.touched" class="text-yellow-400 text-xs italic">
+              <span *ngIf="alarmText.errors?.['required']">
+                Alarm Text is required.
+              </span>
+              <span *ngIf="alarmText.errors?.['maxlength']">
+                Alarm Text is too long.
+              </span>
+              <span *ngIf="alarmText.errors?.['pattern']">
+                Alarm Text is not valid.
+              </span>
+            </p>
+          </div>
+        </div>
+
 
         <button class="bg-accent h-10 px-4 text-light font-medium
         hover:bg-opacity-90 active:bg-accent-dark"

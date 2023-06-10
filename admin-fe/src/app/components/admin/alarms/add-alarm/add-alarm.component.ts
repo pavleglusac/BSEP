@@ -30,7 +30,7 @@ export class AddAlarmComponent {
     alarmText: new FormControl('', [
       Validators.required,
       Validators.maxLength(256),
-      Validators.pattern(/^\w+(?: \w+)*$/),
+      Validators.pattern(/^[\w.!]+(?: [\w.!]+)*$/),
     ]),
   });
 
@@ -99,6 +99,10 @@ export class AddAlarmComponent {
   
   get textRegex() {
     return this.alarmForm.get('textRegex');
+  }
+
+  get alarmText() {
+    return this.alarmForm.get('alarmText');
   }
 
   deviceTypeChanged(event: any) {

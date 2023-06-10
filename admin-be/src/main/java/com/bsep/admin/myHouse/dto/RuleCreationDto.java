@@ -38,6 +38,6 @@ public class RuleCreationDto {
     private String window;
     @NotBlank
     @Length(max=256)
-    @Pattern(regexp = "^\\w+(?: \\w+)*$")
+    @Pattern(regexp = "^[\\w.!]+(?: [\\w.!]+)*$")
     private String alarmText;
 }
