@@ -4,20 +4,20 @@ import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { AlarmRulesComponent } from './alarm-rules/alarm-rules.component';
+import { AlarmRulesListComponent } from './alarm-rules-list/alarm-rules-list.component';
 import { AlarmService } from 'src/app/services/alarm.service';
 import { ToastrService } from 'ngx-toastr';
 import { AlarmRule } from 'src/app/model/alarmRule';
 
 @Component({
-  selector: 'app-alarms',
+  selector: 'app-alarm-rules',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, AlarmRulesComponent],
-  templateUrl: './alarms.component.html',
+  imports: [CommonModule, FontAwesomeModule, AlarmRulesListComponent],
+  templateUrl: './alarm-rules.component.html',
   styles: [
   ]
 })
-export class AlarmsComponent implements OnInit {
+export class AlarmRulesComponent implements OnInit {
   faPlus: IconDefinition = faPlus;
 
   alarmRules: AlarmRule[] = [];
@@ -38,6 +38,6 @@ export class AlarmsComponent implements OnInit {
   }
 
   toAlarmCreation = () => {
-    this.router.navigate(['admin/alarms/new']);
+    this.router.navigate(['admin/alarm-rules/new']);
   }
 }

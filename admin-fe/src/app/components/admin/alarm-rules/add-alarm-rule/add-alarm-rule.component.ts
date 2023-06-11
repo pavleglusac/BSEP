@@ -8,14 +8,14 @@ import { ToastrService } from 'ngx-toastr';
 import { AlarmService } from 'src/app/services/alarm.service';
 
 @Component({
-  selector: 'app-add-alarm',
+  selector: 'app-add-alarm-rule',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule],
-  templateUrl: './add-alarm.component.html',
+  templateUrl: './add-alarm-rule.component.html',
   styles: [
   ]
 })
-export class AddAlarmComponent {
+export class AddAlarmRuleComponent {
   faAngleDown: IconDefinition = faAngleDown;
 
   alarmForm = new FormGroup({

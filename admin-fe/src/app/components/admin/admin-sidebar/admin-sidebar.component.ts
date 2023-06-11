@@ -14,6 +14,7 @@ import {
   faCircleExclamation,
   faRightFromBracket,
   faFileLines,
+  faRectangleList,
 } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs';
 import { environment } from 'src/environment/environment';
@@ -66,9 +67,19 @@ const menus = {
       icon: faClipboard,
     },
     {
+      title: 'Log Rules',
+      link: 'admin/log-rules',
+      icon: faRectangleList,
+    },
+    {
       title: 'Alarms',
-      link: 'admin/alarms',
+      link: 'admin/',
       icon: faCircleExclamation,
+    },
+    {
+      title: 'Alarm Rules',
+      link: 'admin/alarm-rules',
+      icon: faRectangleList,
     },
   ],
 };
