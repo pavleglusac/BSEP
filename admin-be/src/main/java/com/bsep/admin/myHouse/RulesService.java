@@ -37,7 +37,9 @@ public class RulesService {
             import java.util.Date;
             import java.util.concurrent.TimeUnit;
             import com.bsep.admin.myHouse.AlarmService;
+            import com.bsep.admin.service.LogAlarmService;
             global AlarmService alarmService;
+            global LogAlarmService logAlarmService;
     """;
 
     private String ruleStartMarker = "// << ";
@@ -47,7 +49,7 @@ public class RulesService {
 
     private String msgRuleTemplate = "Message($mid: deviceId, read == false)";
     private String accumulateRuleTemplate = "$l: List() from collect( \n" +
-                                            "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
+                                                "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
                                             "   {TEMPLATE_WINDOW}\n" +
                                             " )\n" +
                                             " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";
@@ -127,6 +129,7 @@ public class RulesService {
         System.out.println(ruleCreationDto.toString());
         Rule rule = mapRuleDtoToRule(ruleCreationDto);
         List<String> res = buildRuleTemplate(rule);
+        rule.setId(UUID.randomUUID());
 
         // append rule to DRL
         DRL.addAll(res);
