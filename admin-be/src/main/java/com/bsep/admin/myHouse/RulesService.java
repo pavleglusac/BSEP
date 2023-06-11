@@ -116,6 +116,7 @@ public class RulesService {
 
     public void addRule(Rule rule) {
         List<String> res = buildRuleTemplate(rule);
+        rule.setId(UUID.randomUUID());
 
         // append rule to DRL
         DRL.addAll(res);

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("alarms")
+@Document("log_alarms")
 public class LogAlarm {
     @Id
     private UUID id;

@@ -119,7 +119,12 @@ public class LogRulesService {
     }
 
     public void addRule(LogRule rule) {
+        // check if rule with same name already exists
+        if (ruleRepository.findByName(rule.getName()).isPresent()) {
+            throw new RuntimeException("Rule with same name already exists!");
+        }
         List<String> res = buildRuleTemplate(rule);
+        rule.setId(UUID.randomUUID());
 
         // append rule to DRL
         DRL.addAll(res);

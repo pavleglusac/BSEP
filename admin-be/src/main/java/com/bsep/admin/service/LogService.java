@@ -4,6 +4,7 @@ import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogType;
 import com.bsep.admin.repository.LogRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -16,6 +17,9 @@ import java.util.UUID;
 
 @Service
 public class LogService {
+
+    @Autowired
+    private LogRulesService logRulesService;
     private final LogRepository logRepository;
 
     public LogService(LogRepository logRepository) {
@@ -34,7 +38,9 @@ public class LogService {
         usernamesList.addAll(List.of(usernames));
         log.setUsernames(usernamesList);
         log.setUsernames(List.of(usernames));
+        log.setRead(false);
         logRepository.save(log);
+        logRulesService.addMessage(log);
     }
 
     private String getClientIP() {
@@ -55,6 +61,10 @@ public class LogService {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public List<Log> getAllLogs() {
+        return logRepository.findAll();
     }
 
 }
