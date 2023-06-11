@@ -8,10 +8,11 @@
       </button>
     </div>
 
-    <div *ngIf="alarms.length > 0" class="h-20 bg-dark">
-      
+    <div *ngIf="alarmRules.length > 0" class="bg-dark px-3 py-4">
+      <app-alarm-rules [alarmRules]="alarmRules"></app-alarm-rules>
     </div>
-    <div *ngIf="alarms.length === 0" class="flex flex-col justify-center h-20 bg-dark">
+
+    <div *ngIf="alarmRules.length === 0" class="flex flex-col justify-center h-20 bg-dark">
       <div class="text-medium text-2xl text-center">No alarm rules have been created</div>
     </div>
 

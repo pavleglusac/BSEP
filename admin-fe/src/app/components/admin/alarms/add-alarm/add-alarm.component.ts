@@ -94,7 +94,7 @@ export class AddAlarmComponent {
   operatorNum: string = this.operatorValues[0];
   windowValue: number = 0;
   windowValueError: string = '';
-  windowUnit: string = '';
+  windowUnit: string = this.droolsTimeUnits[0].value;
 
   errorMessage: string = '';
 
@@ -117,6 +117,7 @@ export class AddAlarmComponent {
         }, 
         () => {
           this.toastr.success("Success!");
+          window.location.href = '/admin/alarms';
         },
         (err) => this.toastr.error(err.message))
     }

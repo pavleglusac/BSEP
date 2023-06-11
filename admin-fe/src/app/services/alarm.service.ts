@@ -23,4 +23,29 @@ export class AlarmService {
       },
     });
   }
+
+  getAlarmRules(
+    successCb: (alarmRules: AlarmRule[]) => void,
+    errorCb: (error: any) => void
+  ) {
+    this.http.get(`api/myhouse/alarm/rule`).subscribe({
+      next(res: any) {
+        successCb(res);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
+  deleteAlarmRule(ruleName: string, successCb: () => void, errorCb: (error: any) => void) {
+    this.http.delete(`api/myhouse/alarm/rule?ruleName=${ruleName}`).subscribe({
+      next(value: any) {
+        successCb();
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
 }
