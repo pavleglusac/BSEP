@@ -64,13 +64,13 @@ public class DeviceService {
 
     public Page<Message> findMessagesForDevice(int page, int amount, UUID id, String type, String text, String value, String timestamp) {
         Device device = findDeviceById(id);
-        Integer valueFrom = null;
-        Integer valueTo = null;
+        Float valueFrom = null;
+        Float valueTo = null;
         LocalDateTime timestampFrom = null;
         LocalDateTime timestampTo = null;
         if (!value.equals("")) {
-            valueFrom = Integer.parseInt(value.split(";")[0]);
-            valueTo = Integer.parseInt(value.split(";")[1]);
+            valueFrom = Float.parseFloat(value.split(";")[0]);
+            valueTo = Float.parseFloat(value.split(";")[1]);
         }
         if (!timestamp.equals("")) {
             timestampFrom = LocalDateTime.parse(timestamp.split(";")[0]);

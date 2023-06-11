@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface CustomMongoRepository {
-    public Page<Message> findFilteredMessages(UUID deviceId, String type, String text, Integer valueFrom, Integer valueTo, LocalDateTime timestampFrom, LocalDateTime timestampTo, PageRequest pageRequest);
+    public Page<Message> findFilteredMessages(UUID deviceId, String type, String text, Float valueFrom, Float valueTo, LocalDateTime timestampFrom, LocalDateTime timestampTo, PageRequest pageRequest);
 }

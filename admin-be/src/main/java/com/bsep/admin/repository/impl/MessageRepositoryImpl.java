@@ -24,7 +24,7 @@ public class MessageRepositoryImpl implements CustomMongoRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public Page<Message> findFilteredMessages(UUID deviceId, String type, String text, Integer valueFrom, Integer valueTo, LocalDateTime timestampFrom, LocalDateTime timestampTo, PageRequest pageRequest) {
+    public Page<Message> findFilteredMessages(UUID deviceId, String type, String text, Float valueFrom, Float valueTo, LocalDateTime timestampFrom, LocalDateTime timestampTo, PageRequest pageRequest) {
         Query query = new Query();
 
         query.addCriteria(Criteria.where("deviceId").is(deviceId));
@@ -38,11 +38,11 @@ public class MessageRepositoryImpl implements CustomMongoRepository {
         }
 
         if (valueFrom != null) {
-            query.addCriteria(Criteria.where("value").gte(valueFrom).orOperator(Criteria.where("value").lte(valueTo)));
+            query.addCriteria(Criteria.where("value").gte(valueFrom).andOperator(Criteria.where("value").lte(valueTo)));
         }
 
         if (timestampFrom != null) {
-            query.addCriteria(Criteria.where("timestamp").gte(timestampFrom).orOperator(Criteria.where("timestamp").lte(timestampTo)));
+            query.addCriteria(Criteria.where("timestamp").gte(timestampFrom).andOperator(Criteria.where("timestamp").lte(timestampTo)));
         }
 
         query.with(pageRequest);
