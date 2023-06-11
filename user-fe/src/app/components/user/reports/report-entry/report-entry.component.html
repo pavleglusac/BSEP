@@ -1,0 +1,43 @@
+<div class="flex flex-col gap-2 rounded shadow-md bg-secondary-hover py-6 px-12">
+    <span class="flex gap-x-2 items-end h-[27px]">
+        <p class="font-semibold text-primary-violet text-xl h-full">{{report.deviceName}}</p>
+        <p class="flex items-end font-medium text-secondary-gray brightness-75 text-base my-auto h-full">{{report.deviceType}}</p>
+    </span>
+
+    <div class="flex gap-2 w-full justify-between mt-6">
+        <p class="font-medium uppercase text-primary-gray-dark">messages:</p>
+        <div class="flex gap-4">
+            <span class="flex gap-2">
+                <p class="text-primary-gray-dark italic">All:</p>
+                <p class="text-primary-gray-dark font-bold">{{report.numberOfMessages}}</p>
+            </span>
+            <span class="flex gap-2">
+                <p class="text-primary-gray-dark italic">Info:</p>
+                <p class="text-primary-gray-dark font-bold">{{report.numberOfInfoMessages}}</p>
+            </span>
+            <span class="flex gap-2">
+                <p class="text-primary-gray-dark italic">Alarm:</p>
+                <p class="text-primary-gray-dark font-bold">{{report.numberOfAlarmMessages}}</p>
+            </span>
+        </div>
+    </div>
+
+    <div class="flex gap-2 w-full justify-between">
+        <p class="font-medium uppercase text-primary-gray-dark">values:</p>
+        <div class="flex gap-4">
+            <span class="flex gap-2">
+                <p class="text-primary-gray-dark italic">Min:</p>
+                <p class="text-primary-gray-dark font-bold">{{report.minValue | number : '1.2-2'}}</p>
+            </span>
+            <span class="flex gap-2">
+                <p class="text-primary-gray-dark italic">Max:</p>
+                <p class="text-primary-gray-dark font-bold">{{report.maxValue | number : '1.2-2'}}</p>
+            </span>
+            <span class="flex gap-2">
+                <p class="text-primary-gray-dark italic">Average:</p>
+                <p class="text-primary-gray-dark font-bold">{{report.averageValue | number : '1.2-2'}}</p>
+            </span>
+        </div>
+    </div>
+
+</div>

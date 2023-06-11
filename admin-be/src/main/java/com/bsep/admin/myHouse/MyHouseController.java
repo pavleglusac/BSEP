@@ -3,10 +3,8 @@ package com.bsep.admin.myHouse;
 import com.bsep.admin.exception.DeviceNotFoundException;
 import com.bsep.admin.exception.ForbiddenDeviceAction;
 import com.bsep.admin.exception.ForbiddenRealEstateAction;
-import com.bsep.admin.model.Device;
-import com.bsep.admin.model.Message;
-import com.bsep.admin.model.RealEstate;
-import com.bsep.admin.model.User;
+import com.bsep.admin.exception.RealEstateNotFoundException;
+import com.bsep.admin.model.*;
 import com.bsep.admin.myHouse.dto.*;
 import com.bsep.admin.repository.LandlordRepository;
 import com.bsep.admin.repository.RealEstateRepository;
@@ -19,6 +17,7 @@ import jakarta.validation.constraints.Min;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -51,6 +50,9 @@ public class MyHouseController {
 
     @Autowired
     LandlordRepository  landlordRepository;
+
+    @Autowired
+    RealEstateRepository realEstateRepository;
 
     @GetMapping("/realestate/{email}")
     @PreAuthorize("hasAnyAuthority('READ_REAL_ESTATE', 'WRITE_REAL_ESTATE')")
@@ -87,6 +89,75 @@ public class MyHouseController {
             throw new ForbiddenDeviceAction("Cannot view messages for this device");
         }
 
+    }
+
+    @GetMapping("/realEstate/{id}/report")
+    @PreAuthorize("hasAnyAuthority('READ_REPORTS')")
+    public ResponseEntity<List<Report>> findReportForRealEstate(@PathVariable UUID id,
+                                                                @RequestParam(required = false)
+                                                                String from,
+
+                                                                @RequestParam(required = false)
+                                                                String to,
+                                                                Authentication authentication){
+
+        LocalDate fromDateTime = null;
+        LocalDate toDateTime = null;
+        if (from != null && to != null) {
+            fromDateTime = LocalDate.parse(from);
+            toDateTime = LocalDate.parse(to);
+        }
+        User user = (User) authentication.getPrincipal();
+        RealEstate realEstate = realEstateRepository.findById(id).orElseThrow(() -> new RealEstateNotFoundException("Real estate not found"));
+        boolean isOwner = false;
+        if (user.hasRole("ROLE_TENANT")) {
+            List<Tenant> tenats = tenantRepository.findByRealEstate(realEstate);
+            for (Tenant tenant : tenats) {
+                if (tenant.getId().equals(user.getId())) {
+                    isOwner = true;
+                    break;
+                }
+            }
+        } else if (user.hasRole("ROLE_LANDLORD")) {
+            Landlord landlord= landlordRepository.findByRealEstatesContains(realEstate);
+            if (landlord.getId().equals(user.getId())) {
+                isOwner = true;
+            }
+        }
+        if (isOwner) {
+            return ResponseEntity.ok(deviceService.findReportForRealEstate(realEstate, fromDateTime, toDateTime));
+        }  else {
+            throw new ForbiddenRealEstateAction("Cannot view reports for this real estate");
+        }
+    }
+
+    @GetMapping("/device/{id}/report")
+    @PreAuthorize("hasAnyAuthority('READ_REPORTS')")
+    public ResponseEntity<List<Report>> findReportForDevice(@PathVariable UUID id,
+                                                      @RequestParam(required = false)
+                                                      String from,
+
+                                                      @RequestParam(required = false)
+                                                          String to,
+                                                      Authentication authentication){
+        LocalDate fromDateTime = null;
+        LocalDate toDateTime = null;
+        if (from != null && to != null) {
+            fromDateTime = LocalDate.parse(from);
+            toDateTime = LocalDate.parse(to);
+        }
+        User user = (User) authentication.getPrincipal();
+        boolean hasDevice = false;
+        if (user.hasRole("ROLE_TENANT")) {
+            hasDevice = tenantRepository.doesUserHaveDevice(user.getId(), id);
+        } else if (user.hasRole("ROLE_LANDLORD")) {
+            hasDevice = landlordRepository.doesUserHaveDevice(user.getId(), id);
+        }
+        if (hasDevice) {
+            return ResponseEntity.ok(deviceService.findReportForDevice(id, fromDateTime, toDateTime));
+        }  else {
+            throw new ForbiddenDeviceAction("Cannot view reports for this device");
+        }
     }
 
     @PostMapping("/realestate/{email}")

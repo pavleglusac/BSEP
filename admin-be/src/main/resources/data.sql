@@ -40,6 +40,9 @@ INSERT INTO PRIVILEGE (name) VALUES ('READ_PROFILE');
 
 INSERT INTO PRIVILEGE (name) VALUES ('READ_MESSAGES');
 
+INSERT INTO PRIVILEGE (name) VALUES ('READ_REPORTS');
+
+
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 1);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 2);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 3);
@@ -56,6 +59,7 @@ INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 4);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 7);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 9);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 10);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 11);
 
 /* Tenant */
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 3);
@@ -63,3 +67,4 @@ INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 4);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 7);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 9);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 10);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 11);

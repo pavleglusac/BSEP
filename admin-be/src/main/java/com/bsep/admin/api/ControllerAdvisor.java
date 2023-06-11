@@ -87,4 +87,10 @@ public class ControllerAdvisor {
 		return new ResponseError(HttpStatus.FORBIDDEN, e.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(RealEstateNotFoundException.class)
+	public ResponseError handleRealEstateNotFoundException(RealEstateNotFoundException e) {
+		return new ResponseError(HttpStatus.NOT_FOUND, e.getMessage());
+	}
+
 }

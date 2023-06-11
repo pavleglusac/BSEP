@@ -42,4 +42,25 @@ export class MyHouseService {
     });
   }
 
+  getReports(
+    id: string,
+    from: Date | null,
+    to: Date | null,
+    type: string,
+    successCb: (realEstates: any) => void,
+    errorCb: (error: any) => void
+  ) {
+    let params = ''
+    if (from && to) {
+      params =  `?from=${from}&to=${to}`  
+    }
+    this.http.get(`api/myhouse/${type}/${id}/report${params}`).subscribe({
+      next(req: any) {
+        successCb(req);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
 }

@@ -18,4 +18,9 @@ import java.util.UUID;
 @Repository
 public interface MessageRepository extends MongoRepository<Message, String>, CustomMongoRepository {
     public Page<Message> findFilteredMessages(UUID deviceId, String type, String text, Float valueFrom, Float valueTo, LocalDateTime timestampFrom, LocalDateTime timestampTo, PageRequest pageRequest);
+
+    public List<Message> findAllByDeviceId(UUID deviceId);
+
+    public List<Message> findAllByDeviceIdAndTimestampBetween(UUID deviceId, LocalDateTime timestampFrom, LocalDateTime timestampTo);
+
 }
