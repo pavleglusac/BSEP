@@ -1,0 +1,281 @@
+<div class="m-auto h-full min-h-screen text-light flex justify-center py-10"> 
+  <div class="flex flex-col justify-center h-full">
+    <div class="bg-dark w-5/6 lg:w-140 flex flex-col py-8 px-20 gap-10">
+      <form [formGroup]="alarmForm" (submit)="onSubmit()">
+        <div class="flex flex-col gap-y-6 tracking-wide">
+  
+          <!-- name -->
+          <div class="w-full">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-1"
+            for="alarm-name">
+              Name
+            </label>
+            <input class="appearance-none block w-full text-light tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="name && name.value ? 'border-light' : 'border-medium'"
+            id="alarm-name" type="text" placeholder="Alarm Rule Name" autofocus="autofocus"
+            formControlName="name" (input)="errorMessage = ''">
+            <div class="h-1">
+              <p *ngIf="name && name.invalid && name.touched"
+                class="text-yellow-400 text-xs italic">
+                <span *ngIf="name.errors?.['required']">
+                  Name is required.
+                </span>
+                <span *ngIf="name.errors?.['minlength']">
+                  Name is too short.
+                </span>
+                <span *ngIf="name.errors?.['maxlength']">
+                  Name is too long.
+                </span>
+                <span *ngIf="name.errors?.['pattern']">
+                  Name is not valid.
+                </span>
+              </p>
+            </div>
+          </div>
+  
+          <!-- alarmText -->
+          <div class="w-full">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-alarmText">
+              Alarm Text
+            </label>
+            <input class="appearance-none block w-full text-light tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+              [ngClass]="alarmText && alarmText.value ? 'border-light' : 'border-medium'"
+              id="alarm-alarmText" type="text" placeholder="Alarm Text" autofocus="autofocus"
+              formControlName="alarmText" (input)="errorMessage = ''">
+            <div class="h-1">
+              <p *ngIf="alarmText && alarmText.invalid && alarmText.touched" class="text-yellow-400 text-xs italic">
+                <span *ngIf="alarmText.errors?.['required']">
+                  Alarm Text is required.
+                </span>
+                <span *ngIf="alarmText.errors?.['maxlength']">
+                  Alarm Text is too long.
+                </span>
+                <span *ngIf="alarmText.errors?.['pattern']">
+                  Alarm Text is not valid.
+                </span>
+              </p>
+            </div>
+          </div>
+  
+          <!-- messageType -->
+          <div class="w-full">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-1"
+            for="alarm-message-type">
+              Message Type
+            </label>
+            <input class="appearance-none block w-full text-light tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="messageType && messageType.value ? 'border-light' : 'border-medium'"
+            id="alarm-message-type" type="text" placeholder="Message Type" autofocus="autofocus"
+            formControlName="messageType" (input)="errorMessage = ''">
+            <div class="h-1">
+              <p *ngIf="messageType && messageType.invalid && messageType.touched"
+                class="text-yellow-400 text-xs italic">
+                <span *ngIf="messageType.errors?.['required']">
+                  Message Type is required.
+                </span>
+                <span *ngIf="messageType.errors?.['maxlength']">
+                  Message Type is too long.
+                </span>
+                <span *ngIf="messageType.errors?.['pattern']">
+                  Message Type is not valid.
+                </span>
+              </p>
+            </div>
+          </div>
+  
+          <!-- deviceType -->
+          <div class="w-full">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-device-type">
+              Device Type
+            </label>
+            <select class="appearance-none block w-full text-light tracking-wide
+          caret-medium border-b focus:border-accent bg-transparent border-light
+            leading-tight outline-none focus:transition-color duration-300 py-1"
+             name="device-type" (change)="deviceTypeChanged($event)"
+              id="alarm-device-type">
+              <option *ngFor="let type of deviceTypes" [ngValue]="type"
+              class="text-dark"
+              >
+                {{ type.slice(0, 1) + type.slice(1).toLowerCase().replaceAll('_', ' ') }}
+              </option>
+            </select>
+          </div>
+  
+          <!-- num | operator -->
+          <div class="flex gap-x-6 justify-between">
+            <div class="w-full">
+              <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-operator-num">
+                Num Operator
+              </label>
+              <select class="appearance-none block w-full text-light tracking-wide caret-medium border-b focus:border-accent bg-transparent py-1 leading-tight outline-none focus:transition-color duration-300"
+                name="operator-num" (change)="operatorNumChanged($event)"
+                [ngClass]="operatorNum ? 'border-light' : 'border-medium'"
+                id="alarm-operator-num">
+                <option *ngFor="let operator of operatorValues" [ngValue]="operator" class="text-dark font-bold">
+                  {{ operator.slice(0, 1) + operator.slice(1).toLowerCase().replaceAll('_', ' ') }}
+                </option>
+              </select>
+            </div>
+          
+            <div class="w-full my-auto">
+              <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-num">
+                Num
+              </label>
+              <input class="appearance-none block w-full text-light tracking-wide
+                placeholder-medium caret-medium border-b focus:border-accent border-light
+                bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+                id="alarm-num" type="number" placeholder="Num" autofocus="autofocus"
+                (input)="errorMessage = ''; checkIfNumIsNumber()"
+                [(ngModel)]="num" [ngModelOptions]="{standalone: true}">
+              <div class="h-1">
+                <p class="text-yellow-400 text-xs italic">
+                  <span *ngIf="numError">{{ numError }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <!-- textRegex -->
+          <div class="w-full">
+            <div *ngIf="enableTextRegex">
+              <label class="block tracking-wide text-medium text-xs font-bold mb-1"
+              for="alarm-text-regex">
+                Text Regex
+              </label>
+              <input class="appearance-none block w-full text-light tracking-wide
+              placeholder-medium caret-medium border-b focus:border-accent
+              bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+              [ngClass]="textRegex && textRegex.value ? 'border-light' : 'border-medium'"
+              id="alarm-text-regex" type="text" placeholder="Message Type" autofocus="autofocus"
+              formControlName="textRegex" (input)="errorMessage = ''">
+              <div class="h-1">
+                <p *ngIf="textRegex && textRegex.invalid && textRegex.touched"
+                  class="text-yellow-400 text-xs italic">
+                  <span *ngIf="textRegex.errors?.['required']">
+                    Text Regex is required.
+                  </span>
+                  <span *ngIf="textRegex.errors?.['maxlength']">
+                    Text Regex is too long.
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div *ngIf="!enableTextRegex" class="">
+              <div class="text-lg font-medium italic text-medium 
+              hover:text-accent cursor-pointer" (click)="enableTextRegex = true">
+              <fa-icon [icon]="faAngleDown" class="mr-1"></fa-icon> Enable text regex
+              </div>
+            </div>
+          </div>
+  
+          <!-- value | operator -->
+          <div class="w-full" class="">
+            <div *ngIf="enableValue" class="flex gap-x-6 justify-between">
+  
+              <div class="w-full">
+                <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-operator-value">
+                  Value Operator
+                </label>
+                <select class="appearance-none block w-full text-light tracking-wide caret-medium border-b focus:border-accent bg-transparent py-1 leading-tight outline-none focus:transition-color duration-300"
+                  name="operator-value" (change)="operatorValueChanged($event)"
+                  [ngClass]="operatorValue ? 'border-light' : 'border-medium'"
+                  id="alarm-operator-value">
+                  <option *ngFor="let value of operatorValues" [ngValue]="value"
+                  class="text-dark font-bold">
+                    {{ value.slice(0, 1) + value.slice(1).toLowerCase().replaceAll('_', ' ') }}
+                  </option>
+                </select>
+              </div>
+    
+              <div class="w-full my-auto">
+                <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-value">
+                  Value
+                </label>
+                <input class="appearance-none block w-full text-light tracking-wide
+                  placeholder-medium caret-medium border-b focus:border-accent border-light
+                  bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+                  id="alarm-value" type="number" placeholder="Value" autofocus="autofocus"
+                  (input)="errorMessage = ''; checkIfValueIsNumber()"
+                  [(ngModel)]="value" [ngModelOptions]="{standalone: true}">
+                  <div class="h-1">
+                    <p class="text-yellow-400 text-xs italic">
+                      <span *ngIf="valueError">{{valueError}}</span>
+                    </p>
+                  </div>
+              </div>
+    
+            </div>
+  
+            <div *ngIf="!enableValue">
+              <div class="text-lg font-medium italic text-medium 
+              hover:text-accent cursor-pointer" (click)="enableValue = true">
+              <fa-icon [icon]="faAngleDown" class="mr-1"></fa-icon> Enable value
+              </div>
+            </div>
+          </div>
+  
+          <!-- window -->
+          <div class="w-full">
+            <div *ngIf="enableWindow" class="flex gap-x-6 justify-between">
+  
+              <div class="w-full my-auto">
+                <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-num">
+                  Window Value
+                </label>
+                <input class="appearance-none block w-full text-light tracking-wide
+                  placeholder-medium caret-medium border-b focus:border-accent border-light
+                  bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+                  id="alarm-num" type="number" placeholder="Num" autofocus="autofocus"
+                  (input)="errorMessage = ''; checkIfWindowValueIsNumber()"
+                  [(ngModel)]="windowValue" [ngModelOptions]="{standalone: true}">
+                <div class="h-1">
+                  <p class="text-yellow-400 text-xs italic">
+                    <span *ngIf="windowValueError">{{ windowValueError }}</span>
+                  </p>
+                </div>
+              </div>
+    
+                <div class="w-full my-auto">
+                  <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="alarm-operator-num">
+                    Window Unit
+                  </label>
+                  <select class="appearance-none block w-full text-light border-light tracking-wide caret-medium border-b focus:border-accent bg-transparent py-1 leading-tight outline-none focus:transition-color duration-300"
+                    name="operator-num" (change)="windowUnitChanged($event)"
+                    id="alarm-operator-num">
+                    <option *ngFor="let timeUnit of droolsTimeUnits" [ngValue]="timeUnit.value"
+                    class="text-dark">
+                      {{ timeUnit.name }}
+                    </option>
+                  </select>
+                </div>
+    
+            </div>
+  
+            <div *ngIf="!enableWindow">
+              <div class="text-lg font-medium italic text-medium 
+              hover:text-accent cursor-pointer" (click)="enableWindow = true">
+              <fa-icon [icon]="faAngleDown" class="mr-1"></fa-icon> Enable window
+              </div>
+            </div>
+          </div>
+  
+          <button class="bg-accent h-10 px-4 mt-4 text-light font-medium
+          hover:bg-opacity-90 active:bg-accent-dark">
+            Create rule
+          </button>
+          <div class="h-1">
+            <p class="text-yellow-400 text-xs italic">
+              <span *ngIf="errorMessage">{{ errorMessage }}</span>
+            </p>
+          </div>
+
+          
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

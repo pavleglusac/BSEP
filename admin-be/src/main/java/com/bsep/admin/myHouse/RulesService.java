@@ -2,12 +2,17 @@ package com.bsep.admin.myHouse;
 
 import com.bsep.admin.model.Message;
 import com.bsep.admin.myHouse.dto.Rule;
+import com.bsep.admin.myHouse.dto.RuleCreationDto;
 import com.bsep.admin.repository.RuleRepository;
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.ReleaseId;
+import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -68,9 +73,15 @@ public class RulesService {
 
         ReleaseId releaseId = kieServices.getRepository().getDefaultReleaseId();
         KieContainer kieContainer = kieServices.newKieContainer(releaseId);
+
+        KieBaseConfiguration kieBaseConfig = KieServices.Factory.get().newKieBaseConfiguration();
+        // Set the event processing mode to "stream"
+        kieBaseConfig.setOption(EventProcessingOption.STREAM);
+
+        KieBase kieBase = kieContainer.newKieBase(kieBaseConfig);
         
         // The new session now contains the updated rules
-        kieSession = kieContainer.newKieSession();
+        kieSession = kieBase.newKieSession();
         kieSession.setGlobal("alarmService", alarmService);
 
         for (Message message : queue) {
@@ -112,7 +123,9 @@ public class RulesService {
         DRL = resultDRL;
     }
 
-    public void addRule(Rule rule) {
+    public void addRule(RuleCreationDto ruleCreationDto) {
+        System.out.println(ruleCreationDto.toString());
+        Rule rule = mapRuleDtoToRule(ruleCreationDto);
         List<String> res = buildRuleTemplate(rule);
 
         // append rule to DRL
@@ -121,6 +134,22 @@ public class RulesService {
         DRL.forEach(System.out::println);
 
         ruleRepository.save(rule);
+    }
+
+    private Rule mapRuleDtoToRule(RuleCreationDto dto) {
+        Rule rule = new Rule();
+        rule.setId(UUID.randomUUID());
+        rule.setName(dto.getName());
+        rule.setNum(dto.getNum());
+        rule.setValue(dto.getValue());
+        rule.setWindow(dto.getWindow());
+        rule.setAlarmText(dto.getAlarmText());
+        rule.setDeviceType(dto.getDeviceType());
+        rule.setMessageType(dto.getMessageType());
+        rule.setOperatorNum(dto.getOperatorNum());
+        rule.setOperatorValue(dto.getOperatorValue());
+        rule.setTextRegex(dto.getTextRegex());
+        return rule;
     }
 
     public List<Rule> getAllRules() {
@@ -139,11 +168,11 @@ public class RulesService {
         }
 
         if (rule.getOperatorValue() != null && !rule.getOperatorValue().isEmpty() && rule.getValue() != null) {
-            templateOperatorAndValue = ", " + rule.getOperatorValue() + " " + rule.getValue();
+            templateOperatorAndValue = ", value " + rule.getOperatorValue() + " " + rule.getValue();
         }
 
         if (rule.getWindow() != null && !rule.getWindow().isEmpty()) {
-            templateWindow = ", over window:time(" + rule.getWindow() + ")";
+            templateWindow = " over window:time(" + rule.getWindow() + ")";
         }
 
         if (rule.getOperatorNum() != null && !rule.getOperatorNum().isEmpty() && rule.getNum() != null) {

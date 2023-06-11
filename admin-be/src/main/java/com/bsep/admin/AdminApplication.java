@@ -101,7 +101,7 @@ public class AdminApplication {
 //	@Profile("dev")
 //	public void testDevices() {
 //		deviceService.addDevice("LAMP", "", 1L);
-//		RuleDto ruleDto = new RuleDto();
+//		RuleCreationDto ruleDto = new RuleCreationDto();
 //		ruleDto.setName("Lamp rule");
 //		ruleDto.setDeviceType(DeviceType.LAMP);
 //		ruleDto.setNum(3);
