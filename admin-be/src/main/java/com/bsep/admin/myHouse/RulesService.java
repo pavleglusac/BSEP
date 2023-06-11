@@ -44,7 +44,7 @@ public class RulesService {
 
     private String msgRuleTemplate = "Message($mid: deviceId, read == false)";
     private String accumulateRuleTemplate = "$l: List() from collect( \n" +
-                                            "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
+                                                "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
                                             "   {TEMPLATE_WINDOW}\n" +
                                             " )\n" +
                                             " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";

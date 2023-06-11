@@ -75,7 +75,10 @@
             "proxyConfig": "src/proxy.conf.json",
             "ssl": true,
             "sslCert": "./certs/localhost.crt",
-            "sslKey": "./certs/localhost.key"
+            "sslKey": "./certs/localhost.key",
+            "headers": {
+              "X-Frame-Options": "deny"
+            }        
           },
           "defaultConfiguration": "development"
         },

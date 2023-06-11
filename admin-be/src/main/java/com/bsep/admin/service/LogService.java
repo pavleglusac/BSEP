@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class LogService {
@@ -23,6 +24,7 @@ public class LogService {
 
     public void logAction(LogType type, String action, String details, String... usernames) {
         Log log = new Log();
+        log.setId(UUID.randomUUID());
         log.setTimestamp(LocalDateTime.now());
         log.setType(type);
         log.setAction(action);
