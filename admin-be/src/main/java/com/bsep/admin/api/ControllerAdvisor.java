@@ -13,6 +13,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerAdvisor {
 
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(Exception.class)
+	public ResponseError handleException(Exception e) {
+		System.out.println(e.getMessage());
+		return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error.");
+	}
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseError handleValidationException(MethodArgumentNotValidException e) {
