@@ -166,12 +166,12 @@ public class LogRulesService {
             templateUsernamesRegex = ", usernames.containsAll(java.util.Arrays.asList(" + result + "))";
         }
 
-        if (rule.getLogType() != null && !rule.getLogType().isEmpty()) {
+        if (rule.getLogType() != null) {
             templateType = ", type == LogType." + rule.getLogType() + "";
         }
 
         if (rule.getWindow() != null && !rule.getWindow().isEmpty()) {
-            templateWindow = ", over window:time(" + rule.getWindow() + ")";
+            templateWindow = " over window:time(" + rule.getWindow() + ")";
         }
 
         if (rule.getOperatorNum() != null && !rule.getOperatorNum().isEmpty() && rule.getNum() != null) {

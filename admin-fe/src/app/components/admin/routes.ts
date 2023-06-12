@@ -8,6 +8,8 @@ import { RegisterComponent } from './register/register.component';
 import { SettingsComponent } from './settings/settings.component';
 import { AlarmRulesComponent } from './alarm-rules/alarm-rules.component';
 import { AddAlarmRuleComponent } from './alarm-rules/add-alarm-rule/add-alarm-rule.component';
+import { AddLogRuleComponent } from './log-rules/add-log-rule/add-log-rule.component';
+import { LogRulesComponent } from './log-rules/log-rules.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -37,6 +39,14 @@ export const ADMIN_ROUTES: Route[] = [
       {
         path: 'alarm-rules/new',
         component: AddAlarmRuleComponent,
+      },
+      {
+        path: 'log-rules',
+        component: LogRulesComponent,
+      },
+      {
+        path: 'log-rules/new',
+        component: AddLogRuleComponent,
       },
       {
         path: 'register',

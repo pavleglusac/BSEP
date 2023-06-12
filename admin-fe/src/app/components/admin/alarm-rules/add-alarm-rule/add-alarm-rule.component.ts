@@ -48,7 +48,7 @@ export class AddAlarmRuleComponent {
     "LOCK",
     "LAMP",
     "GATE",
-  ]
+  ];
 
   operatorValues: string[] = [
     "==",
@@ -56,7 +56,7 @@ export class AddAlarmRuleComponent {
     "<=",
     ">",
     "<",
-  ]
+  ];
 
   droolsTimeUnits = [
     {
@@ -79,7 +79,7 @@ export class AddAlarmRuleComponent {
       value: 'd',
       name: 'Days'
     },
-  ]
+  ];
 
   enableTextRegex: boolean = false;
   enableValue: boolean = false;

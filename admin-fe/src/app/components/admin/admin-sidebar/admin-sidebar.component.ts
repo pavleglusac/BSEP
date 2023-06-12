@@ -63,7 +63,7 @@ const menus = {
     },
     {
       title: 'Logs',
-      link: '',
+      link: 'admin/logs',
       icon: faClipboard,
     },
     {
@@ -73,7 +73,7 @@ const menus = {
     },
     {
       title: 'Alarms',
-      link: 'admin/',
+      link: 'admin/alarms',
       icon: faCircleExclamation,
     },
     {

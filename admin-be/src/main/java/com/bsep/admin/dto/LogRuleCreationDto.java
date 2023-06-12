@@ -1,28 +1,35 @@
-package com.bsep.admin.myHouse.dto;
+package com.bsep.admin.dto;
 
-import com.bsep.admin.model.DeviceType;
+import com.bsep.admin.model.LogType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
 @Data
-public class RuleCreationDto {
+public class LogRuleCreationDto {
+
     @NotBlank
     @Length(min=2, max=48)
     @Pattern(regexp = "^\\w+(?: \\w+)*$")
     private String name;
     @NotBlank
-    @Length(max=32)
-    @Pattern(regexp = "^\\w+(?: \\w+)*$")
-    private String messageType;
     @Length(max=256)
-    private String textRegex;
-    private DeviceType deviceType;
-    private Double value;
-    @Pattern(regexp = "^(?:==|>=|<=|>|<)$")
-    private String operatorValue;
+    @Pattern(regexp = "^[\\w.!]+(?: [\\w.!]+)*$")
+    private String alarmText;
+    private LogType logType;
+    @Length(max=256)
+    private String actionRegex;
+    @Length(max=256)
+    private String detailsRegex;
+    @Length(max=256)
+    private String ipAddressRegex;
+    @Size(max = 128)
+    private List<String> usernames;
     @NotNull
     private Integer num;
     @NotBlank
@@ -30,8 +37,4 @@ public class RuleCreationDto {
     private String operatorNum;
     @Length(max=32)
     private String window;
-    @NotBlank
-    @Length(max=256)
-    @Pattern(regexp = "^[\\w.!]+(?: [\\w.!]+)*$")
-    private String alarmText;
 }
