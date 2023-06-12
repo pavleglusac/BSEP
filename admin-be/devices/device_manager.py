@@ -62,7 +62,7 @@ def stop_device(id: str = ""):
 
 
 @app.on_event("startup")
-@repeat_every(seconds=3)
+@repeat_every(seconds=8)
 def run_states():
     for device in devices.values():
         try:
