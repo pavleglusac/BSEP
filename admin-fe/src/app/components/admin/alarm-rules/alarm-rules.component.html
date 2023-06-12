@@ -9,7 +9,7 @@
     </div>
 
     <div *ngIf="alarmRules.length > 0" class="bg-dark px-3 py-4">
-      <app-alarm-rules [alarmRules]="alarmRules"></app-alarm-rules>
+      <app-alarm-rules-list [alarmRules]="alarmRules" />
     </div>
 
     <div *ngIf="alarmRules.length === 0" class="flex flex-col justify-center h-20 bg-dark">

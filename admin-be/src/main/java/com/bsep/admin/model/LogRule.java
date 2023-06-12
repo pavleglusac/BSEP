@@ -21,7 +21,7 @@ public class LogRule {
     private String name;
     private String alarmText;
 
-    private String logType;
+    private LogType logType;
     @Column(name = "action_regex")
     private String actionRegex;
     @Column(name = "details_regex")

@@ -1,6 +1,7 @@
 package com.bsep.admin.controller;
 
 
+import com.bsep.admin.dto.LogRuleCreationDto;
 import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogAlarm;
 import com.bsep.admin.model.LogRule;
@@ -36,8 +37,8 @@ public class LogController {
     }
 
     @PostMapping("/rules")
-    public void addLogRule(@RequestBody LogRule rule) {
-        logRulesService.addRule(rule);
+    public void addLogRule(@RequestBody LogRuleCreationDto dto) {
+        logRulesService.addRule(dto);
     }
 
     @DeleteMapping("/rules/{name}")

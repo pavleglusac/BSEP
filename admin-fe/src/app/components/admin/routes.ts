@@ -1,14 +1,15 @@
 import { Route } from '@angular/router';
 import { AdminComponent } from './admin.component';
-import { CertificateComponent } from './certificate/certificate.component';
 import { CertificatesComponent } from './certificates/certificates.component';
 import { CreateCertificateComponent } from './create-certificate/create-certificate.component';
 import { CsrsComponent } from './csrs/csrs.component';
 import { UsersComponent } from './users/users.component';
 import { RegisterComponent } from './register/register.component';
 import { SettingsComponent } from './settings/settings.component';
-import { AlarmsComponent } from './alarms/alarms.component';
-import { AddAlarmComponent } from './alarms/add-alarm/add-alarm.component';
+import { AlarmRulesComponent } from './alarm-rules/alarm-rules.component';
+import { AddAlarmRuleComponent } from './alarm-rules/add-alarm-rule/add-alarm-rule.component';
+import { AddLogRuleComponent } from './log-rules/add-log-rule/add-log-rule.component';
+import { LogRulesComponent } from './log-rules/log-rules.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -32,12 +33,20 @@ export const ADMIN_ROUTES: Route[] = [
         component: UsersComponent,
       },
       {
-        path: 'alarms',
-        component: AlarmsComponent,
+        path: 'alarm-rules',
+        component: AlarmRulesComponent,
       },
       {
-        path: 'alarms/new',
-        component: AddAlarmComponent,
+        path: 'alarm-rules/new',
+        component: AddAlarmRuleComponent,
+      },
+      {
+        path: 'log-rules',
+        component: LogRulesComponent,
+      },
+      {
+        path: 'log-rules/new',
+        component: AddLogRuleComponent,
       },
       {
         path: 'register',

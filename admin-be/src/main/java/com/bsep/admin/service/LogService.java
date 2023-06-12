@@ -10,10 +10,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class LogService {
@@ -29,7 +26,7 @@ public class LogService {
     public void logAction(LogType type, String action, String details, String... usernames) {
         Log log = new Log();
         log.setId(UUID.randomUUID());
-        log.setTimestamp(LocalDateTime.now());
+        log.setTimestamp(new Date());
         log.setType(type);
         log.setAction(action);
         log.setDetails(details);

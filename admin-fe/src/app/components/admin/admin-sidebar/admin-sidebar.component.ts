@@ -14,6 +14,7 @@ import {
   faCircleExclamation,
   faRightFromBracket,
   faFileLines,
+  faRectangleList,
 } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs';
 import { environment } from 'src/environment/environment';
@@ -62,13 +63,23 @@ const menus = {
     },
     {
       title: 'Logs',
-      link: '',
+      link: 'admin/',
       icon: faClipboard,
     },
     {
+      title: 'Log Rules',
+      link: 'admin/log-rules',
+      icon: faRectangleList,
+    },
+    {
       title: 'Alarms',
-      link: 'admin/alarms',
+      link: 'admin/',
       icon: faCircleExclamation,
+    },
+    {
+      title: 'Alarm Rules',
+      link: 'admin/alarm-rules',
+      icon: faRectangleList,
     },
   ],
 };
@@ -108,9 +119,15 @@ export class AdminSidebarComponent {
     // accept plain text response
     this.http
     .post('api/auth/logout', {}, { responseType: 'text' })
-    .subscribe(() => {
-      window.location.href = '/';
+    .subscribe({
+      next() {
+        window.location.href = '/';
+      },
+      error(error) {
+        window.location.href = '/';
+      }
     });
+    
     window.sessionStorage.removeItem(environment.tokenName);
   }
 

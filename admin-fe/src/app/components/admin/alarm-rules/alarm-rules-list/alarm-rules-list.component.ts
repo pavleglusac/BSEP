@@ -8,14 +8,14 @@ import { AlarmService } from 'src/app/services/alarm.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-alarm-rules',
+  selector: 'app-alarm-rules-list',
   standalone: true,
   imports: [CommonModule, FontAwesomeModule],
-  templateUrl: './alarm-rules.component.html',
+  templateUrl: './alarm-rules-list.component.html',
   styles: [
   ]
 })
-export class AlarmRulesComponent {
+export class AlarmRulesListComponent {
   @Input() alarmRules!: AlarmRule[];
 
   faTrash: IconDefinition = faTrash;

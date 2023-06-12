@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
@@ -26,7 +27,7 @@ public class Message {
     private String text;
     private Double value;
     private DeviceType deviceType;
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     private UUID deviceId;
     private Boolean read = false;

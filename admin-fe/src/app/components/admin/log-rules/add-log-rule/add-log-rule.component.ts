@@ -1,54 +1,55 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { LogService } from 'src/app/services/log.service';
 import { ToastrService } from 'ngx-toastr';
-import { AlarmService } from 'src/app/services/alarm.service';
 
 @Component({
-  selector: 'app-add-alarm',
+  selector: 'app-add-log-rule',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule],
-  templateUrl: './add-alarm.component.html',
+  templateUrl: './add-log-rule.component.html',
   styles: [
   ]
 })
-export class AddAlarmComponent {
+export class AddLogRuleComponent {
   faAngleDown: IconDefinition = faAngleDown;
 
-  alarmForm = new FormGroup({
+  logRulesForm = new FormGroup({
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(2),
       Validators.maxLength(48),
       Validators.pattern(/^\w+(?: \w+)*$/),
     ]),
-    messageType: new FormControl('', [
-      Validators.required,
-      Validators.maxLength(32),
-      Validators.pattern(/^\w+(?: \w+)*$/),
-    ]),
-    textRegex: new FormControl('', [
-      Validators.required,
-      Validators.maxLength(256),
-    ]),
     alarmText: new FormControl('', [
       Validators.required,
       Validators.maxLength(256),
       Validators.pattern(/^[\w.!]+(?: [\w.!]+)*$/),
     ]),
+    actionRegex: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(256),
+    ]),
+    detailsRegex: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(256),
+    ]),
+    ipAddressRegex: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(256),
+    ]),
   });
 
-  deviceTypes: string[] = [
+  logTypes: string[] = [
     "ALL",
-    "THERMOMETER",
-    "MOTION_DETECTOR",
-    "LOCK",
-    "LAMP",
-    "GATE",
-  ]
+    "ERROR",
+    "WARNING",
+    "SUCCESS",
+    "INFO"
+  ];
 
   operatorValues: string[] = [
     "==",
@@ -56,7 +57,7 @@ export class AddAlarmComponent {
     "<=",
     ">",
     "<",
-  ]
+  ];
 
   droolsTimeUnits = [
     {
@@ -79,60 +80,65 @@ export class AddAlarmComponent {
       value: 'd',
       name: 'Days'
     },
-  ]
+  ];
 
-  enableTextRegex: boolean = false;
-  enableValue: boolean = false;
+  enableActionRegex: boolean = false;
+  enableDetailsRegex: boolean = false;
+  enableIpAddressRegex: boolean = false;
   enableWindow: boolean = false;
 
-  deviceType: string = this.deviceTypes[0];
-  value: number = 0;
-  valueError: string = '';
-  operatorValue: string = this.operatorValues[0];
+  logType: string = this.logTypes[0];
   num: number = 0;
   numError: string = '';
   operatorNum: string = this.operatorValues[0];
   windowValue: number = 0;
   windowValueError: string = '';
   windowUnit: string = this.droolsTimeUnits[0].value;
+  usernames: string[] = [];
+  username: string = '';
 
   errorMessage: string = '';
-
-  constructor(private alarmService: AlarmService, private toastr: ToastrService) {}
+  
+  constructor(private logService: LogService, private toastr: ToastrService) {}
 
   onSubmit(): void {
     if (this.isFormValid()) {
-      this.alarmService.addAlarmRule(
+      this.logService.addLogRule(
         { 
           name: this.name?.value!,
           alarmText: this.alarmText?.value!,
-          messageType: this.messageType?.value!,
           num: this.num,
           operatorNum: this.operatorNum,
-          deviceType: this.deviceType === "ALL" ? undefined : this.deviceType,
-          textRegex: this.enableTextRegex ? this.textRegex?.value! : undefined,
+          usernames: this.usernames,
+          logType: this.logType === "ALL" ? undefined : this.logType,
+          actionRegex: this.actionRegex ? this.actionRegex?.value! : undefined,
+          detailsRegex: this.detailsRegex ? this.detailsRegex?.value! : undefined,
+          ipAddressRegex: this.ipAddressRegex ? this.ipAddressRegex?.value! : undefined,
           window: this.enableWindow ? `${this.windowValue}${this.windowUnit}` : undefined,
-          value: this.enableValue ? this.value : undefined,
-          operatorValue: this.enableValue ? this.operatorValue : undefined,
         }, 
         () => {
           this.toastr.success("Success!");
-          window.location.href = '/admin/alarms';
+          window.location.href = '/admin/log-rules';
         },
         (err) => this.toastr.error(err.message))
     }
   }
 
   isFormValid(): boolean {
-    if (this.name?.invalid || this.alarmText?.invalid || this.messageType?.invalid) {
-      this.alarmForm.markAllAsTouched();
+    if (this.name?.invalid || this.alarmText?.invalid) {
+      this.logRulesForm.markAllAsTouched();
       return false;
     }
-    if (this.enableTextRegex && this.textRegex?.invalid) {
-      this.alarmForm.markAllAsTouched();
+    if (this.enableActionRegex && this.actionRegex?.invalid) {
+      this.logRulesForm.markAllAsTouched();
       return false;
     }
-    if (this.enableValue && this.value === null) {
+    if (this.enableDetailsRegex && this.detailsRegex?.invalid) {
+      this.logRulesForm.markAllAsTouched();
+      return false;
+    }
+    if (this.enableIpAddressRegex && this.ipAddressRegex?.invalid) {
+      this.logRulesForm.markAllAsTouched();
       return false;
     }
     if (this.enableWindow && this.windowValue === null) {
@@ -144,42 +150,51 @@ export class AddAlarmComponent {
     return true;
   }
 
-  get name() {
-    return this.alarmForm.get('name');
+  handleUsernameInput(): void {
+    const value = this.username.slice(0, this.username.length - 1).replaceAll(',', '') + this.username.slice(this.username.length - 1, this.username.length);
+    if (value && value.length > 1 && value.slice(value.length - 1, value.length) === ',') {
+      this.username = '';
+      const toAdd = value.slice(0, value.length - 1);
+      if (!this.usernames.includes(toAdd)) {
+        this.usernames.push(toAdd);
+      }
+    }
   }
 
-  get messageType() {
-    return this.alarmForm.get('messageType');
+  removeUsername(uname: string): void {
+    this.usernames = this.usernames.filter(x => x !== uname)
+  }
+
+  get name() {
+    return this.logRulesForm.get('name');
+  }
+
+  get actionRegex() {
+    return this.logRulesForm.get('actionRegex');
   }
   
-  get textRegex() {
-    return this.alarmForm.get('textRegex');
+  get detailsRegex() {
+    return this.logRulesForm.get('detailsRegex');
+  }
+  
+  get ipAddressRegex() {
+    return this.logRulesForm.get('ipAddressRegex');
   }
 
   get alarmText() {
-    return this.alarmForm.get('alarmText');
+    return this.logRulesForm.get('alarmText');
   }
 
-  deviceTypeChanged(event: any) {
-    this.deviceType = event.target.value.toUpperCase().replaceAll(' ', '_');
+  logTypeChanged(event: any) {
+    this.logType = event.target.value.toUpperCase().replaceAll(' ', '_');
   }
-  
-  operatorValueChanged(event: any) {
-    this.operatorValue = event.target.value;
-  }
-  
+
   operatorNumChanged(event: any) {
     this.operatorNum = event.target.value;
   }
-  
+
   windowUnitChanged(event: any) {
     this.windowUnit = this.droolsTimeUnits.filter(x => x.name === event.target.value)[0].value;
-  }
-
-  checkIfValueIsNumber() {
-    if (this.enableValue) {
-      this.checkIfNum(this.value, (v: string) => {this.valueError = v});
-    }
   }
 
   checkIfNumIsNumber() {
@@ -204,5 +219,4 @@ export class AddAlarmComponent {
       }
     }
   }
-  
 }

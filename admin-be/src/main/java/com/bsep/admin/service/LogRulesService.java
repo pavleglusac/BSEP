@@ -1,13 +1,17 @@
 package com.bsep.admin.service;
+import com.bsep.admin.dto.LogRuleCreationDto;
 import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogRule;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.myHouse.dto.Rule;
 import com.bsep.admin.repository.LogRuleRepository;
 import com.bsep.admin.repository.RuleRepository;
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.ReleaseId;
+import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +65,7 @@ public class LogRulesService {
     @Scheduled(fixedRate = 2000)
     public void fireAllRules() {
         System.out.println("Firing all log rules! Total messages: " + queue.size());
+        System.out.println(queue.toString());
         StringBuilder rules = new StringBuilder();
         rules.append(DRL_header);
         DRL.forEach(line -> rules.append(line).append("\n"));
@@ -75,8 +80,14 @@ public class LogRulesService {
         ReleaseId releaseId = kieServices.getRepository().getDefaultReleaseId();
         KieContainer kieContainer = kieServices.newKieContainer(releaseId);
 
+        KieBaseConfiguration kieBaseConfig = KieServices.Factory.get().newKieBaseConfiguration();
+        // Set the event processing mode to "stream"
+        kieBaseConfig.setOption(EventProcessingOption.STREAM);
+
+        KieBase kieBase = kieContainer.newKieBase(kieBaseConfig);
+
         // The new session now contains the updated rules
-        kieSession = kieContainer.newKieSession();
+        kieSession = kieBase.newKieSession();
         kieSession.setGlobal("logAlarmService", alarmService);
 
         for (Log message : queue) {
@@ -118,7 +129,8 @@ public class LogRulesService {
         DRL = resultDRL;
     }
 
-    public void addRule(LogRule rule) {
+    public void addRule(LogRuleCreationDto dto) {
+        LogRule rule = mapLogRuleDtoToLogRule(dto);
         // check if rule with same name already exists
         if (ruleRepository.findByName(rule.getName()).isPresent()) {
             throw new RuntimeException("Rule with same name already exists!");
@@ -132,6 +144,22 @@ public class LogRulesService {
         DRL.forEach(System.out::println);
 
         ruleRepository.save(rule);
+    }
+
+    private LogRule mapLogRuleDtoToLogRule(LogRuleCreationDto dto) {
+        LogRule rule = new LogRule();
+        rule.setId(UUID.randomUUID());
+        rule.setName(dto.getName());
+        rule.setAlarmText(dto.getAlarmText());
+        rule.setLogType(dto.getLogType());
+        rule.setActionRegex(dto.getActionRegex());
+        rule.setDetailsRegex(dto.getDetailsRegex());
+        rule.setIpAddressRegex(dto.getIpAddressRegex());
+        rule.setUsernames(dto.getUsernames());
+        rule.setNum(dto.getNum());
+        rule.setOperatorNum(dto.getOperatorNum());
+        rule.setWindow(dto.getWindow());
+        return rule;
     }
 
     public List<LogRule> getAllRules() {
@@ -166,12 +194,12 @@ public class LogRulesService {
             templateUsernamesRegex = ", usernames.containsAll(java.util.Arrays.asList(" + result + "))";
         }
 
-        if (rule.getLogType() != null && !rule.getLogType().isEmpty()) {
+        if (rule.getLogType() != null) {
             templateType = ", type == LogType." + rule.getLogType() + "";
         }
 
         if (rule.getWindow() != null && !rule.getWindow().isEmpty()) {
-            templateWindow = ", over window:time(" + rule.getWindow() + ")";
+            templateWindow = " over window:time(" + rule.getWindow() + ")";
         }
 
         if (rule.getOperatorNum() != null && !rule.getOperatorNum().isEmpty() && rule.getNum() != null) {
