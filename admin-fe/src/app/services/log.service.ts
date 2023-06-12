@@ -22,4 +22,30 @@ export class LogService {
       },
     });
   }
+
+  addLogRule(
+    logRule: LogRule,
+    successCb: () => void,
+    errorCb: (error: any) => void
+  ) {
+    this.http.post(`api/log/rules`, logRule).subscribe({
+      next(res: any) {
+        successCb();
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
+  deleteLogRule(ruleName: string, successCb: () => void, errorCb: (error: any) => void) {
+    this.http.delete(`api/log/rules/${ruleName}`).subscribe({
+      next(value: any) {
+        successCb();
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
 }

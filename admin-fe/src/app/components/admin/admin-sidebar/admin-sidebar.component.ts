@@ -63,7 +63,7 @@ const menus = {
     },
     {
       title: 'Logs',
-      link: 'admin/logs',
+      link: 'admin/',
       icon: faClipboard,
     },
     {
@@ -73,7 +73,7 @@ const menus = {
     },
     {
       title: 'Alarms',
-      link: 'admin/alarms',
+      link: 'admin/',
       icon: faCircleExclamation,
     },
     {
@@ -119,9 +119,15 @@ export class AdminSidebarComponent {
     // accept plain text response
     this.http
     .post('api/auth/logout', {}, { responseType: 'text' })
-    .subscribe(() => {
-      window.location.href = '/';
+    .subscribe({
+      next() {
+        window.location.href = '/';
+      },
+      error(error) {
+        window.location.href = '/';
+      }
     });
+    
     window.sessionStorage.removeItem(environment.tokenName);
   }
 

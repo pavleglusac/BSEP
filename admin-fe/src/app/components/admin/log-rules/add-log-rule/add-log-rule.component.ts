@@ -103,7 +103,24 @@ export class AddLogRuleComponent {
 
   onSubmit(): void {
     if (this.isFormValid()) {
-
+      this.logService.addLogRule(
+        { 
+          name: this.name?.value!,
+          alarmText: this.alarmText?.value!,
+          num: this.num,
+          operatorNum: this.operatorNum,
+          usernames: this.usernames,
+          logType: this.logType === "ALL" ? undefined : this.logType,
+          actionRegex: this.actionRegex ? this.actionRegex?.value! : undefined,
+          detailsRegex: this.detailsRegex ? this.detailsRegex?.value! : undefined,
+          ipAddressRegex: this.ipAddressRegex ? this.ipAddressRegex?.value! : undefined,
+          window: this.enableWindow ? `${this.windowValue}${this.windowUnit}` : undefined,
+        }, 
+        () => {
+          this.toastr.success("Success!");
+          window.location.href = '/admin/log-rules';
+        },
+        (err) => this.toastr.error(err.message))
     }
   }
 

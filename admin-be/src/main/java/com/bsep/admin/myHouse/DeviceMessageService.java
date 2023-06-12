@@ -12,7 +12,9 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,7 +76,7 @@ public class DeviceMessageService {
         String msgType = parts[1];
         String text = parts[2];
         Double value = Double.parseDouble(parts[3]);
-        LocalDateTime timestamp = LocalDateTime.parse(parts[4]);
+        Date timestamp = Date.from(LocalDateTime.parse(parts[4]).atZone(ZoneId.systemDefault()).toInstant());
 
         // if text matches regex
         if (true) {

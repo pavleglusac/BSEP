@@ -117,7 +117,7 @@ export class AddAlarmRuleComponent {
         }, 
         () => {
           this.toastr.success("Success!");
-          window.location.href = '/admin/alarms';
+          window.location.href = '/admin/alarm-rules';
         },
         (err) => this.toastr.error(err.message))
     }
