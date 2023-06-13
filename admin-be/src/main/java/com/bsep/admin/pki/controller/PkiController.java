@@ -1,10 +1,12 @@
 package com.bsep.admin.pki.controller;
 
+import com.bsep.admin.model.LogType;
 import com.bsep.admin.model.User;
 import com.bsep.admin.pki.dto.CertificateDto;
 import com.bsep.admin.pki.dto.CertificateRevocationDto;
 import com.bsep.admin.pki.dto.CsrDto;
 import com.bsep.admin.pki.service.CsrService;
+import com.bsep.admin.service.LogService;
 import com.bsep.admin.service.MailingService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -38,6 +40,9 @@ public class PkiController {
 	@Autowired
 	CertificateService certificateService;
 
+	@Autowired
+	LogService logService;
+
 	// health endpoint
 	@GetMapping("/health")
 	public String health() {
@@ -49,6 +54,7 @@ public class PkiController {
 	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
 		csrService.processCsr(csr, user);
+		logService.logAction(LogType.SUCCESS, "CSR created", "CSR created for user: " + user.getEmail());
 		return ResponseEntity.ok(Map.of("message", "CSR created"));
 	}
 
@@ -68,6 +74,7 @@ public class PkiController {
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<String> createCertificate(@Valid @RequestBody CertificateDto cert, Authentication authentication) throws CertificateException, OperatorCreationException, NoSuchAlgorithmException, KeyStoreException, InvalidKeySpecException {
 		certificateService.processCertificate(cert);
+		logService.logAction(LogType.SUCCESS, "Certificate created", "Certificate created for user email: " + cert.getCsr().getEmail());
 		return ResponseEntity.ok("Certificate created");
 	}
 
@@ -81,19 +88,24 @@ public class PkiController {
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<String> revokeCertificate(@Valid @RequestBody CertificateRevocationDto dto, Authentication authentication) {
 		certificateService.revokeCertificate(dto);
+		logService.logAction(LogType.SUCCESS, "Certificate revoked", "Certificate revoked for user email: " + dto.getEmail());
 		return ResponseEntity.ok("Certificate revoked");
 	}
 
 	@GetMapping("certificate/distribute/{email}")
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<Map<String, String>> distributeCertificate(@PathVariable @Email String email) {
-		return ResponseEntity.ok(Map.of("message", certificateService.distributeCertificate(email)));
+		var map = Map.of("message", certificateService.distributeCertificate(email));
+		logService.logAction(LogType.SUCCESS, "Certificate distributed", "Certificate distributed for user email: " + email);
+		return ResponseEntity.ok(map);
 	}
 
 	@DeleteMapping("/csr/{id}")
 	@PreAuthorize("hasAuthority('CERTIFICATE_MANAGEMENT')")
 	public ResponseEntity<Map<String, String>> denyCertificate(@PathVariable UUID id) {
-		return ResponseEntity.ok(Map.of("message", csrService.denyCsr(id)));
+		var map = Map.of("message", csrService.denyCsr(id));
+		logService.logAction(LogType.SUCCESS, "CSR denied", "CSR with id denied: " + id);
+		return ResponseEntity.ok(map);
 	}
 
 	@Autowired
@@ -107,7 +119,9 @@ public class PkiController {
 
 	@GetMapping("/validate/{serialNumber}")
 	public ResponseEntity<Boolean> validateCertificate(@PathVariable String serialNumber) {
-		return ResponseEntity.ok(certificateService.validateCertificate(serialNumber));
+		var valid = certificateService.validateCertificate(serialNumber);
+		logService.logAction(LogType.SUCCESS, "Certificate validation", "Certificate validation for serial number: " + serialNumber + " found " + valid.toString());
+		return ResponseEntity.ok(valid);
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.bsep.admin.myHouse;
 
 import com.bsep.admin.exception.InvalidDeviceException;
+import com.bsep.admin.exception.MessageSignatureException;
 import com.bsep.admin.keystores.KeyStoreReader;
 import com.bsep.admin.model.Device;
 import com.bsep.admin.model.Message;
@@ -98,7 +99,7 @@ public class DeviceMessageService {
             signature.update(bytesOfText);
             return signature.verify(bytesOfHash);
         } catch (Exception e) {
-            throw new RuntimeException("Error while verifying the hash", e);
+            throw new MessageSignatureException("Error while verifying the hash.");
         }
     }
 
@@ -119,9 +120,6 @@ public class DeviceMessageService {
         if (!verifyHash(hash, noHash)) {
             return;
         }
-
-        System.out.println("Verified hash!!!");
-
 
         // if text matches regex
         if (noHash.matches(device.getFilterRegex())) {
