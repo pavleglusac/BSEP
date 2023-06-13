@@ -8,7 +8,9 @@ import com.bsep.admin.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
@@ -44,13 +46,20 @@ public class DeviceMessageService {
 
     @Scheduled(fixedRate = 1000)
     public void readDeviceData() {
-//        System.out.println("Reading device data!!!");
+//        System.out.println("Reading dev
+//        ice data!!!");
+        pruneOldMessages();
         timeDevices.forEach((key, value) -> {
             if (secondsPassed % key == 0) {
                 value.forEach(this::readMessagesFromFile);
             }
         });
         secondsPassed++;
+    }
+
+    @Transactional
+    public void pruneOldMessages() {
+        messageRepository.keep100MostRecentMessages();
     }
 
 
@@ -115,7 +124,7 @@ public class DeviceMessageService {
 
 
         // if text matches regex
-        if (true) {
+        if (noHash.matches(device.getFilterRegex())) {
             Message message = new Message(id, msgType, text, value, device.getType(), timestamp, device.getId(), false);
             messageRepository.save(message);
             rulesService.addMessage(message);

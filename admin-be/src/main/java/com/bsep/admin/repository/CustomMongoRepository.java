@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface CustomMongoRepository {
     public Page<Message> findFilteredMessages(UUID deviceId, String type, String text, Float valueFrom, Float valueTo, LocalDateTime timestampFrom, LocalDateTime timestampTo, PageRequest pageRequest);
+
+    public void keep100MostRecentMessages();
 }
