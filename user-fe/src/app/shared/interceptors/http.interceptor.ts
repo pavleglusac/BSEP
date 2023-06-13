@@ -25,7 +25,6 @@ export class AuthInterceptor implements HttpInterceptor {
       });
       return next.handle(authReq).pipe(
         catchError((error) => {
-          console.log(error.message)
           if (error.status === 401 && window.location.pathname !== '/login') {
             window.location.href = '/login';
           } else if (error.status === 400 && error.message === 'Access is denied') {
