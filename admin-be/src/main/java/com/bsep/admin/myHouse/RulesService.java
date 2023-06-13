@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 public class RulesService {
@@ -56,7 +57,7 @@ public class RulesService {
                                             " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";
 
     // add thread safe queue of messages
-    ArrayDeque<Message> queue = new ArrayDeque<>();
+    ConcurrentLinkedQueue<Message> queue = new ConcurrentLinkedQueue<>();
 
 
 
@@ -97,7 +98,7 @@ public class RulesService {
 
 
     public void addMessage(Message message) {
-        if (queue.size() > 1000) {
+        if (queue.size() > 100) {
             queue.poll();
         }
         queue.add(message);

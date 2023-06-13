@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -52,6 +53,18 @@ public class MessageRepositoryImpl implements CustomMongoRepository {
         long count = mongoTemplate.count(query, Message.class);
 
         return PageableExecutionUtils.getPage(messages, pageRequest, () -> mongoTemplate.count((Query.of(query).limit(-1).skip(-1)), Message.class));
+    }
+
+
+    public void keep100MostRecentMessages() {
+        // create a query that sorts by timestamp descending and limits to 100
+        Query query = new Query().with(Sort.by(Sort.Direction.DESC, "timestamp")).limit(100);
+        // find the 100 most recent messages
+        List<Message> messages = mongoTemplate.find(query, Message.class);
+        // delete all messages
+        mongoTemplate.remove(new Query(), Message.class);
+        // save the 100 most recent messages
+        mongoTemplate.insert(messages, Message.class);
     }
 
 }

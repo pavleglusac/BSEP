@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,7 +61,7 @@ public class LogRulesService {
             " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";
 
     // add thread safe queue of messages
-    ArrayDeque<Log> queue = new ArrayDeque<>();
+    ConcurrentLinkedDeque<Log> queue = new ConcurrentLinkedDeque<>();
 
 
 
@@ -102,7 +103,7 @@ public class LogRulesService {
 
 
     public void addMessage(Log message) {
-        if (queue.size() > 1000) {
+        if (queue.size() > 100) {
             queue.poll();
         }
         queue.add(message);

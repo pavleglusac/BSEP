@@ -38,6 +38,7 @@ public class LogService {
         log.setRead(false);
         logRepository.save(log);
         logRulesService.addMessage(log);
+        logRepository.keep100MostRecentMessages();
     }
 
     private String getClientIP() {
