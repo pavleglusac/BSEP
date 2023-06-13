@@ -40,7 +40,7 @@
         <div [title]="message.value" class="flex justify-center font-medium text-secondary-gray brightness-75 w-[17%]">
             <p class="w-[80%] px-3 py-2 truncate text-center">{{message.value | number : '1.2-2'}}</p>
         </div>
-        <div [title]="message.timestamp" class="flex justify-center font-medium text-secondary-gray brightness-75 w-[17%]">                       
+        <div [title]="message.timestamp | date:'short'" class="flex justify-center font-medium text-secondary-gray brightness-75 w-[17%]">                       
             <p class="w-[80%] px-3 py-2 truncate text-center">{{message.timestamp | date:'short'}}</p>
         </div>
         <div [title]="message.deviceId" class="flex justify-center font-medium text-secondary-gray brightness-75 w-[17%]">

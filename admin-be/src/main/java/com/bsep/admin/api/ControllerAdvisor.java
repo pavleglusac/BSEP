@@ -93,4 +93,46 @@ public class ControllerAdvisor {
 		return new ResponseError(HttpStatus.NOT_FOUND, e.getMessage());
 	}
 
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(DeviceNotFoundException.class)
+	public ResponseError handleDeviceNotFoundException(DeviceNotFoundException e) {
+		return new ResponseError(HttpStatus.NOT_FOUND, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(RuleNotFoundException.class)
+	public ResponseError handleRuleNotFoundException(RuleNotFoundException e) {
+		return new ResponseError(HttpStatus.NOT_FOUND, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidRuleException.class)
+	public ResponseError handleInvalidRuleException(InvalidRuleException e) {
+		return new ResponseError(HttpStatus.BAD_REQUEST, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(MailingException.class)
+	public ResponseError handleMailingException(MailingException e) {
+		return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(DeviceCommunicationExcpetion.class)
+	public ResponseError handleDeviceCommunicationException(DeviceCommunicationExcpetion e) {
+		return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(InvalidDeviceException.class)
+	public ResponseError handleInvalidDeviceException(InvalidDeviceException e) {
+		return new ResponseError(HttpStatus.BAD_REQUEST, e.getMessage());
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(CsrException.class)
+	public ResponseError handleCsrException(CsrException e) {
+		return new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+	}
+
 }

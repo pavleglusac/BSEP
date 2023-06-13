@@ -1,5 +1,7 @@
 package com.bsep.admin.service;
 import com.bsep.admin.dto.LogRuleCreationDto;
+import com.bsep.admin.exception.InvalidRuleException;
+import com.bsep.admin.exception.RuleNotFoundException;
 import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogRule;
 import com.bsep.admin.model.Message;
@@ -110,7 +112,7 @@ public class LogRulesService {
 
     public void deleteRule(String ruleName) {
         // find rule in list of rules and delete it
-        LogRule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuntimeException("Rule not found!"));
+        LogRule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuleNotFoundException("Rule not found!"));
         ruleRepository.delete(rule);
 
         List<String> resultDRL = new ArrayList<>();
@@ -133,7 +135,7 @@ public class LogRulesService {
         LogRule rule = mapLogRuleDtoToLogRule(dto);
         // check if rule with same name already exists
         if (ruleRepository.findByName(rule.getName()).isPresent()) {
-            throw new RuntimeException("Rule with same name already exists!");
+            throw new InvalidRuleException("Rule with same name already exists!");
         }
         List<String> res = buildRuleTemplate(rule);
         rule.setId(UUID.randomUUID());

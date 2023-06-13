@@ -1,5 +1,6 @@
 package com.bsep.admin.myHouse;
 
+import com.bsep.admin.exception.DeviceCommunicationExcpetion;
 import com.bsep.admin.model.Device;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,12 @@ public class DeviceManagerService {
             var resp = HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());
             if (resp.statusCode() != 200) {
                 System.out.println(resp.body());
-                throw new RuntimeException("Failed to start device");
+                throw new DeviceCommunicationExcpetion("Failed to start device");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DeviceCommunicationExcpetion("Failed to start device");
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new DeviceCommunicationExcpetion("Failed to start device");
         }
     }
 
@@ -44,12 +45,12 @@ public class DeviceManagerService {
         try {
             var resp = HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());
             if (resp.statusCode() != 200) {
-                throw new RuntimeException("Failed to stop device");
+                throw new DeviceCommunicationExcpetion("Failed to stop device");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new DeviceCommunicationExcpetion("Failed to stop device");
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new DeviceCommunicationExcpetion("Failed to stop device");
         }
     }
 }

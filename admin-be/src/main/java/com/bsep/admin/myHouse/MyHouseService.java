@@ -1,5 +1,8 @@
 package com.bsep.admin.myHouse;
 
+import com.bsep.admin.exception.ForbiddenRealEstateAction;
+import com.bsep.admin.exception.RealEstateNotFoundException;
+import com.bsep.admin.exception.UserNotFoundException;
 import com.bsep.admin.model.*;
 import com.bsep.admin.myHouse.dto.AddTenantDto;
 import com.bsep.admin.myHouse.dto.RealEstateDto;
@@ -67,7 +70,7 @@ public class MyHouseService {
     public RealEstateDto addRealEstate(String email, RealEstateDto realEstateDto) {
         User user = getUser(email);
         if (!user.hasRole("ROLE_LANDLORD")) {
-            throw new RuntimeException("User must be landlord in order to add new real estate.");
+            throw new ForbiddenRealEstateAction("User must be landlord in order to have real estate.");
         }
         Landlord landlord = (Landlord) user;
         RealEstate realEstate = new RealEstate(realEstateDto.getAddress(), realEstateDto.getName());
@@ -80,27 +83,27 @@ public class MyHouseService {
 
     private User getUser(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
-        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userOptional.orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!user.getEmailVerified()) {
-            throw new RuntimeException("User does not have permission to have real estates");
+            throw new ForbiddenRealEstateAction("User does not have permission to have real estates");
         }
 
         if (user.hasRole("ROLE_TENANT") || user.hasRole("ROLE_LANDLORD")) {
             return user;
         }
-        throw new RuntimeException("User does not have permission to have real estates");
+        throw new ForbiddenRealEstateAction("User does not have permission to have real estates");
     }
 
     public RealEstateDto editRealEstate(String email, RealEstateDto realEstateDto) {
         User user = getUser(email);
         Optional<RealEstate> realEstateOpt = realEstateRepository.findById(realEstateDto.getId());
         if (realEstateOpt.isEmpty()) {
-            throw new RuntimeException("Real estate not found");
+            throw new RealEstateNotFoundException("Real estate not found");
         }
         RealEstate realEstate = realEstateOpt.get();
         if (!user.getRealEstates().contains(realEstate)) {
-            throw new RuntimeException("User does not have permission to edit this real estate");
+            throw new ForbiddenRealEstateAction("User does not have permission to edit this real estate");
         }
         realEstate.setAddress(realEstateDto.getAddress());
         realEstate.setName(realEstateDto.getName());
@@ -111,10 +114,10 @@ public class MyHouseService {
     public TenantDto addTenant(AddTenantDto addTenantDto) {
         User user = getUser(addTenantDto.getEmail());
         if (!user.hasRole("ROLE_TENANT") || !user.getEmailVerified())
-            throw new RuntimeException("User does not have permission to be tenant for real estate.");
+            throw new ForbiddenRealEstateAction("User does not have permission to be tenant for real estate.");
         Tenant tenant = (Tenant) user;
         Optional<RealEstate> realEstateOpt = realEstateRepository.findById(addTenantDto.getRealEstateId());
-        RealEstate realEstate = realEstateOpt.orElseThrow(() -> new RuntimeException("Real estate does not exist"));
+        RealEstate realEstate = realEstateOpt.orElseThrow(() -> new RealEstateNotFoundException("Real estate not found"));
         tenant.setRealEstate(realEstate);
         tenantRepository.save(tenant);
         return new TenantDto(user.getId(), user.getEmail(), user.getName(), user.getImageUrl());

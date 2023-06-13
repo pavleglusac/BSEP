@@ -1,5 +1,6 @@
 package com.bsep.admin.service;
 
+import com.bsep.admin.exception.MailingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class MailingService {
 			helper.addAttachment(privateKey.getName(), privateKey);
 			mailSender.send(mimeMessage);
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			throw new MailingException("Error while sending mail");
 		}
 	}
 
@@ -76,7 +77,7 @@ public class MailingService {
 			helper.setSubject(subject);
 			mailSender.send(mimeMessage);
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			throw new MailingException("Error while sending mail");
 		}
 	}
 
@@ -101,7 +102,7 @@ public class MailingService {
 		try {
 			message = FileUtils.readFileToString(file, "UTF-8");
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new MailingException("Error while sending mail");
 		}
 
 		String target, renderedValue;

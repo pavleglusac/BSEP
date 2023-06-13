@@ -1,5 +1,6 @@
 package com.bsep.admin.pki.service;
 
+import com.bsep.admin.exception.CsrException;
 import com.bsep.admin.exception.CsrNotFoundException;
 import com.bsep.admin.model.CsrStatus;
 import com.bsep.admin.model.User;
@@ -48,18 +49,22 @@ public class CsrService {
 	public String findPublicKeyForUser(String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		return this.keyService.findPublicKeyForUser(email).toString();
 	}
-	public void processCsr(Csr csr, User user) throws Exception {
-		KeyPair keys = keyService.generateKeys();
-		keyService.storeKeys(keys, user.getEmail());
-		LocalDateTime currentTime = LocalDateTime.now();
-		Optional<Csr> existingCsrOpt = this.csrRepository.findByEmailAndStatus(user.getEmail(), CsrStatus.PENDING);
-		if (existingCsrOpt.isPresent()) {
-			csr = this.updateCsr(existingCsrOpt.get(), csr, currentTime);
-		} else {
-			csr.setEmail(user.getEmail());
-			csr.setCreationDate(currentTime);
+	public void processCsr(Csr csr, User user) {
+		try {
+			KeyPair keys = keyService.generateKeys();
+			keyService.storeKeys(keys, user.getEmail());
+			LocalDateTime currentTime = LocalDateTime.now();
+			Optional<Csr> existingCsrOpt = this.csrRepository.findByEmailAndStatus(user.getEmail(), CsrStatus.PENDING);
+			if (existingCsrOpt.isPresent()) {
+				csr = this.updateCsr(existingCsrOpt.get(), csr, currentTime);
+			} else {
+				csr.setEmail(user.getEmail());
+				csr.setCreationDate(currentTime);
+			}
+			csrRepository.save(csr);
+		} catch (Exception e) {
+			throw new CsrException("Failed to create CSR");
 		}
-		csrRepository.save(csr);
 	}
 
 	private Csr updateCsr(Csr previousCsr, Csr newCsr, LocalDateTime currentTime) {
@@ -84,7 +89,7 @@ public class CsrService {
 
 	public String denyCsr(UUID id) {
 		Optional<Csr> csrOpt = this.csrRepository.findById(id);
-		Csr csr = csrOpt.orElseThrow(() -> new RuntimeException("Deny Certificate signing request with id " + id + " unsuccessful."));
+		Csr csr = csrOpt.orElseThrow(() -> new CsrNotFoundException("Csr not found. Deny failed."));
 		csr.setStatus(CsrStatus.REJECTED);
 		this.csrRepository.save(csr);
 		return "Deny Certificate signing request successful.";

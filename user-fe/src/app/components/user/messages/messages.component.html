@@ -8,7 +8,7 @@
                     <option *ngFor="let realEstate of realEstates" [value]="realEstate.id">{{realEstate.name}} </option>
                 </select>
                 
-                <select *ngIf="selectedRealEstate" class="input-msg" (change)="selectedDevice = getSelectedDevice(selectedRealEstate, $event.target)">
+                <select *ngIf="selectedRealEstate" [value]="selectedDeviceVal" class="input-msg" (change)="selectedDevice = getSelectedDevice(selectedRealEstate, $event.target)">
                     <option value="" [selected]="true" disabled>Choose device</option>
                     <option *ngFor="let device of selectedRealEstate.devices" [value]="device.id">{{device.name}} {{device.type}}</option>
                 </select>

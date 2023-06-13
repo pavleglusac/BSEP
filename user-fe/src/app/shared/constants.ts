@@ -4,7 +4,6 @@ import { CsrComponent } from '../components/csr/csr.component';
 import { HomepageComponent } from '../components/homepage/homepage.component';
 import { RealEstatesComponent } from '../components/user/realestates/realestates.component';
 import { AuthGuard } from '../auth.guard';
-import { MyprofileComponent } from '../components/user/myprofile/myprofile.component';
 import { MessagesComponent } from '../components/user/messages/messages.component';
 import { ReportsComponent } from '../components/user/reports/reports.component';
 

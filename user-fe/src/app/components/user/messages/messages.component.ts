@@ -31,6 +31,7 @@ export class MessagesComponent implements OnInit{
   messages: Message[] | null = null;
   page: number = 1;
   pageInfo: any = null;
+  selectedDeviceVal: string = ''
 
   faFilter: IconDefinition = faFilter;
   openFilter: boolean = false;
@@ -55,11 +56,14 @@ export class MessagesComponent implements OnInit{
 
    getSelectedRealEstate = (target: any) => {
     let id = target.value;
+    this.selectedDevice = null;
+    this.selectedDeviceVal = '';
     return this.realEstates.filter(state => state.id === id)[0];
    }
 
   getSelectedDevice = (realEstate: RealEstate, target: any) => {
     let id = target.value;
+    this.selectedDeviceVal = id;
     return realEstate.devices!.filter(device => device.id === id)[0];
   }
 
@@ -76,7 +80,6 @@ export class MessagesComponent implements OnInit{
       AMOUNT,
       filterString,
       (value: any) => {
-        console.log(value)
         this.messages = value.content;
         this.pageInfo = value;
       },

@@ -43,8 +43,10 @@ export class DevicesModalComponent {
   }
 
   handleAddDevice() {
-    if (this.valid())
+    if (this.valid()) {
       this.addNewDevice.emit(this.newDevice);
+      this.newDevice = new Device(DeviceType.THERMOMETER, '', 1, '');
+    }
   }
 
   valid = () => {
