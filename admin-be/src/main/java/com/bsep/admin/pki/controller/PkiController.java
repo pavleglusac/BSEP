@@ -48,11 +48,7 @@ public class PkiController {
 	@PreAuthorize("hasAuthority('WRITE_CSR')")
 	public ResponseEntity<Map<String, String>> createCsr(@RequestBody Csr csr, Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
-		try {
-			csrService.processCsr(csr, user);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create CSR");
-		}
+		csrService.processCsr(csr, user);
 		return ResponseEntity.ok(Map.of("message", "CSR created"));
 	}
 

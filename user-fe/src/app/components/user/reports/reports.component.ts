@@ -52,6 +52,7 @@ import { ReportEntryComponent } from "./report-entry/report-entry.component";
 
     getSelectedRealEstate = (target: any) => {
         let id = target.value;
+        this.clearFilter();
         return this.realEstates.filter(state => state.id === id)[0];
        }
     
@@ -65,7 +66,7 @@ import { ReportEntryComponent } from "./report-entry/report-entry.component";
     show = () => {
         let type: string = this.selectedDevice ? 'device' : 'realEstate';
         let id: string = this.selectedDevice ? this.selectedDevice!.id! : this.selectedRealEstate!.id;
-        if ((this.from && this.to && this.from >= this.to) || (this.from && !this.to) || (!this.from && this.to)) {
+        if ((this.from && this.to && this.from > this.to) || (this.from && !this.to) || (!this.from && this.to)) {
             this.from = null;
             this.to = null;
         }

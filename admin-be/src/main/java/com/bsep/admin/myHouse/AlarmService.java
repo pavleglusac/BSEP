@@ -1,6 +1,7 @@
 package com.bsep.admin.myHouse;
 
 //import io.swagger.v3.oas.annotations.servers.Server;
+import com.bsep.admin.exception.RealEstateNotFoundException;
 import com.bsep.admin.model.Alarm;
 import com.bsep.admin.model.Device;
 import com.bsep.admin.model.DeviceType;
@@ -58,7 +59,7 @@ public class AlarmService {
         // get devices for real estate
         // get alarms for devices
         // return alarms
-        List<Device> devices = realEstateRepository.findById(realEstateId).orElseThrow(() -> new RuntimeException("Real estate not found")).getDevices();
+        List<Device> devices = realEstateRepository.findById(realEstateId).orElseThrow(() -> new RealEstateNotFoundException("Real estate not found")).getDevices();
 
         return alarmRepository.findAllByDeviceIdIn(devices.stream().map(Device::getId).toList());
 

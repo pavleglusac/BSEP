@@ -1,5 +1,6 @@
 package com.bsep.admin.myHouse;
 
+import com.bsep.admin.exception.RuleNotFoundException;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.myHouse.dto.Rule;
 import com.bsep.admin.myHouse.dto.RuleCreationDto;
@@ -106,7 +107,7 @@ public class RulesService {
 
     public void deleteRule(String ruleName) {
         // find rule in list of rules and delete it
-        Rule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuntimeException("Rule not found!"));
+        Rule rule = ruleRepository.findByName(ruleName).orElseThrow(() -> new RuleNotFoundException("Rule not found!"));
         ruleRepository.delete(rule);
 
         List<String> resultDRL = new ArrayList<>();

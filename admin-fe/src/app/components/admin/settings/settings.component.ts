@@ -68,6 +68,8 @@ export class SettingsComponent implements OnInit {
         this.newRealEstate,
         (realEstate: RealEstate) => {
           this.realEstates?.push(realEstate);
+          this.newRealEstate.name = '';
+          this.newRealEstate.address = '';
         },
         (err) => this.toastr.error(err.message)
       );

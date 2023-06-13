@@ -8,9 +8,13 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { baseUrl, tokenName } from '../constants';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+
+  constructor(private toastr: ToastrService) {}
+
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -26,9 +30,15 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(authReq).pipe(
         catchError((error) => {
           if (error.status === 401 && window.location.pathname !== '/login') {
-            window.location.href = '/login';
+            this.toastr.error('Session timeout. Please login again.');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 1500)
           } else if (error.status === 400 && error.message === 'Access is denied') {
-            window.location.href = '/login';
+            this.toastr.error('Session timeout. Please login again.');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 1500)
           }
           return throwError(() => error);
         })

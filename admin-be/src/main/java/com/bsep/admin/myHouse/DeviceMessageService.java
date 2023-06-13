@@ -1,5 +1,6 @@
 package com.bsep.admin.myHouse;
 
+import com.bsep.admin.exception.InvalidDeviceException;
 import com.bsep.admin.model.Device;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.repository.MessageRepository;
@@ -93,7 +94,7 @@ public class DeviceMessageService {
             timeDevices.computeIfAbsent(device.getRefreshRate().intValue(), k -> new ArrayList<>()).add(device);
             deviceManagerService.startDevice(device);
         } else {
-            throw new RuntimeException("Couldn't add device");
+            throw new InvalidDeviceException("Couldn't add device");
         }
     }
 

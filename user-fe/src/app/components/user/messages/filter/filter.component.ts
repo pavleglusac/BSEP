@@ -9,7 +9,7 @@ interface FilterOption {
     messageType: string;
     messageText: string;
     messageValue: {from: number, to: number},
-    messageTimestamp: {from: Date, to: Date}
+    messageTimestamp: {from: any, to: any}
 }
 
 export interface Filter {
@@ -35,7 +35,7 @@ export interface Filter {
       
     ngOnInit(): void {
         for (let f of this.filter) {
-            let filterOpt = {filterField: '', messageType: '', messageText: '', messageValue: {from: 0, to: 0}, messageTimestamp: {from: new Date(), to: new Date()}};
+            let filterOpt: FilterOption = {filterField: '', messageType: '', messageText: '', messageValue: {from: 0, to: 0}, messageTimestamp: {from: null, to: null}};
             if (f.field === 'type') {
                 filterOpt.filterField = 'type';
                 filterOpt.messageType = f.value;
@@ -52,15 +52,14 @@ export interface Filter {
             }
             if (f.field === 'timestamp') {
                 filterOpt.filterField = 'timestamp';
-                let values = f.value.split(';');
-                filterOpt.messageTimestamp.from = new Date(values[0]);
-                filterOpt.messageTimestamp.to = new Date(values[1]);
+                let values = f.value.split(';');;
+                filterOpt.messageTimestamp.from = new Date(values[0]).toISOString().split('T')[0];
+                filterOpt.messageTimestamp.to = new Date(values[1]).toISOString().split('T')[0];
             }
             this.filterOptions.push(filterOpt);
         }
         if (this.filterOptions.length <= 3)
-            this.filterOptions.push({filterField: '', messageType: '', messageText: '', messageValue: {from: 0, to: 0}, messageTimestamp: {from: new Date(), to: new Date()}});
-       
+            this.filterOptions.push({filterField: '', messageType: '', messageText: '', messageValue: {from: 0, to: 0}, messageTimestamp: {from: null, to: null}});
     }
     
 
@@ -73,7 +72,7 @@ export interface Filter {
     }
 
     addFilter = () => {
-        this.filterOptions.push({filterField: '', messageType: '', messageText: '', messageValue: {from: 0, to: 0}, messageTimestamp: {from: new Date(), to: new Date()}})
+        this.filterOptions.push({filterField: '', messageType: '', messageText: '', messageValue: {from: 0, to: 0}, messageTimestamp: {from: null, to: null}})
     }
 
     apply = () => {
@@ -96,11 +95,12 @@ export interface Filter {
                 valuePushed = true;
                 filter.push({field: option.filterField, value: `${option.messageValue.from};${option.messageValue.to}`});
             }
-            if (option.filterField === 'timestamp' && option.messageTimestamp.from <= option.messageTimestamp.to && !timestampPushed) {
+            if (option.filterField === 'timestamp' && option.messageTimestamp.from && option.messageTimestamp.to && option.messageTimestamp.from <= option.messageTimestamp.to && !timestampPushed) {
                 timestampPushed = true;
                 filter.push({field: option.filterField, value: `${option.messageTimestamp.from};${option.messageTimestamp.to}`})
             }
         }
+        console.log(filter)
         this.applyFilter.emit(filter.reverse());
     } 
 
