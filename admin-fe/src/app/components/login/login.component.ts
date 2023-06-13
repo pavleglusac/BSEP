@@ -49,7 +49,7 @@ export class LoginComponent {
       this.code?.value!,
       () => {
         this.toastr.success('Login successful');
-        window.location.href = '/admin';
+        window.location.href = '/admin/requests';
       },
       (error: any) => {
         this.toastr.error(error.message, 'Login failed');

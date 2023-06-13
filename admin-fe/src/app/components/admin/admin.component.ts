@@ -12,5 +12,8 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class AdminComponent {
-
+  constructor() {
+    if (window.location.pathname === '/admin')
+      window.location.href = '/admin/requests';
+  }
 }
