@@ -2,6 +2,7 @@ import datetime
 from abc import ABC, abstractmethod
 import uuid
 import logging
+from crypto import sign_message
 
 class Device(ABC):
 
@@ -17,13 +18,17 @@ class Device(ABC):
         print(f"Logging message {type} {text} {value}")
         logging.info(f"Logging message {type} {text} {value}")
         # create file if not exists
+        curr_iso_time = datetime.datetime.now().isoformat()
+        # create new message uuid
+        message_uuid = uuid.uuid4()
+        string_to_log = f"{message_uuid},{type},{text},{value},{curr_iso_time}"
+        # get bytes from string
+        byte_string = string_to_log.encode()
+        logging.info(f"{message_uuid} => {byte_string}")
 
 
         with open(f"./devices/logs/{self.id}.log", "a") as f:
-            curr_iso_time = datetime.datetime.now().isoformat()
-            # create new message uuid
-            message_uuid = uuid.uuid4()
-            f.write(f"{message_uuid},{type},{text},{value},{curr_iso_time}\n")
+            f.write(string_to_log + ',' + sign_message(byte_string) + '\n')
             f.flush()
 
 

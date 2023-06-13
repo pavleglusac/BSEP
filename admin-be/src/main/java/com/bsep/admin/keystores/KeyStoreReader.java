@@ -194,6 +194,26 @@ public class KeyStoreReader {
 		return null;
 	}
 
+	public PublicKey readPublicKey(String keyStoreFile, String keyStorePass, String alias) {
+		try {
+			// kreiramo instancu KeyStore
+			KeyStore ks = KeyStore.getInstance("JKS", "SUN");
+			// ucitavamo podatke
+			BufferedInputStream in = new BufferedInputStream(new FileInputStream(keyStoreFile));
+			ks.load(in, keyStorePass.toCharArray());
+
+			if (ks.isKeyEntry(alias)) {
+				Certificate cert = ks.getCertificate(alias);
+				PublicKey pk = cert.getPublicKey();
+				return pk;
+			}
+		} catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | CertificateException
+				 | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 
 	public List<X509Certificate> readAllCertificates(String keyStoreFile, String password) {
 		try {

@@ -1,6 +1,5 @@
 package com.bsep.admin.myHouse;
 
-import com.bsep.admin.exception.InvalidDeviceException;
 import com.bsep.admin.model.Device;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.repository.MessageRepository;
@@ -12,12 +11,14 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
 import java.time.LocalDateTime;
+import java.util.*;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -31,6 +32,9 @@ public class DeviceMessageService {
 
     @Autowired
     private RulesService rulesService;
+
+
+
     public ConcurrentHashMap<Integer, ArrayList<Device>> timeDevices = new ConcurrentHashMap<>();
     private HashMap<Device, Long> deviceFilePositions = new HashMap<>();
 
@@ -71,13 +75,42 @@ public class DeviceMessageService {
     }
 
 
+
+    public Boolean verifyHash(String hash, String text) {
+        try {
+            KeyStoreReader keyStoreReader = new KeyStoreReader();
+            PublicKey publicKey = keyStoreReader.readPublicKey("./keystores/admin.jks", "admin", "bebenem");
+            byte[] bytesOfHash = Base64.getDecoder().decode(hash);
+            byte[] bytesOfText = text.getBytes("UTF-8");
+            Signature signature = Signature.getInstance("SHA1withRSA");
+            signature.initVerify(publicKey);
+            signature.update(bytesOfText);
+            return signature.verify(bytesOfHash);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while verifying the hash", e);
+        }
+    }
+
+
     private void parseMessageLine(Device device, String line) {
+        line = line.strip();
+        line = line.trim();
         String[] parts = line.split(",");
         UUID id = UUID.fromString(parts[0]);
         String msgType = parts[1];
         String text = parts[2];
         Double value = Double.parseDouble(parts[3]);
         Date timestamp = Date.from(LocalDateTime.parse(parts[4]).atZone(ZoneId.systemDefault()).toInstant());
+
+        String hash = parts[5].trim().strip();
+        String noHash = String.join(",", parts[0], parts[1], parts[2], parts[3], parts[4]);
+
+        if (!verifyHash(hash, noHash)) {
+            return;
+        }
+
+        System.out.println("Verified hash!!!");
+
 
         // if text matches regex
         if (true) {
