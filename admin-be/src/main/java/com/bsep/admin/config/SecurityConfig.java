@@ -1,6 +1,7 @@
 package com.bsep.admin.config;
 
 
+import com.bsep.admin.api.RateLimitingInterceptor;
 import com.bsep.admin.security.CustomAuthenticationProvider;
 import com.bsep.admin.security.CustomUserDetailsService;
 import com.bsep.admin.security.RestAuthenticationEntryPoint;
@@ -88,6 +89,5 @@ public class SecurityConfig {
 
 		return http.build();
 	}
-
 
 }
