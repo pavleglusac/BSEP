@@ -2,15 +2,13 @@ package com.bsep.admin.myHouse;
 
 import com.bsep.admin.exception.DeviceNotFoundException;
 import com.bsep.admin.exception.RealEstateNotFoundException;
-import com.bsep.admin.model.Device;
-import com.bsep.admin.model.DeviceType;
-import com.bsep.admin.model.Message;
-import com.bsep.admin.model.RealEstate;
+import com.bsep.admin.model.*;
 import com.bsep.admin.myHouse.dto.DeviceDto;
 import com.bsep.admin.myHouse.dto.Report;
 import com.bsep.admin.repository.DeviceRepository;
 import com.bsep.admin.repository.MessageRepository;
 import com.bsep.admin.repository.RealEstateRepository;
+import com.bsep.admin.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +37,9 @@ public class DeviceService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private LogService logService;
+
     public Device addDevice(DeviceDto deviceDto) {
         UUID houseId = UUID.fromString(deviceDto.getHouseId());
         RealEstate realEstate = realEstateRepository.findById(houseId).orElseThrow(() -> new RealEstateNotFoundException("Real estate not found"));
@@ -53,6 +54,7 @@ public class DeviceService {
         realEstate.getDevices().add(device);
         realEstateRepository.save(realEstate);
         deviceMessageService.addDevice(device);
+        logService.logAction(LogType.SUCCESS, "Added device.", "Device: " + device.getName() + ":" + device.getId().toString() +  " added to real estate " + realEstate.getName() + ":" + realEstate.getId().toString());
         return device;
     }
 
@@ -61,6 +63,7 @@ public class DeviceService {
         Device device = deviceRepository.findById(id).orElseThrow(() -> new DeviceNotFoundException("Device not found"));
         deviceRepository.delete(device);
         deviceMessageService.removeDevice(device);
+        logService.logAction(LogType.SUCCESS, "Removed device.", "Device: " + device.getName() + ":" + device.getId().toString() +  " removed from real estate.");
     }
 
     public Device findDeviceById(UUID id) {
