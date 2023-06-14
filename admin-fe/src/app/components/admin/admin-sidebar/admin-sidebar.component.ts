@@ -73,7 +73,7 @@ const menus = {
     },
     {
       title: 'Alarms',
-      link: 'admin/',
+      link: 'admin/alarms',
       icon: faCircleExclamation,
     },
     {
