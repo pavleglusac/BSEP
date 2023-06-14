@@ -1,0 +1,98 @@
+<div class="flex flex-col gap-y-2 bg-dark px-4 py-2">
+
+  <div class="flex justify-between">
+
+    <div>
+      <div>
+        <form (ngSubmit)="handleSearch()" class="flex gap-x-2">
+          <div class="w-40 lg:w-52">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-0.5"
+            for="log-action">
+              Action
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="actionQuery && !showActionQueryError ? 'border-light' : 'border-medium'"
+            [ngClass]="showActionQueryError ? 'border-red-600' : ''" [(ngModel)]="actionQuery"
+            (change)="showActionQueryError = false"
+            [ngModelOptions]="{standalone: true}" id="log-action" type="text" placeholder="Action">
+          </div>
+          
+          <div class="w-40 lg:w-52">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-0.5" for="log-details">
+              Details
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+              [ngClass]="detailsQuery && !showDetailsQueryError ? 'border-light' : 'border-medium'"
+              [ngClass]="showDetailsQueryError ? 'border-red-600' : ''" [(ngModel)]="detailsQuery"
+              (change)="showDetailsQueryError = false"
+              [ngModelOptions]="{standalone: true}" id="log-details" type="text" placeholder="Details">
+          </div>
+  
+          <div class="w-40 lg:w-52">
+            <label class="block tracking-wide text-medium text-xs font-bold mb-0.5" for="log-ipAddress">
+              IP Address
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide placeholder-medium caret-medium border-b focus:border-accent bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+              [ngClass]="ipAddressQuery && !showIpAddressQueryError ? 'border-light' : 'border-medium'"
+              [ngClass]="showIpAddressQueryError ? 'border-red-600' : ''" [(ngModel)]="ipAddressQuery"
+              (change)="showIpAddressQueryError = false"
+              [ngModelOptions]="{standalone: true}" id="log-ipAddress" type="text" placeholder="IP Address">
+          </div>
+  
+        </form>
+      </div>
+    </div>
+
+    <button class="hover:bg-opacity-90 w-10 h-10 shrink-0 text-light font-bold pb-1 mt-auto"
+    [title]="enableRegex ? 'Disable regex search' : 'Enable regex search'"
+    [ngClass]="enableRegex ? 'bg-accent' : 'bg-medium'" (click)="enableRegex = !enableRegex">
+      (.*)
+    </button>
+  </div>
+
+  <div class="flex justify-between">
+
+    <div class="flex gap-x-2">
+      
+      <!-- usernames -->
+      <div class="w-82 lg:w-106 text-light overflow-x-hidden">
+        <label class="block tracking-wide text-medium text-xs font-bold mb-0.5" for="tag-alarmText">
+          Usernames (comma separated)
+        </label>
+        <div class="flex gap-x-1 gap-y-1 border-b"
+        [ngClass]="usernames.length > 0 ? 'border-light' : 'border-medium'">
+          <div *ngFor="let uname of usernames" class="">
+            <div class="bg-accent bg-opacity-40 px-1 cursor-pointer hover:bg-red-500 hover:bg-opacity-30" (click)="removeUsername(uname)">
+              {{ uname }}
+            </div>
+          </div>
+          <input class="appearance-none block text-light tracking-wide placeholder-medium 
+          w-full caret-medium bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+          id="tag-usernames" type="text" placeholder="Usernames" autofocus="autofocus"
+          [(ngModel)]="username" [ngModelOptions]="{standalone: true}" (input)="handleUsernameInput()">
+        </div>
+      </div>
+
+      <!-- logType -->
+      <div class="w-40 lg:w-52">
+        <label class="block tracking-wide text-medium text-xs font-bold mb-1" for="tag-log-type">
+          Log Type
+        </label>
+        <select class="appearance-none block w-full text-light tracking-wide caret-medium border-b focus:border-accent bg-transparent border-light leading-tight outline-none focus:transition-color duration-300 py-1"
+                name="log-type" (change)="logTypeChanged($event)" id="tag-log-type">
+          <option *ngFor="let type of logTypes" [ngValue]="type" class="text-dark">
+            {{ type.slice(0, 1) + type.slice(1).toLowerCase().replaceAll('_', ' ') }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <button class="bg-accent hover:bg-opacity-90 active:bg-accent-dark
+    w-10 h-10 shrink-0 mt-auto" (click)="handleSearch()">
+      <fa-icon [icon]="faSearch" class="text-light my-auto"></fa-icon>
+    </button>
+  </div>
+
+</div>

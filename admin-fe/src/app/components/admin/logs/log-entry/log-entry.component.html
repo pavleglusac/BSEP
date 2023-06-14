@@ -1,0 +1,37 @@
+<div class="py-2 border-b border-medium border-opacity-60 hover:opacity-90">
+  <div class="flex flex-col w-full justify-between text-light" [title]="log.action">
+
+    <div class="flex justify-between">
+      <div class="flex gap-x-3">
+        <div class="w-96 truncate" [title]="log.details">
+          {{ log.details }}
+        </div>
+        <div class="font-mono text-medium font-bold my-auto">
+          {{ log.ipAddress }}
+        </div>
+      </div>
+
+      <div class="flex gap-x-3">
+        <div class="font-bold">
+          {{ log.type }}
+        </div>
+        <div class="my-auto text-sm text-medium font-mono" [title]="log.timestamp">
+          {{ log.timestamp | date:'short' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-justify-between">
+      
+      <div *ngIf="log.usernames.length > 0" class="flex">
+        <div class="text-medium font-mono">Usernames:</div>
+          <div class="inline ml-2 w-72 lg:w-120 truncate font-bold">
+            <div *ngFor="let username of log.usernames; let i = index" class="inline">
+              {{ username }}{{ i === log.usernames.length - 1 ? '' : ',&nbsp;' }}
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

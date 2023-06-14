@@ -11,6 +11,7 @@ import { AddAlarmRuleComponent } from './alarm-rules/add-alarm-rule/add-alarm-ru
 import { AddLogRuleComponent } from './log-rules/add-log-rule/add-log-rule.component';
 import { LogRulesComponent } from './log-rules/log-rules.component';
 import { AlarmsComponent } from './alarms/alarms.component';
+import { LogsComponent } from './logs/logs.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -44,6 +45,10 @@ export const ADMIN_ROUTES: Route[] = [
       {
         path: 'alarm-rules/new',
         component: AddAlarmRuleComponent,
+      },
+      {
+        path: 'logs',
+        component: LogsComponent,
       },
       {
         path: 'log-rules',
