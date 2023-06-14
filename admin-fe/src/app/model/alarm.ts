@@ -1,3 +1,4 @@
+import { Log } from "./log";
 import { Device, RealEstate } from "./myHouse";
 
 export interface Alarm {
@@ -8,4 +9,12 @@ export interface Alarm {
   timestamp: string;
   device: Device;
   realEstate: RealEstate;
+}
+
+export class LogAlarm {
+  id: string = '';
+  name: string = '';
+  text: string = '';
+  timestamp: Date | null = null;
+  logs: Log[] = [];
 }

@@ -64,4 +64,19 @@ export class AlarmService {
     });
   }
 
+  getLogAlarms(
+    page: number,
+    successCb: (alarmsPage: any) => void,
+    errorCb: (error: any) => void
+  ) {
+    this.http.get(`api/myhouse/alarm/logAlarm?page=${page}&amount=20`).subscribe({
+      next(res: any) {
+        successCb(res);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
 }

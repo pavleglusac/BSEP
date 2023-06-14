@@ -15,6 +15,7 @@ import {
   faRightFromBracket,
   faFileLines,
   faRectangleList,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { filter } from 'rxjs';
 import { environment } from 'src/environment/environment';
@@ -70,6 +71,11 @@ const menus = {
       title: 'Log Rules',
       link: 'admin/log-rules',
       icon: faRectangleList,
+    },
+    {
+      title: 'Log Alarms',
+      link: 'admin/log-alarms',
+      icon: faExclamationTriangle,
     },
     {
       title: 'Alarms',

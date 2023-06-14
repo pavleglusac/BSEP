@@ -1,6 +1,7 @@
 package com.bsep.admin.myHouse;
 
 import com.bsep.admin.model.Alarm;
+import com.bsep.admin.model.LogAlarm;
 import com.bsep.admin.myHouse.dto.AlarmResponseDto;
 import com.bsep.admin.myHouse.dto.Rule;
 import com.bsep.admin.myHouse.dto.RuleCreationDto;
@@ -54,6 +55,14 @@ public class AlarmController {
             @RequestParam @Min(1) @Max(20) int amount
     ) {
         return alarmService.getAllAlarms(page, amount);
+    }
+
+    @GetMapping("/logAlarm")
+    public Page<LogAlarm> getLogAlarms(
+            @RequestParam @Min(0) int page,
+            @RequestParam @Min(1) @Max(20) int amount
+    ) {
+        return alarmService.getAllLogAlarms(page, amount);
     }
 
     @GetMapping("/{realEstateId}")

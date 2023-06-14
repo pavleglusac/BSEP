@@ -2,15 +2,13 @@ package com.bsep.admin.myHouse;
 
 //import io.swagger.v3.oas.annotations.servers.Server;
 import com.bsep.admin.exception.RealEstateNotFoundException;
-import com.bsep.admin.model.Alarm;
-import com.bsep.admin.model.Device;
-import com.bsep.admin.model.DeviceType;
-import com.bsep.admin.model.RealEstate;
+import com.bsep.admin.model.*;
 import com.bsep.admin.myHouse.dto.AlarmResponseDto;
 import com.bsep.admin.myHouse.dto.DeviceResponseDto;
 import com.bsep.admin.myHouse.dto.RealEstateResponseDto;
 import com.bsep.admin.repository.AlarmRepository;
 import com.bsep.admin.repository.DeviceRepository;
+import com.bsep.admin.repository.LogAlarmRepository;
 import com.bsep.admin.repository.RealEstateRepository;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
@@ -43,6 +41,9 @@ public class AlarmService {
     private AlarmRepository alarmRepository;
 
     @Autowired
+    private LogAlarmRepository logAlarmRepository;
+
+    @Autowired
     private DeviceRepository deviceRepository;
 
     @Autowired
@@ -61,11 +62,19 @@ public class AlarmService {
 
     public Page<AlarmResponseDto> getAllAlarms(int page, int amount) {
         Page<Alarm> alarmPage = alarmRepository.findAll(PageRequest.of(page, amount));
+        //check if no alarms
+        /*if (alarmPage.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>());
+        }*/
         List<UUID> deviceIds = alarmPage.getContent()
                 .stream().map(x -> UUID.fromString(x.getDeviceId())).toList();
         List<Device> devices = deviceRepository.findByIdIn(deviceIds);
         List<RealEstate> realEstates = realEstateRepository.findByDevicesInList(devices);
         return convertAlarmsToAlarmDtos(alarmPage, devices, realEstates);
+    }
+
+    public Page<LogAlarm> getAllLogAlarms(int page, int amount) {
+        return logAlarmRepository.findAll(PageRequest.of(page, amount));
     }
 
     private Page<AlarmResponseDto> convertAlarmsToAlarmDtos(Page<Alarm> alarmPage, List<Device> devices, List<RealEstate> realEstates) {

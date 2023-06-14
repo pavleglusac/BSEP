@@ -1,12 +1,12 @@
 <div class="flex flex-col fixed justify-between h-screen w-64 bg-dark px-6 overflow-auto hidden-scrollbar">
   <div>
     <!-- logo -->
-    <div class="w-full flex flex-col justify-center h-24">
+    <div class="w-full flex flex-col justify-center h-16">
       <img src="./assets/images/homeguard_logo.png" alt="logo" class="w-2/3 my-auto">
     </div>
     
     <!-- public keys -->
-    <div class="flex flex-col gap-y-3">
+    <div class="flex flex-col gap-y-2">
       <div *ngFor="let group of objectKeys(menus)">
         <h1 class="text-base text-medium font-medium">{{ group }}</h1>
         <div class="flex flex-col mt-2 cursor-pointer">

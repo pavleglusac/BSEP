@@ -65,7 +65,6 @@ public class LogService {
             User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return Optional.of(user.getEmail());
         } catch (Exception e) {
-            e.printStackTrace();
             return Optional.empty();
         }
     }
