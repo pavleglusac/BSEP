@@ -15,7 +15,7 @@ class Device(ABC):
 
 
     def log(self, type, text, value):
-        print(f"Logging message {type} {text} {value}")
+        print(f"Logging message {type} {text} {value}\n")
         logging.info(f"Logging message {type} {text} {value}")
         # create file if not exists
         curr_iso_time = datetime.datetime.now().isoformat()
@@ -26,10 +26,11 @@ class Device(ABC):
         byte_string = string_to_log.encode()
         logging.info(f"{message_uuid} => {byte_string}")
 
-
+        print('Writing to file')
         with open(f"./devices/logs/{self.id}.log", "a") as f:
             f.write(string_to_log + ',' + sign_message(byte_string) + '\n')
             f.flush()
+        print('Done writing to file\n')
 
 
     @abstractmethod

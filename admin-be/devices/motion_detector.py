@@ -9,7 +9,7 @@ class MotionDetector(Device):
         self.modes = {
             "NORMAL": [[self.state_normal_detection, 20], [self.state_no_detection, 20]],
             "NO_DETECTION": [[self.state_no_detection, 20]],
-            "ALARM": [[self.state_alarm, 1]]
+            "ALARM": [[self.state_alarm, 5]]
         }
 
         self.current_mode = deepcopy(self.modes["NORMAL"])
