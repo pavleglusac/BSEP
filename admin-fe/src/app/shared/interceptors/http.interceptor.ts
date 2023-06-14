@@ -31,17 +31,17 @@ export class AuthInterceptor implements HttpInterceptor {
       });
       return next.handle(authReq).pipe(
         catchError((error) => {
-          if (error.status === 401 && window.location.pathname !== '/') {
-            this.toastr.error('Session timeout. Please login again.');
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 1500)
-          } else if (error.status === 400 && error.message === 'Access is denied') {
-            this.toastr.error('Session timeout. Please login again.');
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 1500)
-          }
+          // if (error.status === 401 && window.location.pathname !== '/') {
+          //   this.toastr.error('Session timeout. Please login again.');
+          //   setTimeout(() => {
+          //     window.location.href = '/';
+          //   }, 1500)
+          // } else if (error.status === 400 && error.message === 'Access is denied') {
+          //   this.toastr.error('Session timeout. Please login again.');
+          //   setTimeout(() => {
+          //     window.location.href = '/';
+          //   }, 1500)
+          // }
           return throwError(() => error);
         })
       );

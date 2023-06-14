@@ -2,14 +2,18 @@ package com.bsep.admin.service;
 
 import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogType;
+import com.bsep.admin.myHouse.dto.LogSearchResultDto;
 import com.bsep.admin.repository.LogRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -17,7 +21,10 @@ public class LogService {
 
     @Autowired
     private LogRulesService logRulesService;
-    private final LogRepository logRepository;
+    @Autowired
+    private LogRepository logRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public LogService(LogRepository logRepository) {
         this.logRepository = logRepository;
@@ -61,8 +68,46 @@ public class LogService {
         }
     }
 
-    public List<Log> getAllLogs() {
-        return logRepository.findAll();
+    public LogSearchResultDto searchLogs(String actionQuery, String detailsQuery, String ipAddressQuery,
+                                String logType, List<String> usernames, boolean regexEnabled, int page, int amount) {
+        Query query = new Query();
+
+        if (regexEnabled) {
+            if (actionQuery != null) {
+                query.addCriteria(Criteria.where("action").regex(actionQuery));
+            }
+            if (detailsQuery != null) {
+                query.addCriteria(Criteria.where("details").regex(detailsQuery));
+            }
+            if (ipAddressQuery != null) {
+                query.addCriteria(Criteria.where("ipAddress").regex(ipAddressQuery));
+            }
+        } else {
+            if (actionQuery != null) {
+                query.addCriteria(Criteria.where("action").regex(".*" + actionQuery + ".*", "i"));
+            }
+            if (detailsQuery != null) {
+                query.addCriteria(Criteria.where("details").regex(".*" + detailsQuery + ".*", "i"));
+            }
+            if (ipAddressQuery != null) {
+                query.addCriteria(Criteria.where("ipAddress").regex(".*" + ipAddressQuery + ".*", "i"));
+            }
+        }
+
+        if (logType != null && logType.length() > 0) {
+            query.addCriteria(Criteria.where("type").is(logType));
+        }
+        if (usernames != null && !usernames.isEmpty()) {
+            query.addCriteria(Criteria.where("usernames").all(usernames));
+        }
+
+        query.with(Sort.by(Sort.Direction.DESC, "timestamp"));
+        long totalItems = mongoTemplate.count(query, Log.class);
+
+        query.skip((page - 1) * amount).limit(amount);
+
+        List<Log> logs = mongoTemplate.find(query, Log.class);
+        return new LogSearchResultDto(logs, totalItems);
     }
 
 }

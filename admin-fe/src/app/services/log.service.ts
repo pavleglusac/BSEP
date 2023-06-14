@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LogRule } from '../model/logRule';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,26 @@ import { HttpClient } from '@angular/common/http';
 export class LogService {
 
   constructor(private http: HttpClient) {}
+
+  search(
+    actionQuery: string,
+    detailsQuery: string,
+    ipAddressQuery: string,
+    logType: string | null,
+    usernames: string[] | null = null,
+    regexEnabled: boolean = false,
+    page: number,
+    amount: number
+  ): Observable<any> {
+    return this.http.get(`api/log?page=${page}&amount=${
+      amount}${actionQuery ? '&actionQuery=' + encodeURIComponent(actionQuery) : ''}${
+        detailsQuery ? '&detailsQuery=' + encodeURIComponent(detailsQuery) : ''}${
+          ipAddressQuery ? '&ipAddressQuery=' + encodeURIComponent(ipAddressQuery) : ''}${
+            logType ? '&logType=' + logType : ''}${
+              '&regexEnabled=' + regexEnabled}${
+                usernames && usernames.length > 0 ? '&usernames=' + usernames.join(',') : ''
+              }`);
+  }
 
   getLogRules(
     successCb: (alarmRules: LogRule[]) => void,

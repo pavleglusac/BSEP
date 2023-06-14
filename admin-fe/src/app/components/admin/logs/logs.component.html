@@ -1,0 +1,36 @@
+<div class="flex flex-col w-full items-center py-8">
+  <div class="flex flex-col gap-y-4 w-11/12 xl:w-5/6">
+
+    <div>
+      <app-log-search [parent]="this"></app-log-search>
+    </div>
+
+    <div *ngIf="logs.length > 0">
+      <div *ngFor="let log of logs">
+        <app-log-entry [log]="log"></app-log-entry>
+      </div>
+    </div>
+    <div *ngIf="logs.length === 0">
+      <div class="text-light text-xl font-medium">No logs match the criteria</div>
+    </div>
+    
+    <!-- pagination controls -->
+    <div *ngIf="logs.length > 0" class="flex justify-between w-44 mx-auto bg-dark px-4 py-2">
+      <div class="cursor-pointer my-auto" (click)="prevPage()"
+      [ngClass]="page === 1 ? 'cursor-default text-black' : 'cursor-pointer text-accent'">
+        <fa-icon [icon]="faChevronLeft"></fa-icon>
+      </div>
+
+      <div class="flex text-xl my-auto text-light gap-x-1">
+        {{ page }}<span class="text-medium">∣</span>{{ totalPages }}
+      </div>
+
+      <div class="cursor-pointer my-auto" (click)="nextPage()"
+      [ngClass]="page === totalPages ? 'cursor-default text-black' : 'cursor-pointer text-accent'">
+        <fa-icon [icon]="faChevronRight"></fa-icon>
+      </div>
+    </div>
+
+  </div>
+
+</div>
