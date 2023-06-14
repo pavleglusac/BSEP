@@ -15,19 +15,25 @@
     </div>
     
     <!-- pagination controls -->
-    <div *ngIf="logs.length > 0" class="flex justify-between w-44 mx-auto bg-dark px-4 py-2">
-      <div class="cursor-pointer my-auto" (click)="prevPage()"
-      [ngClass]="page === 1 ? 'cursor-default text-black' : 'cursor-pointer text-accent'">
-        <fa-icon [icon]="faChevronLeft"></fa-icon>
+    <div *ngIf="logs.length > 0">
+      <div class="flex justify-between w-44 mx-auto bg-dark px-4 py-2">
+        <div class="cursor-pointer my-auto" (click)="prevPage()"
+        [ngClass]="page === 1 ? 'cursor-default text-black' : 'cursor-pointer text-accent'">
+          <fa-icon [icon]="faChevronLeft"></fa-icon>
+        </div>
+  
+        <div class="flex text-xl my-auto text-light gap-x-1">
+          {{ page }}<span class="text-medium">∣</span>{{ totalPages }}
+        </div>
+  
+        <div class="cursor-pointer my-auto" (click)="nextPage()"
+        [ngClass]="page === totalPages ? 'cursor-default text-black' : 'cursor-pointer text-accent'">
+          <fa-icon [icon]="faChevronRight"></fa-icon>
+        </div>
       </div>
 
-      <div class="flex text-xl my-auto text-light gap-x-1">
-        {{ page }}<span class="text-medium">∣</span>{{ totalPages }}
-      </div>
-
-      <div class="cursor-pointer my-auto" (click)="nextPage()"
-      [ngClass]="page === totalPages ? 'cursor-default text-black' : 'cursor-pointer text-accent'">
-        <fa-icon [icon]="faChevronRight"></fa-icon>
+      <div class="text-medium text-center font-mono text-sm font-bold">
+        {{(page - 1) * 20 + 1}} - {{(page - 1) * 20 + logs.length}} out of {{totalItems}}
       </div>
     </div>
 

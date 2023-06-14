@@ -5,6 +5,7 @@ import com.bsep.admin.dto.LogRuleCreationDto;
 import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogAlarm;
 import com.bsep.admin.model.LogRule;
+import com.bsep.admin.model.LogType;
 import com.bsep.admin.myHouse.dto.LogSearchResultDto;
 import com.bsep.admin.service.LogAlarmService;
 import com.bsep.admin.service.LogRulesService;
@@ -60,7 +61,7 @@ public class LogController {
             @RequestParam(required = false, defaultValue = "") String actionQuery,
             @RequestParam(required = false, defaultValue = "") String detailsQuery,
             @RequestParam(required = false, defaultValue = "") String ipAddressQuery,
-            @RequestParam(required = false, defaultValue = "") String logType,
+            @RequestParam(required = false, defaultValue = "") LogType logType,
             @RequestParam(required = false, defaultValue = "") List<String> usernames,
             @RequestParam(required = false, defaultValue = "false") boolean regexEnabled,
             @RequestParam @Min(0) int page,

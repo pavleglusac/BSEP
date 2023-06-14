@@ -42,6 +42,7 @@ export class LogSearchComponent {
   enableRegex: boolean = false;
 
   handleSearch(): void {
+    this.parent.page = 1;
     this.parent.search(this.actionQuery, this.detailsQuery, this.ipAddressQuery, this.logType !== 'ALL' ? this.logType : null, this.usernames, this.enableRegex);
   }
 

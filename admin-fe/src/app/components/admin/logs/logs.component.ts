@@ -36,7 +36,6 @@ export class LogsComponent {
     this.logService.search(actionQuery, detailsQuery, ipAddressQuery, logType, usernames, regexEnabled, this.page - 1, amountPerPage)
     .subscribe((retval: any) => {
       if (retval) {
-        console.log(retval);
         this.logs = retval.items;
         this.totalItems = retval.totalItems;
       }

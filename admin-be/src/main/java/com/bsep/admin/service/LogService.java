@@ -69,7 +69,7 @@ public class LogService {
     }
 
     public LogSearchResultDto searchLogs(String actionQuery, String detailsQuery, String ipAddressQuery,
-                                String logType, List<String> usernames, boolean regexEnabled, int page, int amount) {
+                                LogType logType, List<String> usernames, boolean regexEnabled, int page, int amount) {
         Query query = new Query();
 
         if (regexEnabled) {
@@ -94,7 +94,7 @@ public class LogService {
             }
         }
 
-        if (logType != null && logType.length() > 0) {
+        if (logType != null) {
             query.addCriteria(Criteria.where("type").is(logType));
         }
         if (usernames != null && !usernames.isEmpty()) {
@@ -104,7 +104,7 @@ public class LogService {
         query.with(Sort.by(Sort.Direction.DESC, "timestamp"));
         long totalItems = mongoTemplate.count(query, Log.class);
 
-        query.skip((page - 1) * amount).limit(amount);
+        query.skip(page * amount).limit(amount);
 
         List<Log> logs = mongoTemplate.find(query, Log.class);
         return new LogSearchResultDto(logs, totalItems);
