@@ -11,6 +11,7 @@ import com.bsep.admin.repository.LandlordRepository;
 import com.bsep.admin.repository.RealEstateRepository;
 import com.bsep.admin.repository.TenantRepository;
 import com.bsep.admin.repository.UserRepository;
+import com.bsep.admin.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class MyHouseService {
     private TenantRepository tenantRepository;
     @Autowired
     private RealEstateRepository realEstateRepository;
+    @Autowired
+    private LogService logService;
 
     public List<RealEstateDto> findRealEstatesForUser(String email) {
         User user = getUser(email);
@@ -78,6 +81,7 @@ public class MyHouseService {
         landlord.getRealEstates().add(realEstate);
         realEstate = realEstateRepository.save(realEstate);
         userRepository.save(user);
+        logService.logAction(LogType.SUCCESS, "Add real estate", "Real estate added with id: " + realEstate.getId(), email);
         return new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), email, new ArrayList<>(), new ArrayList<>());
     }
 
@@ -108,6 +112,7 @@ public class MyHouseService {
         realEstate.setAddress(realEstateDto.getAddress());
         realEstate.setName(realEstateDto.getName());
         realEstate = realEstateRepository.save(realEstate);
+        logService.logAction(LogType.SUCCESS, "Edit real estate", "Real estate edited with id: " + realEstate.getId(), email);
         return new RealEstateDto(realEstate.getId(), realEstate.getAddress(), realEstate.getName(), realEstateDto.getLandlord(), realEstateDto.getTenants(), realEstate.getDevices());
     }
 
@@ -120,6 +125,7 @@ public class MyHouseService {
         RealEstate realEstate = realEstateOpt.orElseThrow(() -> new RealEstateNotFoundException("Real estate not found"));
         tenant.setRealEstate(realEstate);
         tenantRepository.save(tenant);
+        logService.logAction(LogType.SUCCESS, "Add tenant to real estate", "Tenant added with id: " + tenant.getId(), addTenantDto.getEmail());
         return new TenantDto(user.getId(), user.getEmail(), user.getName(), user.getImageUrl());
     }
 }

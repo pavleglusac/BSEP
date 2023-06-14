@@ -10,6 +10,7 @@ import com.bsep.admin.repository.LandlordRepository;
 import com.bsep.admin.repository.RealEstateRepository;
 import com.bsep.admin.repository.TenantRepository;
 import com.bsep.admin.repository.UserRepository;
+import com.bsep.admin.service.LogService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;

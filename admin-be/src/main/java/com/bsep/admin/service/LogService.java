@@ -2,6 +2,7 @@ package com.bsep.admin.service;
 
 import com.bsep.admin.model.Log;
 import com.bsep.admin.model.LogType;
+import com.bsep.admin.model.User;
 import com.bsep.admin.myHouse.dto.LogSearchResultDto;
 import com.bsep.admin.repository.LogRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -38,10 +40,10 @@ public class LogService {
         log.setAction(action);
         log.setDetails(details);
         log.setIpAddress(getClientIP());
-        List<String> usernamesList = new ArrayList<>(getClientUsername().map(List::of).orElse(List.of()));
+        List<String> usernamesList = new ArrayList<>();
+        usernamesList.add(getClientUsername().orElse("unauthenticated"));
         usernamesList.addAll(List.of(usernames));
         log.setUsernames(usernamesList);
-        log.setUsernames(List.of(usernames));
         log.setRead(false);
         logRepository.save(log);
         logRulesService.addMessage(log);
@@ -60,10 +62,10 @@ public class LogService {
 
     private Optional<String> getClientUsername() {
         try {
-            ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = sra.getRequest();
-            return Optional.of(request.getUserPrincipal().getName());
+            User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return Optional.of(user.getEmail());
         } catch (Exception e) {
+            e.printStackTrace();
             return Optional.empty();
         }
     }

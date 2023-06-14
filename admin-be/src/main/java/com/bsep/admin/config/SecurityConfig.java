@@ -1,11 +1,13 @@
 package com.bsep.admin.config;
 
 
+import com.bsep.admin.api.LoggingFilter;
 import com.bsep.admin.api.RateLimitingInterceptor;
 import com.bsep.admin.security.CustomAuthenticationProvider;
 import com.bsep.admin.security.CustomUserDetailsService;
 import com.bsep.admin.security.RestAuthenticationEntryPoint;
 import com.bsep.admin.security.TokenAuthenticationFilter;
+import com.bsep.admin.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +35,9 @@ public class SecurityConfig {
 
 	@Autowired
 	private CustomAuthenticationProvider authProvider;
+
+	@Autowired
+	private LogService logService;
 
 	@Bean
 	public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -85,7 +90,7 @@ public class SecurityConfig {
 					.anyRequest().authenticated();
 
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+		http.addFilterAfter(new LoggingFilter(logService), TokenAuthenticationFilter.class);
 
 		return http.build();
 	}

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component
 public class LoggingFilter implements Filter {
     private final LogService logService;
 
