@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AlarmRule } from '../model/alarmRule';
+import { Alarm } from '../model/alarm';
 
 @Injectable({
   providedIn: 'root'
@@ -48,4 +49,20 @@ export class AlarmService {
       },
     });
   }
+
+  getAlarms(
+    page: number,
+    successCb: (alarm: any) => void,
+    errorCb: (error: any) => void
+  ) {
+    this.http.get(`api/myhouse/alarm?page=${page}&amount=20`).subscribe({
+      next(res: any) {
+        successCb(res);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    });
+  }
+
 }

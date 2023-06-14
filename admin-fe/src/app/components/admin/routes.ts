@@ -10,6 +10,7 @@ import { AlarmRulesComponent } from './alarm-rules/alarm-rules.component';
 import { AddAlarmRuleComponent } from './alarm-rules/add-alarm-rule/add-alarm-rule.component';
 import { AddLogRuleComponent } from './log-rules/add-log-rule/add-log-rule.component';
 import { LogRulesComponent } from './log-rules/log-rules.component';
+import { AlarmsComponent } from './alarms/alarms.component';
 
 export const ADMIN_ROUTES: Route[] = [
   {
@@ -31,6 +32,10 @@ export const ADMIN_ROUTES: Route[] = [
       {
         path: 'users',
         component: UsersComponent,
+      },
+      {
+        path: 'alarms',
+        component: AlarmsComponent,
       },
       {
         path: 'alarm-rules',
