@@ -1,0 +1,21 @@
+<div class="m-auto flex flex-col items-start min-h-full max-h-full overflow-auto">
+    
+    <ul class="flex text-sm w-full h-fit font-semibold text-center text-primary-violet divide-x divide-primary-gray-dark/[70%] shadow cursor-pointer mb-8">
+        <li class="w-full h-full" (click)="changeSelect(1)">
+            <p class="w-full bg-primary-gray-light bg-opacity-10  hover:text-primary-violet" [ngClass]="selected === 1 ? 'text-primary-violet text-xl p-3' : 'text-primary-gray-light p-4'">Alarms from devices</p>
+        </li>
+        <li class="w-full h-full" (click)="changeSelect(2)">
+            <p class="w-full bg-primary-gray-light bg-opacity-10 hover:text-primary-violet" [ngClass]="selected === 2 ? 'text-primary-violet text-xl p-3' : 'text-primary-gray-light p-4'">Set off alarms</p>
+        </li>
+        <li class="w-full h-full" (click)="changeSelect(3)">
+            <p class="w-full bg-primary-gray-light bg-opacity-10  hover:text-primary-violet" [ngClass]="selected === 3 ? 'text-primary-violet text-xl p-3' : 'text-primary-gray-light p-4'">Set off Log alarms</p>
+        </li>
+    </ul>
+
+    <div class="px-10" style="width:inherit;">
+        <app-message-alarms *ngIf="selected === 1"></app-message-alarms>
+        <app-set-off-alarms *ngIf="selected === 2"></app-set-off-alarms>
+        <app-set-off-log-alarms *ngIf="selected === 3"></app-set-off-log-alarms>
+    </div>
+    
+</div>

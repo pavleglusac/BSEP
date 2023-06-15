@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -9,10 +9,13 @@ import {
   faHouseUser,
   faRightFromBracket,
   faFileCircleCheck,
-  faEnvelope
+  faEnvelope,
+  faExclamationCircle
 } from '@fortawesome/free-solid-svg-icons';
+import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
 import { tokenName } from 'src/app/shared/constants';
+import { StoreType } from 'src/app/shared/store/types';
 
 interface MenuOption {
   title: string;
@@ -28,16 +31,23 @@ const menus = {
       icon: faHouseUser,
     },
   ],
-  'Other': [
+  'Devices' :[
     {
-      title: 'Certificate signing request',
-      link: 'csr',
-      icon: faCheckDouble,
+      title: 'Threats',
+      link: 'threats',
+      icon: faExclamationCircle,
     },
     {
       title: 'Messages',
       link: 'messages',
       icon: faEnvelope,
+    },
+  ],
+  'Other': [
+    {
+      title: 'Certificate signing request',
+      link: 'csr',
+      icon: faCheckDouble,
     },
     {
       title: 'Reports',
@@ -54,14 +64,25 @@ const menus = {
   styles: [],
   imports: [CommonModule, FontAwesomeModule]
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
 
   menus: any = menus;
   faRightFromBracket: IconDefinition = faRightFromBracket;
   chosenOption: MenuOption = menus['User'][0];
   objectKeys = Object.keys;
+  unreadMessages = 0;
 
-  constructor(private router: Router, private http: HttpClient) {
+  ngOnInit(): void {
+    //vrati alarme iz svih uredjaja i setuj u store
+    //vrati okinute alarme i setuj u store
+    //vrati okinute log alarme i setuj u store
+  }
+
+  constructor(private router: Router, private http: HttpClient, private store: Store<StoreType>) {
+    store.select('threats').subscribe((alarms) => {
+      this.unreadMessages = alarms.unreadMessages;
+    });
+    
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((event) => {

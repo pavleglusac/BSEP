@@ -6,6 +6,7 @@ import { RealEstatesComponent } from '../components/user/realestates/realestates
 import { AuthGuard } from '../auth.guard';
 import { MessagesComponent } from '../components/user/messages/messages.component';
 import { ReportsComponent } from '../components/user/reports/reports.component';
+import { ThreatsComponent } from '../components/threats/threats.component';
 
 export const tokenName = 'access_token';
 
@@ -34,6 +35,10 @@ export const ROUTES: Route[] = [
       {
         path: 'reports',
         component: ReportsComponent,
+      },
+      {
+        path: 'threats',
+        component: ThreatsComponent,
       },
     ],
   },

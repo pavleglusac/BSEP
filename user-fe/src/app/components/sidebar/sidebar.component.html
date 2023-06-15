@@ -12,11 +12,12 @@
             <div class="flex flex-col mt-2 cursor-pointer">
               
               <div *ngFor="let option of menus[group]"
-               class="flex w-full text-sm font-medium pl-6 py-2 pr-2"
+               class="flex w-full text-sm font-medium pl-6 py-2 pr-2 relative"
                [ngClass]="option === chosenOption ? 'text-primary-violet bg-secondary-hover' : 'text-primary-gray-light bg-secondary-white hover:text-primary-violet hover:bg-secondary-hover'"
                (click)="navigate(option)">
                <div class="w-11 text-center"><fa-icon [icon]="option.icon" class="text-xl"></fa-icon></div>
                <p class="my-auto">{{ option.title }}</p>
+               <div *ngIf="option.title === 'Threats' && unreadMessages > 0" class=" right-[45%] absolute bg-red-900 text-secondary-white font-semibold rounded-full flex items-center justify-center w-7 h-7 text-sm">{{unreadMessages}}</div>
               </div>
       
             </div>
