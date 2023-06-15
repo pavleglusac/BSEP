@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { WebSocketService } from 'src/app/services/websocket.service';
 
 @Component({
   selector: 'app-alarms',
@@ -16,6 +17,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
   ]
 })
 export class AlarmsComponent implements OnInit {
+
   faChevronLeft: IconDefinition = faChevronLeft;
   faChevronRight: IconDefinition = faChevronRight;
 
@@ -26,11 +28,16 @@ export class AlarmsComponent implements OnInit {
 
   constructor(
     private alarmService: AlarmService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private websocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
     this.fetchAlarms();
+  }
+
+  sendSocketMessage() {
+    this.websocketService.sendMessage("Hello from Angular");
   }
 
   fetchAlarms() {

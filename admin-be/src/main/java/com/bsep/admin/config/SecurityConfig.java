@@ -57,7 +57,6 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
-
 				.cors()
 					.and()
 				.sessionManagement()
@@ -83,6 +82,7 @@ public class SecurityConfig {
 				.requiresSecure()
 				.and()
 				.authorizeHttpRequests()
+					.requestMatchers(new AntPathRequestMatcher("/ws/**")).authenticated()
 					.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
 					.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 					.requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()

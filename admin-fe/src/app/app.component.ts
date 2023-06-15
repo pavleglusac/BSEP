@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { WebSocketService } from './services/websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,15 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'admin-fe';
+
+  constructor(private webSocketService: WebSocketService) { }
+
+  ngOnInit() {
+    this.webSocketService.connect();
+  }
+
+  ngOnDestroy() {
+    this.webSocketService.disconnect();
+  }
+
 }

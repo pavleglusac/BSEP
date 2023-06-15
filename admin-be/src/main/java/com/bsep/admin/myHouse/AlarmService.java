@@ -6,10 +6,7 @@ import com.bsep.admin.model.*;
 import com.bsep.admin.myHouse.dto.AlarmResponseDto;
 import com.bsep.admin.myHouse.dto.DeviceResponseDto;
 import com.bsep.admin.myHouse.dto.RealEstateResponseDto;
-import com.bsep.admin.repository.AlarmRepository;
-import com.bsep.admin.repository.DeviceRepository;
-import com.bsep.admin.repository.LogAlarmRepository;
-import com.bsep.admin.repository.RealEstateRepository;
+import com.bsep.admin.repository.*;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
@@ -24,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +50,43 @@ public class AlarmService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
+    @Autowired
+    private LandlordRepository landlordRepository;
+
+    @Autowired
+    private TenantRepository tenantRepository;
+
     public void createAlarm(String name, String text, UUID deviceId) {
         System.err.println("Creating alarm: " + name);
         // TODO: Send alarm to frontend via websocket
         DeviceType deviceType = deviceRepository.findById(deviceId).get().getType();
         Alarm alarm = new Alarm(UUID.randomUUID(), name, text, deviceType, LocalDateTime.now(), deviceId.toString());
         alarmRepository.save(alarm);
+        template.convertAndSendToUser("admin@homeguard.com", "/queue/alarms", alarm);
+        notifyTenantAndLandlord(alarm);
+    }
+
+    public void notifyTenantAndLandlord(Alarm alarm) {
+        Device device = deviceRepository.findById(UUID.fromString(alarm.getDeviceId())).get();
+        RealEstate realEstate = realEstateRepository.findByDevice(device);
+        if (realEstate == null) {
+            throw new RealEstateNotFoundException("Real estate not found for device: " + device.getId() + ".");
+        }
+
+        Landlord landlord = landlordRepository.findByRealEstatesContains(realEstate);
+        List<Tenant> tenants = tenantRepository.findByRealEstate(realEstate);
+
+        if (landlord != null) {
+            template.convertAndSendToUser(landlord.getEmail(), "/queue/alarms", alarm);
+        }
+
+        for (Tenant tenant : tenants) {
+            template.convertAndSendToUser(tenant.getEmail(), "/queue/alarms", alarm);
+        }
+
     }
 
     public Page<AlarmResponseDto> getAllAlarms(int page, int amount) {

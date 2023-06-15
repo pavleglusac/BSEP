@@ -20,12 +20,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -191,4 +195,27 @@ public class MyHouseController {
         deviceService.removeDevice(id);
         return ResponseEntity.ok("Device deleted");
     }
+
+    @MessageMapping("hello")
+    public void hello(@Payload String message, Principal principal) {
+        System.out.println(principal.getName());
+        System.out.println(message);
+        userRepository.findAll().forEach(user -> {
+            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/user/queue/notifications", message);
+            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/notifications", message);
+        });
+    }
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @MessageMapping("/app/hello")
+    public void helloz(@Payload String message) {
+        System.out.println(message);
+
+        userRepository.findAll().forEach(user -> {
+            simpMessagingTemplate.convertAndSendToUser(user.getEmail(), "/queue/hello", message);
+        });
+    }
+
 }
