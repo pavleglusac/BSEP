@@ -22,6 +22,8 @@
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@ngrx/store": "^15.4.0",
+    "@stomp/stompjs": "^7.0.0",
+    "@types/stompjs": "^2.3.5",
     "crypto-js": "^4.1.1",
     "lodash": "^4.17.21",
     "ngrx-store-localstorage": "^15.0.0",
@@ -29,7 +31,10 @@
     "primeicons": "^6.0.1",
     "primeng": "^15.2.1",
     "rxjs": "~7.8.0",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "tslib": "^2.3.0",
+    "ws": "^8.13.0",
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
@@ -39,6 +44,7 @@
     "@types/crypto-js": "^4.1.1",
     "@types/jasmine": "~4.3.0",
     "@types/lodash": "^4.14.192",
+    "@types/sockjs-client": "^1.5.1",
     "autoprefixer": "^10.4.14",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",

@@ -25,7 +25,7 @@ public class Privilege implements GrantedAuthority {
     private String name;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "privileges", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     @JsonIgnore

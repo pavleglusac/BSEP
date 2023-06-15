@@ -6,6 +6,7 @@ import com.bsep.admin.repository.DeviceRepository;
 import com.bsep.admin.repository.LogAlarmRepository;
 import com.bsep.admin.repository.RealEstateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,9 @@ public class LogAlarmService {
     @Autowired
     private RealEstateRepository realEstateRepository;
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
     public void createAlarm(String name, String text, List<Log> logs) {
         System.err.println("Creating alarm: " + name);
         // TODO: Send alarm to frontend via websocket
@@ -33,6 +37,7 @@ public class LogAlarmService {
         }
         LogAlarm alarm = new LogAlarm(UUID.randomUUID(), name, text, LocalDateTime.now(), logs);
         alarmRepository.save(alarm);
+        template.convertAndSendToUser("admin@homeguard.com", "/queue/logs", alarm);
     }
 
     public List<LogAlarm> getAllAlarms() {
