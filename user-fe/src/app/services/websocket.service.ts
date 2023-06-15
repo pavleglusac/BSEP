@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
-import { environment } from 'src/environment/environment';
+import { tokenName } from './../shared/constants';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class WebSocketService {
   private client: Client;
 
   constructor() {
-    const token = sessionStorage.getItem(environment.tokenName);
+    const token = sessionStorage.getItem(tokenName);
     this.client = new Client({
       webSocketFactory: () => new SockJS('https://localhost:8080/ws?token=' + token),
     });
@@ -46,15 +47,13 @@ export class WebSocketService {
   }
 
   subscribeToTopic() {
-    // TODO: stize alarm ondosno logalarm za svaki endpoint, dodati toster i to sve
-    this.client.subscribe('/user/queue/logs', (msg) => {
-      let body = JSON.parse(msg.body);
-      console.log(body)
-    });
 
     this.client.subscribe('/user/queue/alarms', (msg) => {
-      let body = JSON.parse(msg.body);
-      console.log(body);
+        console.log(msg);
+        // json parse
+        let body = JSON.parse(msg.body);
+        console.log(body);
+
     });
   }
 }

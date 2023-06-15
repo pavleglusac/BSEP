@@ -24,6 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.StringReader;
 import java.time.LocalDateTime;
@@ -69,6 +71,8 @@ public class AlarmService {
         notifyTenantAndLandlord(alarm);
     }
 
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyTenantAndLandlord(Alarm alarm) {
         Device device = deviceRepository.findById(UUID.fromString(alarm.getDeviceId())).get();
         RealEstate realEstate = realEstateRepository.findByDevice(device);
