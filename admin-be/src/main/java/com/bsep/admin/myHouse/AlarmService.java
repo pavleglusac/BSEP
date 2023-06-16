@@ -12,7 +12,6 @@ import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.Message;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -141,4 +140,22 @@ public class AlarmService {
 
     }
 
+    public void notifyTenantAndLandlord(Message message, Device device) {
+        RealEstate realEstate = realEstateRepository.findByDevice(device);
+        if (realEstate == null) {
+            throw new RealEstateNotFoundException("Real estate not found for device: " + device.getId() + ".");
+        }
+
+        Landlord landlord = landlordRepository.findByRealEstatesContains(realEstate);
+        List<Tenant> tenants = tenantRepository.findByRealEstate(realEstate);
+
+        if (landlord != null) {
+            template.convertAndSendToUser(landlord.getEmail(), "/queue/message", message);
+        }
+
+        for (Tenant tenant : tenants) {
+            template.convertAndSendToUser(tenant.getEmail(), "/queue/message", message);
+        }
+
+    }
 }

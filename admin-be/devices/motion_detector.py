@@ -7,8 +7,8 @@ class MotionDetector(Device):
         super().__init__(id, name)
 
         self.modes = {
-            "NORMAL": [[self.state_normal_detection, 20], [self.state_no_detection, 20]],
-            "NO_DETECTION": [[self.state_no_detection, 20]],
+            "NORMAL": [[self.state_normal_detection, 5], [self.state_no_detection, 5]],
+            "NO_DETECTION": [[self.state_no_detection, 5]],
             "ALARM": [[self.state_alarm, 5]]
         }
 
@@ -29,9 +29,9 @@ class MotionDetector(Device):
     
     def pick_a_state(self):
         states_odds = {
-            "NORMAL": 0.5,
+            "NORMAL": 0.2,
             "NO_DETECTION": 0.1,
-            "ALARM": 0.4
+            "ALARM": 0.7
         }
 
         picked_state = random.choices(list(states_odds.keys()), list(states_odds.values()))[0]

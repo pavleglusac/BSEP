@@ -55,5 +55,13 @@ export class WebSocketService {
         console.log(body);
 
     });
+
+    this.client.subscribe('/user/queue/message', (msg) => {
+      console.log(msg);
+      // json parse
+      let body = JSON.parse(msg.body);
+      console.log(body);
+
+  });
   }
 }

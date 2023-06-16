@@ -7,6 +7,7 @@ import com.bsep.admin.model.Device;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,11 @@ public class DeviceMessageService {
     @Autowired
     private RulesService rulesService;
 
+    @Autowired
+    private SimpMessagingTemplate template;
 
+    @Autowired
+    private AlarmService alarmService;
 
     public ConcurrentHashMap<Integer, ArrayList<Device>> timeDevices = new ConcurrentHashMap<>();
     private HashMap<Device, Long> deviceFilePositions = new HashMap<>();
@@ -126,8 +131,14 @@ public class DeviceMessageService {
             Message message = new Message(id, msgType, text, value, device.getType(), timestamp, device.getId(), false);
             messageRepository.save(message);
             rulesService.addMessage(message);
+            sendAlarmIfNeeded(message, device);
         }
+    }
 
+
+    public void sendAlarmIfNeeded(Message message, Device device) {
+        if(!message.getType().equals("ALARM")) return;
+        alarmService.notifyTenantAndLandlord(message, device);
 
     }
 
