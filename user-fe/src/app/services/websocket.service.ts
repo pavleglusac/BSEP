@@ -64,6 +64,14 @@ export class WebSocketService {
         this.fetchAlarams();
         
     });
+
+    this.client.subscribe('/user/queue/message', (msg) => {
+      console.log(msg);
+      // json parse
+      let body = JSON.parse(msg.body);
+      console.log(body);
+
+  });
   }
 
   fetchAlarams() {

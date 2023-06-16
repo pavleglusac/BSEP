@@ -198,4 +198,22 @@ public class AlarmService {
 
     }
 
+    public void notifyTenantAndLandlord(Message message, Device device) {
+        RealEstate realEstate = realEstateRepository.findByDevice(device);
+        if (realEstate == null) {
+            throw new RealEstateNotFoundException("Real estate not found for device: " + device.getId() + ".");
+        }
+
+        Landlord landlord = landlordRepository.findByRealEstatesContains(realEstate);
+        List<Tenant> tenants = tenantRepository.findByRealEstate(realEstate);
+
+        if (landlord != null) {
+            template.convertAndSendToUser(landlord.getEmail(), "/queue/message", message);
+        }
+
+        for (Tenant tenant : tenants) {
+            template.convertAndSendToUser(tenant.getEmail(), "/queue/message", message);
+        }
+
+    }
 }
