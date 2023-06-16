@@ -10,7 +10,6 @@ export class Alarm {
     timestamp: string = '';
     device: Device | null = null;
     realEstate: RealEstate | null = null;
-    read: boolean = false;
   }
   
   export class LogAlarm {
@@ -19,7 +18,6 @@ export class Alarm {
     text: string = '';
     timestamp: Date | null = null;
     logs: Log[] = [];
-    read: boolean = false;
   }
 
   export interface Log {
@@ -33,8 +31,6 @@ export class Alarm {
   }
   
 export class MessageAlarm extends Message {
-    read: boolean = false;
     realEstate: RealEstate | null = null;
     device: Device | null = null;
-
   }

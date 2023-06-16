@@ -12,10 +12,12 @@ export type RealEstateStateType = {
 };
 
 export type AlarmStateType = {
-  unreadMessages: number;
-  alarms: Alarm[]
-  logAlarms: LogAlarm[],
-  messagesAlarm: MessageAlarm[]
+  unreadMessagesAlarms: number;
+  unreadMessagesMessagesAlarms: number;
+  alarms: Alarm[];
+  pageInfoAlarms: any;
+  messagesAlarm: MessageAlarm[];
+  pageInfoMessagesAlarms: any;
 }
 
 export type StoreType = {

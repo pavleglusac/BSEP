@@ -14,7 +14,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
+import { ThreatService } from 'src/app/services/threat.service';
 import { tokenName } from 'src/app/shared/constants';
+import { AlarmAction, AlarmActionType } from 'src/app/shared/store/threats-slice/threats.actions';
 import { StoreType } from 'src/app/shared/store/types';
 
 interface MenuOption {
@@ -73,14 +75,35 @@ export class SidebarComponent implements OnInit {
   unreadMessages = 0;
 
   ngOnInit(): void {
-    //vrati alarme iz svih uredjaja i setuj u store
-    //vrati okinute alarme i setuj u store
-    //vrati okinute log alarme i setuj u store
+    this.fetchAlarams();
+    this.fetchMessageAlarms();
   }
 
-  constructor(private router: Router, private http: HttpClient, private store: Store<StoreType>) {
+  fetchAlarams() {
+    this.threatService.getAlarms(
+      0,
+      (alarmsPage: any) => {
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_ALARMS, alarmsPage))
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_UNREAD_MESSAGES_ALARMS, alarmsPage.content.length))
+      },
+      (err) => {}
+    );
+  }
+
+  fetchMessageAlarms() {
+    this.threatService.getMessageAlarms(
+      0,
+      (alarmsPage: any) => {
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_MESSAGES_ALARMS, alarmsPage))
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_UNREAD_MESSAGES_MESSAGE_ALARMS, alarmsPage.content.length))
+      },
+      (err) => {}
+    );
+  }
+
+  constructor(private router: Router, private http: HttpClient, private store: Store<StoreType>, private threatService: ThreatService) {
     store.select('threats').subscribe((alarms) => {
-      this.unreadMessages = alarms.unreadMessages;
+      this.unreadMessages = alarms.unreadMessagesAlarms + alarms.unreadMessagesMessagesAlarms;
     });
     
     router.events
@@ -91,6 +114,7 @@ export class SidebarComponent implements OnInit {
           const menusToLookup: MenuOption[] = [
             ...menus['Other'],
             ...menus['User'],
+            ...menus['Devices']
           ];
           this.chosenOption = menusToLookup.find(
             (option: MenuOption) => `/${option.link}` === end.url

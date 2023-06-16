@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
 import { tokenName } from './../shared/constants';
+import { StoreType } from '../shared/store/types';
+import { Store } from '@ngrx/store';
+import { AlarmAction, AlarmActionType } from '../shared/store/threats-slice/threats.actions';
+import { ThreatService } from './threat.service';
 
 
 @Injectable({
@@ -9,8 +13,13 @@ import { tokenName } from './../shared/constants';
 })
 export class WebSocketService {
   private client: Client;
+  private pageAlarms: number = 0;
 
-  constructor() {
+  constructor(private store: Store<StoreType>, private threatService: ThreatService) {
+    this.store.subscribe((state) => {
+      console.log(state.threats.pageInfoAlarms)
+      this.pageAlarms = state.threats.pageInfoAlarms?.number;
+    });
     const token = sessionStorage.getItem(tokenName);
     this.client = new Client({
       webSocketFactory: () => new SockJS('https://localhost:8080/ws?token=' + token),
@@ -51,9 +60,20 @@ export class WebSocketService {
     this.client.subscribe('/user/queue/alarms', (msg) => {
         console.log(msg);
         // json parse
-        let body = JSON.parse(msg.body);
-        console.log(body);
-
+        let alarm = JSON.parse(msg.body);
+        this.fetchAlarams();
+        
     });
+  }
+
+  fetchAlarams() {
+    this.threatService.getAlarms(
+      this.pageAlarms,
+      (alarmsPage: any) => {
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_ALARMS, alarmsPage))
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_UNREAD_MESSAGES_ALARMS, 1))
+      },
+      (err) => {}
+    );
   }
 }

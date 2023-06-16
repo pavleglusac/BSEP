@@ -1,14 +1,12 @@
 package com.bsep.admin.repository.impl;
 
+import com.bsep.admin.model.Alarm;
 import com.bsep.admin.model.Message;
 import com.bsep.admin.repository.CustomMongoRepository;
 import com.bsep.admin.repository.MessageRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -55,6 +53,19 @@ public class MessageRepositoryImpl implements CustomMongoRepository {
         return PageableExecutionUtils.getPage(messages, pageRequest, () -> mongoTemplate.count((Query.of(query).limit(-1).skip(-1)), Message.class));
     }
 
+    public Page<Message> findFilteredMessages(List<UUID> deviceIds, String type, PageRequest pageRequest) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("deviceId").in(deviceIds));
+        query.addCriteria(Criteria.where("type").is(type));
+        query.with(pageRequest);
+
+        List<Message> messages = mongoTemplate.find(query, Message.class);
+
+        long count = mongoTemplate.count(query, Message.class);
+
+        return PageableExecutionUtils.getPage(messages, pageRequest, () -> mongoTemplate.count((Query.of(query).limit(-1).skip(-1)), Message.class));
+
+    }
 
     public void keep100MostRecentMessages() {
         // create a query that sorts by timestamp descending and limits to 100
@@ -65,6 +76,10 @@ public class MessageRepositoryImpl implements CustomMongoRepository {
         mongoTemplate.remove(new Query(), Message.class);
         // save the 100 most recent messages
         mongoTemplate.insert(messages, Message.class);
+    }
+
+    public Page<Alarm> findAllByDeviceIdIn(List<String> deviceIds, Pageable pageable) {
+        return null;
     }
 
 }

@@ -17,4 +17,8 @@ public interface TenantRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT CASE WHEN COUNT(d) > 0 THEN TRUE ELSE FALSE END FROM Tenant u JOIN u.realEstate re JOIN re.devices d WHERE u.id = :userId AND d.id = :deviceId")
     boolean doesUserHaveDevice(@Param("userId") UUID userId, @Param("deviceId") UUID deviceId);
+
+    //get real estates by tenant
+    @Query("SELECT re FROM Tenant u JOIN u.realEstate re WHERE u.id = :userId")
+    List<RealEstate> getRealEstatesByTenant(@Param("userId") UUID userId);
 }
