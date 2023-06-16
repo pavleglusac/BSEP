@@ -25,6 +25,8 @@
             <div class="my-auto shrink-0 ml-6 text-primary-gray-light font-mono">
               {{ alarm.timestamp | date }}
             </div>
+
+            <fa-icon [icon]="isExpanded(alarm) ? faChevronUp : faChevronDown" class="my-auto ml-3 text-primary-gray-light"></fa-icon> 
           </div>
   
           <div *ngIf="isExpanded(alarm)">

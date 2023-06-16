@@ -3,11 +3,11 @@
     <ul class="flex text-sm w-full h-fit font-semibold text-center text-primary-violet divide-x divide-primary-gray-dark/[70%] shadow cursor-pointer mb-8">
         <li class="w-full h-full relative" (click)="changeSelect(1)">
             <p class="w-full bg-primary-gray-light bg-opacity-10  hover:text-primary-violet" [ngClass]="selected === 1 ? 'text-primary-violet text-xl p-3' : 'text-primary-gray-light p-4'">Alarms from devices</p>
-            <div *ngIf="unreadMessageAlarms > 0" class="bg-red-900 text-xs text-secondary-white font-bold rounded-full absolute top-3 h-5 w-5" [ngClass]="selected === 1 ? 'right-[31%]':'right-[36%]' " >{{unreadMessageAlarms}}</div>
+            <div *ngIf="unreadMessageAlarms > 0" class="bg-red-900 text-xs text-secondary-white font-bold rounded-full absolute top-4 h-2 w-2" [ngClass]="selected === 1 ? 'right-[32%]':'right-[38%]' " ></div>
         </li>
         <li class="w-full h-full relative" (click)="changeSelect(2)">
             <p class="w-full bg-primary-gray-light bg-opacity-10 hover:text-primary-violet" [ngClass]="selected === 2 ? 'text-primary-violet text-xl p-3' : 'text-primary-gray-light p-4'">Set off alarms</p>
-            <div *ngIf="unreadAlarms > 0" class="bg-red-900 text-xs text-secondary-white font-bold rounded-full absolute top-3 h-5 w-5" [ngClass]="selected === 2 ? 'right-[36%]':'right-[39%]' " >{{unreadAlarms}}</div>
+            <div *ngIf="unreadAlarms > 0" class="bg-red-900 text-xs text-secondary-white font-bold rounded-full absolute top-4 h-2 w-2" [ngClass]="selected === 2 ? 'right-[38%]':'right-[41%]' " ></div>
         </li>
     </ul>
 

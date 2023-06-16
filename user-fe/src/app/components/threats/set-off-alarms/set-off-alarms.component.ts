@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { IconDefinition, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition, faChevronDown, faChevronLeft, faChevronRight, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { Store } from "@ngrx/store";
 import { ToastrService } from "ngx-toastr";
 import { Alarm } from "src/app/model/alarms";
@@ -20,6 +20,8 @@ import { StoreType } from "src/app/shared/store/types";
 
     faChevronLeft: IconDefinition = faChevronLeft;
     faChevronRight: IconDefinition = faChevronRight;
+    faChevronDown: IconDefinition = faChevronDown;
+    faChevronUp: IconDefinition = faChevronUp;
   
     alarms: Alarm[] = []
     pageInfo: any = null;
