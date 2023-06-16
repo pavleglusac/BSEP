@@ -14,11 +14,12 @@ import { ThreatService } from './threat.service';
 export class WebSocketService {
   private client: Client;
   private pageAlarms: number = 0;
+  private pageMsgs: number = 0;
 
   constructor(private store: Store<StoreType>, private threatService: ThreatService) {
     this.store.subscribe((state) => {
-      console.log(state.threats.pageInfoAlarms)
       this.pageAlarms = state.threats.pageInfoAlarms?.number;
+      this.pageMsgs = state.threats.pageInfoMessagesAlarms?.number;
     });
     const token = sessionStorage.getItem(tokenName);
     this.client = new Client({
@@ -68,9 +69,8 @@ export class WebSocketService {
     this.client.subscribe('/user/queue/message', (msg) => {
       console.log(msg);
       // json parse
-      let body = JSON.parse(msg.body);
-      console.log(body);
-
+      let msgAlarm = JSON.parse(msg.body);
+      this.fetchMessageAlarms();
   });
   }
 
@@ -80,6 +80,17 @@ export class WebSocketService {
       (alarmsPage: any) => {
         this.store.dispatch(new AlarmAction(AlarmActionType.ADD_ALARMS, alarmsPage))
         this.store.dispatch(new AlarmAction(AlarmActionType.ADD_UNREAD_MESSAGES_ALARMS, 1))
+      },
+      (err) => {}
+    );
+  }
+
+  fetchMessageAlarms() {
+    this.threatService.getMessageAlarms(
+      this.pageMsgs,
+      (alarmsPage: any) => {
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_MESSAGES_ALARMS, alarmsPage))
+        this.store.dispatch(new AlarmAction(AlarmActionType.ADD_UNREAD_MESSAGES_MESSAGE_ALARMS, 1))
       },
       (err) => {}
     );
