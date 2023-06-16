@@ -52,7 +52,7 @@ public class RulesService {
 
     private String msgRuleTemplate = "Message($mid: deviceId, read == false)";
     private String accumulateRuleTemplate = "$l: List() from collect( \n" +
-                                                "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
+                                                "   Message($m: this, read==false, deviceId == $mid {TEMPLATE_MESSAGE_TYPE}{TEMPLATE_TEXT_REGEX}{TEMPLATE_OPERATOR_AND_VALUE}{TEMPLATE_DEVICE_TYPE})" +
                                             "   {TEMPLATE_WINDOW}\n" +
                                             " )\n" +
                                             " eval($l.size() {TEMPLATE_OPERATOR_AND_NUM})";
@@ -168,6 +168,11 @@ public class RulesService {
         String templateWindow = null;
         String templateOperatorAndNum = null;
         String templateDeviceType = null;
+        String templateMessageType = null;
+
+        if (rule.getMessageType() != null) {
+            templateMessageType = ", type == \"" + rule.getMessageType() + "\"";
+        }
 
         if (rule.getTextRegex() != null && !rule.getTextRegex().isEmpty()) {
             templateTextRegex = ", text matches \"" + rule.getTextRegex() + "\"";
@@ -196,6 +201,7 @@ public class RulesService {
         res.add("when");
         res.add(msgRuleTemplate);
         res.add(accumulateRuleTemplate
+                .replace("{TEMPLATE_MESSAGE_TYPE}", Optional.ofNullable(templateMessageType).map(Objects::toString).orElse(""))
                 .replace("{TEMPLATE_DEVICE_TYPE}", Optional.ofNullable(templateDeviceType).map(Objects::toString).orElse(""))
                 .replace("{TEMPLATE_TEXT_REGEX}", Optional.ofNullable(templateTextRegex).orElse(""))
                 .replace("{TEMPLATE_OPERATOR_AND_VALUE}", Optional.ofNullable(templateOperatorAndValue).orElse(""))

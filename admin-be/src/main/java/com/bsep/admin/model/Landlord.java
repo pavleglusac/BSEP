@@ -23,4 +23,11 @@ public class Landlord extends User{
         super(user.getId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getLoginAttempts(), user.getPassword(), user.getDeleted(), user.getLoginToken(), user.getEmailVerified(), user.getEmailVerificationToken(), user.getRoles());
         this.realEstates = new ArrayList<>();
     }
+
+    @Override
+    public String toString() {
+        return "Landlord{" +
+                "username='" + super.getName() + '\'' +
+                '}';
+    }
 }

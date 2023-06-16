@@ -13,4 +13,8 @@ public interface RealEstateRepository extends JpaRepository<RealEstate, UUID> {
     @Query("SELECT DISTINCT r FROM RealEstate r JOIN r.devices d WHERE d IN :devices")
     List<RealEstate> findByDevicesInList(@Param("devices") List<Device> devices);
 
+    // find realestate that contains device in list of devices
+    @Query("SELECT DISTINCT r FROM RealEstate r JOIN r.devices d WHERE d = :device")
+    RealEstate findByDevice(@Param("device") Device device);
+
 }

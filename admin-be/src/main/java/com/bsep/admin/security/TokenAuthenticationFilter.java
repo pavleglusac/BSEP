@@ -101,6 +101,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		if (StringUtils.hasLength(authHeader) && authHeader.startsWith("Bearer "))
 			return authHeader.substring(7);
 
+		String token = request.getParameter("token");
+		if (StringUtils.hasLength(token))
+			return token;
+
 		return null;
 	}
 
