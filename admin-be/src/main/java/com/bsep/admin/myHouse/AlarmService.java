@@ -5,6 +5,7 @@ import com.bsep.admin.exception.RealEstateNotFoundException;
 import com.bsep.admin.model.*;
 import com.bsep.admin.myHouse.dto.AlarmResponseDto;
 import com.bsep.admin.myHouse.dto.DeviceResponseDto;
+import com.bsep.admin.myHouse.dto.MessageDto;
 import com.bsep.admin.myHouse.dto.RealEstateResponseDto;
 import com.bsep.admin.repository.*;
 import org.kie.api.KieBase;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,9 @@ public class AlarmService {
     private LandlordRepository landlordRepository;
 
     @Autowired
+    private MessageRepository messageRepository;
+
+    @Autowired
     private TenantRepository tenantRepository;
 
     public void createAlarm(String name, String text, UUID deviceId) {
@@ -78,7 +83,10 @@ public class AlarmService {
         if (realEstate == null) {
             throw new RealEstateNotFoundException("Real estate not found for device: " + device.getId() + ".");
         }
-
+        List<Device> devices = new ArrayList<>();
+        devices.add(device);
+        List<RealEstate> realEstates = new ArrayList<>();
+        realEstates.add(realEstate);
         Landlord landlord = landlordRepository.findByRealEstatesContains(realEstate);
         List<Tenant> tenants = tenantRepository.findByRealEstate(realEstate);
 
@@ -94,10 +102,6 @@ public class AlarmService {
 
     public Page<AlarmResponseDto> getAllAlarms(int page, int amount) {
         Page<Alarm> alarmPage = alarmRepository.findAll(PageRequest.of(page, amount));
-        //check if no alarms
-        /*if (alarmPage.isEmpty()) {
-            return new PageImpl<>(new ArrayList<>());
-        }*/
         List<UUID> deviceIds = alarmPage.getContent()
                 .stream().map(x -> UUID.fromString(x.getDeviceId())).toList();
         List<Device> devices = deviceRepository.findByIdIn(deviceIds);
@@ -109,21 +113,75 @@ public class AlarmService {
         return logAlarmRepository.findAll(PageRequest.of(page, amount));
     }
 
+    private List<RealEstate> getRealEstateByUser(User user) {
+        List<RealEstate> realEstates = new ArrayList<>();
+        if (user instanceof Landlord) {
+            realEstates = landlordRepository.getRealEstatesByLandlord(user.getId());
+        } else if (user instanceof Tenant) {
+            realEstates = tenantRepository.getRealEstatesByTenant(user.getId());
+        }
+        return realEstates;
+    }
+
+    public Page<AlarmResponseDto> getAllMineAlarms(User user, int page, int amount) {
+        List<RealEstate> realEstates = getRealEstateByUser(user);
+        List<Device> devices = realEstateRepository.findDevicesByRealEstates(realEstates);
+        List<String> deviceIds = devices.stream().map(x -> x.getId().toString()).toList();
+        Page<Alarm> alarmPage = alarmRepository.findAllByDeviceIdIn(deviceIds , PageRequest.of(page, amount));
+        return convertAlarmsToAlarmDtos(alarmPage, devices, realEstates);
+    }
+
+    public Page<MessageDto> findMessageAlarms(User user, int page, int amount) {
+        List<RealEstate> realEstates = getRealEstateByUser(user);
+        List<Device> devices = realEstateRepository.findDevicesByRealEstates(realEstates);
+        List<UUID> deviceIds = devices.stream().map(Device::getId).toList();
+        String type = "ALARM";
+        Page<Message> messagePage = messageRepository.findFilteredMessages(deviceIds, type,PageRequest.of(page, amount, Sort.by(Sort.Direction.DESC, "timestamp")));
+        return convertMessagesToMessageDtos(messagePage, devices, realEstates);
+    }
+
     private Page<AlarmResponseDto> convertAlarmsToAlarmDtos(Page<Alarm> alarmPage, List<Device> devices, List<RealEstate> realEstates) {
         List<AlarmResponseDto> alarmResponseDtos = new ArrayList<>();
         for (Alarm alarm : alarmPage.getContent()) {
-            AlarmResponseDto dto = modelMapper.map(alarm, AlarmResponseDto.class);
-            Device device = devices.stream()
-                    .filter(d -> d.getId().equals(UUID.fromString(alarm.getDeviceId())))
-                    .findFirst().get();
-            dto.setDevice(modelMapper.map(device, DeviceResponseDto.class));
-            RealEstate realEstate = realEstates.stream()
-                    .filter(re -> re.getDevices().contains(device))
-                    .findFirst().get();
-            dto.setRealEstate(modelMapper.map(realEstate, RealEstateResponseDto.class));
+            AlarmResponseDto dto = getAlarmResponseDto(devices, realEstates, alarm);
             alarmResponseDtos.add(dto);
         }
         return new PageImpl<>(alarmResponseDtos, alarmPage.getPageable(), alarmPage.getTotalElements());
+    }
+
+    private Page<MessageDto> convertMessagesToMessageDtos(Page<Message> messagePage, List<Device> devices, List<RealEstate> realEstates) {
+        List<MessageDto> messageDtos = new ArrayList<>();
+        for (Message message : messagePage.getContent()) {
+            MessageDto dto = getMessageDto(devices, realEstates, message);
+            messageDtos.add(dto);
+        }
+        return new PageImpl<>(messageDtos, messagePage.getPageable(), messagePage.getTotalElements());
+    }
+
+    private AlarmResponseDto getAlarmResponseDto(List<Device> devices, List<RealEstate> realEstates, Alarm alarm) {
+        AlarmResponseDto dto = modelMapper.map(alarm, AlarmResponseDto.class);
+        Device device = devices.stream()
+                .filter(d -> d.getId().equals(UUID.fromString(alarm.getDeviceId())))
+                .findFirst().get();
+        dto.setDevice(modelMapper.map(device, DeviceResponseDto.class));
+        RealEstate realEstate = realEstates.stream()
+                .filter(re -> re.getDevices().contains(device))
+                .findFirst().get();
+        dto.setRealEstate(modelMapper.map(realEstate, RealEstateResponseDto.class));
+        return dto;
+    }
+
+    private MessageDto getMessageDto(List<Device> devices, List<RealEstate> realEstates, Message message) {
+        MessageDto dto = modelMapper.map(message, MessageDto.class);
+        Device device = devices.stream()
+                .filter(d -> d.getId().equals(message.getDeviceId()))
+                .findFirst().get();
+        dto.setDevice(modelMapper.map(device, DeviceResponseDto.class));
+        RealEstate realEstate = realEstates.stream()
+                .filter(re -> re.getDevices().contains(device))
+                .findFirst().get();
+        dto.setRealEstate(modelMapper.map(realEstate, RealEstateResponseDto.class));
+        return dto;
     }
 
     public List<Alarm> getAlarmsForDevice(UUID deviceId) {

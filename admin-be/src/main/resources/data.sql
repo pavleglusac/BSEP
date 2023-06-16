@@ -54,6 +54,8 @@ INSERT INTO PRIVILEGE (name) VALUES ('WRITE_LOGS');
 INSERT INTO PRIVILEGE (name) VALUES ('READ_ALARM');
 /* 15 */
 INSERT INTO PRIVILEGE (name) VALUES ('WRITE_ALARM');
+/* 16 */
+INSERT INTO PRIVILEGE (name) VALUES ('READ_THREATS');
 
 /* Admin */
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (1, 1);
@@ -77,6 +79,7 @@ INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 7);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 9);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 10);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 11);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (2, 16);
 
 /* Tenant */
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 3);
@@ -85,6 +88,7 @@ INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 7);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 9);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 10);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 11);
+INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 16);
 
 
 /* Test Data */

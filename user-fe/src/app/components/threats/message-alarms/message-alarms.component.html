@@ -1,0 +1,78 @@
+<div class="flex flex-col w-full items-center pb-8">
+    <button *ngIf="messages.length > 0" class="button gray-button self-end" (click)="markAsRead()">Mark as read</button>
+    <div class="flex flex-col gap-y-4 w-11/12 lg:w-5/6">
+  
+      <div *ngIf="messages.length > 0" class="flex flex-col bg-dark px-3 py-4 text-primary-gray-dark">
+        <div *ngFor="let alarm of messages; let i = index"
+        class="flex flex-col justify-between py-1 border-b border-medium border-opacity-60
+        hover:opacity-90 cursor-pointer" (click)="handleExpand(alarm)">
+          <div class="flex w-full">
+            <div class="flex gap-x-3 my-auto w-[86%]">
+              <div class="text-sm font-mono text-primary-gray-light my-auto">{{ i + 1 }}</div>
+              <div [title]="alarm.text" class="text-lg font-bold text-red-900 w-36 truncate">
+                {{ alarm.text }}
+              </div>
+    
+              <div class="truncate my-auto text-primary-violet" [title]="alarm.text">
+                {{ alarm.value }}
+              </div>
+            </div>
+    
+            <div class="font-bold text-right w-32 my-auto">
+              {{ alarm.type ? alarm.type.replaceAll('_', ' ') : 'ALL'}}
+            </div>
+    
+            <div class="my-auto shrink-0 ml-6 text-primary-gray-light font-mono">
+              {{ alarm.timestamp | date }}
+            </div>
+
+            <fa-icon [icon]="isExpanded(alarm) ? faChevronUp : faChevronDown" class="my-auto ml-3 text-primary-gray-light"></fa-icon> 
+          </div>
+  
+          <div *ngIf="isExpanded(alarm)">
+            <div class="flex flex-col mt-1">
+              <div class="flex flex-col">
+                <div class="text-primary-gray-light text-sm">Real Estate</div>
+                <div class="flex justify-between">
+                  <div>{{ alarm.realEstate!.name }}</div>
+                  <div class="truncate font-mono text-primary-gray-light my-auto text-sm">{{ alarm.realEstate!.address }}</div>
+                </div>
+                
+              </div>
+  
+              <div class="flex flex-col">
+                <div class="text-primary-gray-light text-sm">Device</div>
+                <div class="flex justify-between">
+                  <div>{{ alarm.device!.name }}</div>
+                  <div class="font-mono text-primary-gray-light my-auto text-sm">{{ alarm.device!.id }}</div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+      <div *ngIf="messages.length > 0" class="flex justify-between w-44 mx-auto bg-dark px-4 py-2">
+        <div class="cursor-pointer my-auto" (click)="prevPage()"
+        [ngClass]="pageInfo.first ? 'cursor-default text-primary-gray-light' : 'cursor-pointer text-primary-violet'">
+          <fa-icon [icon]="faChevronLeft"></fa-icon>
+        </div>
+  
+        <div class="flex text-xl my-auto text-primary-gray-light gap-x-1">
+          {{ page }}<span class="text-primary-gray-dark">∣</span>{{ pageInfo.totalPages }}
+        </div>
+  
+        <div class="cursor-pointer my-auto" (click)="nextPage()"
+        [ngClass]="pageInfo.last ? 'cursor-default text-primary-gray-light' : 'cursor-pointer text-primary-violet'">
+          <fa-icon [icon]="faChevronRight"></fa-icon>
+        </div>
+      </div>
+  
+      <div *ngIf="messages.length === 0" class="flex flex-col justify-center h-20 bg-dark">
+        <div class="text-primary-gray-light text-2xl text-center">No device alarms present</div>
+      </div>
+  
+    </div>
+  </div>
