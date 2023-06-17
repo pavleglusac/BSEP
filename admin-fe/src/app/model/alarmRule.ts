@@ -8,6 +8,7 @@ export interface AlarmRule {
   window?: string;
   textRegex?: string;
   deviceType?: string;
+  deviceId?: string;
   value?: number;
   operatorValue?: string;
 }

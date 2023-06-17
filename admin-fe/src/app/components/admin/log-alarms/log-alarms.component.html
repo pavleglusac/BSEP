@@ -7,7 +7,7 @@
         hover:opacity-90 cursor-pointer" (click)="handleExpand(alarm)">
           <div class="flex w-full">
             <div class="flex gap-x-3 my-auto w-[70%]">
-              <div class="text-sm font-mono text-medium my-auto">{{ i + 1 }}</div>
+              <div class="text-sm font-mono text-medium my-auto w-5">{{ i + 1 }}</div>
               <div class="text-lg font-bold text-yellow-400 w-24 truncate">
                 {{ alarm.name }}
               </div>
@@ -21,8 +21,8 @@
               {{ alarm.id ? alarm.id.replaceAll('_', ' ') : 'ALL'}}
             </div>
     
-            <div class="my-auto shrink-0 ml-6 text-medium font-mono">
-              {{ alarm.timestamp | date }}
+            <div class="my-auto shrink-0 ml-6 text-medium font-mono" [title]="alarm.timestamp">
+              {{ alarm.timestamp | date:'short' }}
             </div>
           </div>
   

@@ -89,15 +89,3 @@ INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 9);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 10);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 11);
 INSERT INTO ROLE_PRIVILEGE (role_id, privilege_id) VALUES (3, 16);
-
-
-/* Test Data */
-INSERT INTO DEVICE (id, name, type, file_path, refresh_rate, filter_regex)
-VALUES ('a4bb9ee5-fbd8-4980-b810-9e876b020547', 'Test Device', 'THERMOMETER',
-        './file/path/test/device', 50, '.');
-
-INSERT INTO REAL_ESTATE (id, address, name)
-VALUES ('73feaf70-edf9-437c-aeca-489df92d470d', 'Mock Address 23', 'Mock Real Estate');
-
-INSERT INTO REAL_ESTATE_DEVICES (real_estate_id, devices_id)
-VALUES ('73feaf70-edf9-437c-aeca-489df92d470d', 'a4bb9ee5-fbd8-4980-b810-9e876b020547');
