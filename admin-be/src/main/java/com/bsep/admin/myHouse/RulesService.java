@@ -14,6 +14,7 @@ import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,11 +32,15 @@ public class RulesService {
     @Autowired
     private RuleRepository ruleRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     private List<String> DRL = new ArrayList<>();
 
     private final String DRL_header = """
             import com.bsep.admin.model.*;
             import java.util.List;
+            import java.util.UUID;
             import java.util.ArrayList;
             import java.util.Date;
             import java.util.concurrent.TimeUnit;
@@ -129,8 +134,8 @@ public class RulesService {
     }
 
     public void addRule(RuleCreationDto ruleCreationDto) {
-        System.out.println(ruleCreationDto.toString());
-        Rule rule = mapRuleDtoToRule(ruleCreationDto);
+        Rule rule = modelMapper.map(ruleCreationDto, Rule.class);
+        rule.setId(UUID.randomUUID());
         List<String> res = buildRuleTemplate(rule);
         rule.setId(UUID.randomUUID());
 
@@ -142,27 +147,12 @@ public class RulesService {
         ruleRepository.save(rule);
     }
 
-    private Rule mapRuleDtoToRule(RuleCreationDto dto) {
-        Rule rule = new Rule();
-        rule.setId(UUID.randomUUID());
-        rule.setName(dto.getName());
-        rule.setNum(dto.getNum());
-        rule.setValue(dto.getValue());
-        rule.setWindow(dto.getWindow());
-        rule.setAlarmText(dto.getAlarmText());
-        rule.setDeviceType(dto.getDeviceType());
-        rule.setMessageType(dto.getMessageType());
-        rule.setOperatorNum(dto.getOperatorNum());
-        rule.setOperatorValue(dto.getOperatorValue());
-        rule.setTextRegex(dto.getTextRegex());
-        return rule;
-    }
-
     public List<Rule> getAllRules() {
         return ruleRepository.findAll();
     }
 
     private List<String> buildRuleTemplate(Rule rule) {
+        String deviceIdDefault = "$mid: deviceId";
         String templateTextRegex = null;
         String templateOperatorAndValue = null;
         String templateWindow = null;
@@ -194,12 +184,16 @@ public class RulesService {
             templateDeviceType = ", deviceType == DeviceType." + rule.getDeviceType();
         }
 
+        if (rule.getDeviceId() != null) {
+            deviceIdDefault = deviceIdDefault + " == UUID.fromString(\"" + rule.getDeviceId() + "\")";
+        }
+
         // add rule to list of rules
         List<String> res = new ArrayList<>();
         res.add(ruleStartMarker + rule.getName());
         res.add("rule \"" + rule.getName() + "\"");
         res.add("when");
-        res.add(msgRuleTemplate);
+        res.add(msgRuleTemplate.replace("$mid: deviceId", deviceIdDefault));
         res.add(accumulateRuleTemplate
                 .replace("{TEMPLATE_MESSAGE_TYPE}", Optional.ofNullable(templateMessageType).map(Objects::toString).orElse(""))
                 .replace("{TEMPLATE_DEVICE_TYPE}", Optional.ofNullable(templateDeviceType).map(Objects::toString).orElse(""))

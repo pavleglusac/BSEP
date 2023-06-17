@@ -20,6 +20,8 @@ public class RuleCreationDto {
     @Length(max=256)
     private String textRegex;
     private DeviceType deviceType;
+    @Pattern(regexp = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$")
+    private String deviceId;
     private Double value;
     @Pattern(regexp = "^(?:==|>=|<=|>|<)$")
     private String operatorValue;

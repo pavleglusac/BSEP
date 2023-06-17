@@ -36,10 +36,6 @@ export class AlarmsComponent implements OnInit {
     this.fetchAlarms();
   }
 
-  sendSocketMessage() {
-    this.websocketService.sendMessage("Hello from Angular");
-  }
-
   fetchAlarms() {
     this.alarmService.getAlarms(
       this.page - 1,

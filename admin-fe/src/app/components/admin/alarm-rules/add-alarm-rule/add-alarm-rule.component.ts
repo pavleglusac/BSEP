@@ -25,6 +25,11 @@ export class AddAlarmRuleComponent {
       Validators.maxLength(48),
       Validators.pattern(/^\w+(?: \w+)*$/),
     ]),
+    alarmText: new FormControl('', [
+      Validators.required,
+      Validators.maxLength(256),
+      Validators.pattern(/^[\w.!]+(?: [\w.!]+)*$/),
+    ]),
     messageType: new FormControl('', [
       Validators.required,
       Validators.maxLength(32),
@@ -34,10 +39,9 @@ export class AddAlarmRuleComponent {
       Validators.required,
       Validators.maxLength(256),
     ]),
-    alarmText: new FormControl('', [
+    deviceId: new FormControl('', [
       Validators.required,
-      Validators.maxLength(256),
-      Validators.pattern(/^[\w.!]+(?: [\w.!]+)*$/),
+      Validators.pattern(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/),
     ]),
   });
 
@@ -82,6 +86,7 @@ export class AddAlarmRuleComponent {
   ];
 
   enableTextRegex: boolean = false;
+  enableDeviceId: boolean = false;
   enableValue: boolean = false;
   enableWindow: boolean = false;
 
@@ -114,6 +119,7 @@ export class AddAlarmRuleComponent {
           window: this.enableWindow ? `${this.windowValue}${this.windowUnit}` : undefined,
           value: this.enableValue ? this.value : undefined,
           operatorValue: this.enableValue ? this.operatorValue : undefined,
+          deviceId: this.enableDeviceId ? this.deviceId?.value! : undefined,
         }, 
         () => {
           this.toastr.success("Success!");
@@ -138,6 +144,10 @@ export class AddAlarmRuleComponent {
     if (this.enableWindow && this.windowValue === null) {
       return false;
     }
+    if (this.enableDeviceId && this.deviceId?.invalid) {
+      this.alarmForm.markAllAsTouched();
+      return false;
+    }
     if (this.num === null) {
       return false;
     }
@@ -158,6 +168,10 @@ export class AddAlarmRuleComponent {
 
   get alarmText() {
     return this.alarmForm.get('alarmText');
+  }
+
+  get deviceId() {
+    return this.alarmForm.get('deviceId');
   }
 
   deviceTypeChanged(event: any) {

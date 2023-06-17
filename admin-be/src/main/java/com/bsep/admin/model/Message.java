@@ -28,7 +28,6 @@ public class Message {
     private Double value;
     private DeviceType deviceType;
     private Date timestamp;
-
     private UUID deviceId;
     private Boolean read = false;
 

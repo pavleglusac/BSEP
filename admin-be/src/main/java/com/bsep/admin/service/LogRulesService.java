@@ -68,7 +68,7 @@ public class LogRulesService {
     @Scheduled(fixedRate = 2000)
     public void fireAllRules() {
         System.out.println("Firing all log rules! Total messages: " + queue.size());
-        System.out.println(queue.toString());
+//        System.out.println(queue.toString());
         StringBuilder rules = new StringBuilder();
         rules.append(DRL_header);
         DRL.forEach(line -> rules.append(line).append("\n"));

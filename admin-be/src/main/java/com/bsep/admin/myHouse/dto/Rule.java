@@ -24,6 +24,7 @@ public class Rule {
     @Column(name = "text_regex")
     private String textRegex;
     private DeviceType deviceType;
+    private UUID deviceId;
     @Column(name = "value_field")
     private Double value;
     private String operatorValue;

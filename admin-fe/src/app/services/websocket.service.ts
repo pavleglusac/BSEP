@@ -47,12 +47,12 @@ export class WebSocketService {
 
   subscribeToTopic() {
     // TODO: stize alarm ondosno logalarm za svaki endpoint, dodati toster i to sve
-    this.client.subscribe('/user/queue/logs', (msg) => {
+    this.client.subscribe('/user/queue/logs', (msg: any) => {
       let body = JSON.parse(msg.body);
       console.log(body)
     });
 
-    this.client.subscribe('/user/queue/alarms', (msg) => {
+    this.client.subscribe('/user/queue/alarms', (msg: any) => {
       let body = JSON.parse(msg.body);
       console.log(body);
     });
