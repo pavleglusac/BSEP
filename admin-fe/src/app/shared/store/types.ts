@@ -9,7 +9,13 @@ export type CsrStateType = {
   csr: Csr;
 };
 
+export type AlarmStateType = {
+  unreadAlarms: number;
+  unreadLogAlarms: number;
+}
+
 export type StoreType = {
+  alarms: AlarmStateType;
   loggedUser: LoggedUserStateType;
   certificate: CertificateStateType;
   csr: CsrStateType;

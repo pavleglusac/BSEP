@@ -12,7 +12,9 @@
       </div>
 
       <div class="flex gap-x-3">
-        <div class="font-bold">
+        <div class="font-bold"
+        [ngClass]="log.type === 'INFO' ? 'text-light' : (log.type === 'SUCCESS' ? 'text-accent' : 
+        (log.type === 'WARNING' ? 'text-yellow-500' : (log.type === 'ERROR' ? 'text-red-600' : 'text-light')))">
           {{ log.type }}
         </div>
         <div class="my-auto text-sm text-medium font-mono" [title]="log.timestamp">

@@ -12,11 +12,19 @@
         <div class="flex flex-col mt-2 cursor-pointer">
           
           <div *ngFor="let option of menus[group]"
-           class="flex w-full text-sm font-medium  py-2 pr-2"
+           class="flex w-full text-sm font-medium py-2 pr-2"
            [ngClass]="option === chosenOption ? 'text-dark bg-light' : 'text-light bg-dark hover:text-dark hover:bg-light'"
            (click)="navigate(option)">
-           <div class="w-11 text-center"><fa-icon [icon]="option.icon" class="text-xl"></fa-icon></div>
-           <p class="my-auto">{{ option.title }}</p>
+           <div class="w-11 text-center" 
+           [ngClass]="(option.title === 'Alarms' && unreadAlarms > 0) || (option.title === 'Log Alarms' && unreadLogAlarms > 0) ?
+            'text-yellow-500 font-extrabold0' : ''"
+           ><fa-icon [icon]="option.icon" class="text-xl"></fa-icon></div>
+           <div class="w-full flex justify-between my-auto">
+              <p [ngClass]="(option.title === 'Alarms' && unreadAlarms > 0) || (option.title === 'Log Alarms' && unreadLogAlarms > 0) ?
+                'text-yellow-500 font-extrabold' : ''">{{ option.title }}</p>
+              <p *ngIf="option.title === 'Alarms' && unreadAlarms > 0" class="font-extrabold text-yellow-500">{{ unreadAlarms }}</p>
+              <p *ngIf="option.title === 'Log Alarms' && unreadLogAlarms > 0" class="font-extrabold text-yellow-500">{{ unreadLogAlarms }}</p>
+           </div>
           </div>
   
         </div>

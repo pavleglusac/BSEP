@@ -101,7 +101,7 @@ public class AlarmService {
     }
 
     public Page<AlarmResponseDto> getAllAlarms(int page, int amount) {
-        Page<Alarm> alarmPage = alarmRepository.findAll(PageRequest.of(page, amount));
+        Page<Alarm> alarmPage = alarmRepository.findAll(PageRequest.of(page, amount, Sort.by(Sort.Direction.DESC, "timestamp")));
         List<UUID> deviceIds = alarmPage.getContent()
                 .stream().map(x -> UUID.fromString(x.getDeviceId())).toList();
         List<Device> devices = deviceRepository.findByIdIn(deviceIds);
@@ -110,7 +110,7 @@ public class AlarmService {
     }
 
     public Page<LogAlarm> getAllLogAlarms(int page, int amount) {
-        return logAlarmRepository.findAll(PageRequest.of(page, amount));
+        return logAlarmRepository.findAll(PageRequest.of(page, amount, Sort.by(Sort.Direction.DESC, "timestamp")));
     }
 
     private List<RealEstate> getRealEstateByUser(User user) {

@@ -7,6 +7,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { WebSocketService } from 'src/app/services/websocket.service';
+import { StoreType } from 'src/app/shared/store/types';
+import { Store } from '@ngrx/store';
+import { AlarmAction, AlarmActionType } from 'src/app/shared/store/alarms-slice/alarms.actions';
 
 @Component({
   selector: 'app-alarms',
@@ -29,10 +32,11 @@ export class AlarmsComponent implements OnInit {
   constructor(
     private alarmService: AlarmService,
     private toastr: ToastrService,
-    private websocketService: WebSocketService
+    private store: Store<StoreType>
   ) {}
 
   ngOnInit(): void {
+    this.store.dispatch(new AlarmAction(AlarmActionType.RESET_UNREAD_ALARMS));
     this.fetchAlarms();
   }
 

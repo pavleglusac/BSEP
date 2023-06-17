@@ -17,7 +17,9 @@ import {
   faRectangleList,
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
+import { Store } from '@ngrx/store';
 import { filter } from 'rxjs';
+import { AlarmStateType, StoreType } from 'src/app/shared/store/types';
 import { environment } from 'src/environment/environment';
 
 interface MenuOption {
@@ -102,8 +104,15 @@ export class AdminSidebarComponent {
   faRightFromBracket: IconDefinition = faRightFromBracket;
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
+  unreadAlarms = 0;
+  unreadLogAlarms = 0;
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(private router: Router, private http: HttpClient, private store: Store<StoreType>) {
+    this.loadAlarmsStore();
+    this.store.select('alarms').subscribe((alarms: AlarmStateType) => {
+      this.unreadAlarms = alarms.unreadAlarms;
+      this.unreadLogAlarms = alarms.unreadLogAlarms;
+    });
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((event) => {
@@ -119,6 +128,13 @@ export class AdminSidebarComponent {
           )!;
         }
       });
+  }
+
+  loadAlarmsStore(): void {
+    this.store.select('alarms').subscribe((alarms: AlarmStateType) => {
+      const a = { unreadAlarms: alarms.unreadAlarms, unreadLogAlarms: alarms.unreadLogAlarms }
+      window.localStorage.setItem('unread', JSON.stringify(a));
+    })
   }
 
   signOut(): void {

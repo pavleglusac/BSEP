@@ -7,6 +7,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Log } from 'src/app/model/log';
+import { AlarmAction, AlarmActionType } from 'src/app/shared/store/alarms-slice/alarms.actions';
+import { Store } from '@ngrx/store';
+import { StoreType } from 'src/app/shared/store/types';
 
 @Component({
   selector: 'app-log-alarms',
@@ -27,10 +30,12 @@ export class LogAlarmsComponent implements OnInit {
 
   constructor(
     private alarmService: AlarmService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private store: Store<StoreType>
   ) {}
 
   ngOnInit(): void {
+    this.store.dispatch(new AlarmAction(AlarmActionType.RESET_UNREAD_LOG_ALARMS));
     this.fetchLogAlarms();
   }
 
