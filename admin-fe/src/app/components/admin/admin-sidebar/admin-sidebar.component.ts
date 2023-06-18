@@ -1,8 +1,26 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faCheckDouble, faCertificate, faTurnDown, faMagnifyingGlass, faArrowsDownToPeople, faUserPlus, faUserGroup, faGear, faClipboard, faCircleExclamation, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheckDouble,
+  faCertificate,
+  faUserPlus,
+  faUserGroup,
+  faGear,
+  faClipboard,
+  faCircleExclamation,
+  faRightFromBracket,
+  faFileLines,
+  faRectangleList,
+  faExclamationTriangle,
+} from '@fortawesome/free-solid-svg-icons';
+import { Store } from '@ngrx/store';
+import { filter } from 'rxjs';
+import { AlarmStateType, StoreType } from 'src/app/shared/store/types';
+import { environment } from 'src/environment/environment';
 
 interface MenuOption {
   title: string;
@@ -14,76 +32,128 @@ const menus = {
   'Public Keys': [
     {
       title: 'Review requests',
-      link: '',
+      link: 'admin/requests',
       icon: faCheckDouble,
     },
     {
       title: 'Create certificate',
-      link: '',
+      link: 'admin/create-certificate',
       icon: faCertificate,
     },
     {
-      title: 'Withdraw certificate',
-      link: '',
-      icon: faTurnDown,
+      title: 'All certificates',
+      link: 'admin/certificates',
+      icon: faFileLines,
     },
-    {
-      title: 'Insights',
-      link: '',
-      icon: faMagnifyingGlass,
-    },
-    {
-      title: 'Distribute',
-      link: '',
-      icon: faArrowsDownToPeople,
-    }
   ],
-  'Users': [
+  Users: [
     {
       title: 'Register',
-      link: '',
+      link: 'admin/register',
       icon: faUserPlus,
     },
     {
-      title: 'All users',
-      link: '',
+      title: 'Users',
+      link: 'admin/users',
       icon: faUserGroup,
     },
   ],
-  'System': [
+  System: [
     {
       title: 'Settings',
-      link: '',
+      link: 'admin/settings',
       icon: faGear,
     },
     {
       title: 'Logs',
-      link: '',
+      link: 'admin/logs',
       icon: faClipboard,
     },
     {
+      title: 'Log Rules',
+      link: 'admin/log-rules',
+      icon: faRectangleList,
+    },
+    {
+      title: 'Log Alarms',
+      link: 'admin/log-alarms',
+      icon: faExclamationTriangle,
+    },
+    {
       title: 'Alarms',
-      link: '',
+      link: 'admin/alarms',
       icon: faCircleExclamation,
     },
-  ]
-}
+    {
+      title: 'Alarm Rules',
+      link: 'admin/alarm-rules',
+      icon: faRectangleList,
+    },
+  ],
+};
 
 @Component({
   selector: 'app-admin-sidebar',
   templateUrl: './admin-sidebar.component.html',
   standalone: true,
-  styles: [
-  ],
-  imports: [ CommonModule, FontAwesomeModule ]
+  styles: [],
+  imports: [CommonModule, FontAwesomeModule],
 })
 export class AdminSidebarComponent {
   menus: any = menus;
   faRightFromBracket: IconDefinition = faRightFromBracket;
   chosenOption: MenuOption = menus['Public Keys'][0];
   objectKeys = Object.keys;
+  unreadAlarms = 0;
+  unreadLogAlarms = 0;
+
+  constructor(private router: Router, private http: HttpClient, private store: Store<StoreType>) {
+    this.loadAlarmsStore();
+    this.store.select('alarms').subscribe((alarms: AlarmStateType) => {
+      this.unreadAlarms = alarms.unreadAlarms;
+      this.unreadLogAlarms = alarms.unreadLogAlarms;
+    });
+    router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((event) => {
+        const end = event as NavigationEnd;
+        if (end.url.startsWith('/admin')) {
+          const menusToLookup: MenuOption[] = [
+            ...menus['Public Keys'],
+            ...menus.System,
+            ...menus.Users,
+          ];
+          this.chosenOption = menusToLookup.find(
+            (option: MenuOption) => `/${option.link}` === end.url
+          )!;
+        }
+      });
+  }
+
+  loadAlarmsStore(): void {
+    this.store.select('alarms').subscribe((alarms: AlarmStateType) => {
+      const a = { unreadAlarms: alarms.unreadAlarms, unreadLogAlarms: alarms.unreadLogAlarms }
+      window.localStorage.setItem('unread', JSON.stringify(a));
+    })
+  }
 
   signOut(): void {
-    // TODO: Implement method
+    // accept plain text response
+    this.http
+    .post('api/auth/logout', {}, { responseType: 'text' })
+    .subscribe({
+      next() {
+        window.location.href = '/';
+      },
+      error(error) {
+        window.location.href = '/';
+      }
+    });
+    
+    window.sessionStorage.removeItem(environment.tokenName);
+  }
+
+  navigate(option: MenuOption) {
+    this.router.navigate([option.link]);
   }
 }

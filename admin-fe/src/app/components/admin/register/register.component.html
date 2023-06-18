@@ -1,0 +1,84 @@
+<div class="m-auto text-light flex justify-center pt-28"> 
+    <div class="bg-dark w-1/2 flex flex-col py-12 px-20 gap-10">
+
+        <div class="w-full">
+            <label class="block tracking-wide text-medium text-sm font-bold mb-1">
+              Name
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="user.name ? 'border-light' : 'border-medium'"
+            type="text" placeholder="Your name" autofocus="autofocus" [(ngModel)]="user.name"> 
+            <div class="h-1">
+                <p *ngIf="errors.name" class="text-yellow-400 text-xs italic">
+                  {{errors.name}}
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label class="block tracking-wide text-medium text-sm font-bold mb-1">
+              E-Mail
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="user.email ? 'border-light' : 'border-medium'"
+            type="text" placeholder="Your E-Mail Address" autofocus="autofocus" [(ngModel)]="user.email"> 
+            <div class="h-1">
+                <p *ngIf="errors.email" class="text-yellow-400 text-xs italic">
+                  {{errors.email}}
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label class="block tracking-wide text-medium text-sm font-bold mb-1">
+              Password
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="user.password ? 'border-light' : 'border-medium'"
+            type="password" placeholder="Your password" autofocus="autofocus" [(ngModel)]="user.password"> 
+            <div class="h-1">
+                <p *ngIf="errors.password" class="text-yellow-400 text-xs italic">
+                  {{errors.password}}
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label class="block tracking-wide text-medium text-sm font-bold mb-1">
+              Confirm password
+            </label>
+            <input class="appearance-none block w-full text-white tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+            [ngClass]="user.confirmPassword ? 'border-light' : 'border-medium'"
+            type="password" placeholder="Confirm your password" autofocus="autofocus" [(ngModel)]="user.confirmPassword"> 
+            <div class="h-1">
+                <p *ngIf="errors.confirmPassword" class="text-yellow-400 text-xs italic">
+                  {{errors.confirmPassword}}
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label class="block tracking-wide text-medium text-sm font-bold mb-1">
+              Role
+            </label>
+            <select class="appearance-none block w-full text-white tracking-wide
+            placeholder-medium caret-medium border-b focus:border-accent
+            bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300 border-medium"
+            autofocus="autofocus" [(ngModel)]="user.role"> 
+            <option value="ROLE_TENANT" class="text-dark">Tenant</option>
+            <option value = 'ROLE_LANDLORD' class="text-dark">Landlord</option>
+            </select>
+        </div>
+
+        <button class="bg-accent w-40 hover:bg-accent-dark text-light font-bold py-1 px-1 self-center" (click)="onSubmit()">Register</button>
+
+    </div>
+</div>

@@ -6,16 +6,20 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { baseUrl, tokenName } from '../constants';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+
+  constructor(private toastr: ToastrService) {}
+
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    request = request.clone({ url: `${baseUrl}/${request.url}` });
+    request = request.clone({ url: `${baseUrl}/${request.url}`, withCredentials: true });
     const token = sessionStorage.getItem(tokenName);
     if (token) {
       const authReq = request.clone({
@@ -23,7 +27,22 @@ export class AuthInterceptor implements HttpInterceptor {
           Authorization: `Bearer ${token}`,
         }),
       });
-      return next.handle(authReq);
+      return next.handle(authReq).pipe(
+        catchError((error) => {
+          if (error.status === 401 && window.location.pathname !== '/login') {
+            this.toastr.error('Session timeout. Please login again.');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 1500)
+          } else if (error.status === 400 && error.message === 'Access is denied') {
+            this.toastr.error('Session timeout. Please login again.');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 1500)
+          }
+          return throwError(() => error);
+        })
+      );
     }
     return next.handle(request);
   }

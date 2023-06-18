@@ -1,0 +1,20 @@
+<div class="flex flex-col w-full items-center py-8">
+  <div class="flex flex-col gap-y-4 w-11/12 lg:w-5/6">
+
+    <div class="flex justify-end">
+      <button class="bg-accent flex gap-x-3 h-10 px-4 hover:bg-opacity-90 active:bg-accent-dark" (click)="toAlarmCreation()">
+        <fa-icon [icon]="faPlus" class="text-light my-auto"></fa-icon>
+        <div class="text-light font-medium my-auto">New alarm rule</div>
+      </button>
+    </div>
+
+    <div *ngIf="alarmRules.length > 0" class="bg-dark px-3 py-4">
+      <app-alarm-rules-list [alarmRules]="alarmRules" />
+    </div>
+
+    <div *ngIf="alarmRules.length === 0" class="flex flex-col justify-center h-20 bg-dark">
+      <div class="text-medium text-2xl text-center">No alarm rules have been created</div>
+    </div>
+
+  </div>
+</div>

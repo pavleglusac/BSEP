@@ -1,0 +1,44 @@
+<div class="text-light bg-dark max-w-lg">
+    <div class="text-accent italic font-semibold flex p-4 justify-start items-start border-b border-accent-dark">
+       <p> Request No. {{csr!.id}} </p>
+       <div class="flex gap-3 items-start pt-[7px]">
+            <button title="Create certificate" (click)="onCreateCertificate()"> <fa-icon [icon]="createIcon" class="bg-gray-700 text-light hover:bg-accent-dark text-sm p-2"></fa-icon> </button>
+            <button title="Deny certificate" (click)="onDenyCertificate()"><fa-icon [icon]="denyIcon" class="bg-gray-700 text-light hover:bg-accent-dark text-sm p-2 px-[10px]"></fa-icon></button>
+       </div>
+    </div>
+    <div class="text-light flex flex-col gap-2 p-4">
+        <div class="flex gap-2">
+            <p class="font-light">Common name:</p>
+            <p class="font-semibold italic">{{csr!.commonName}}</p>
+        </div>
+        <div class="flex gap-2">
+            <p class="font-light">Given name:</p>
+            <p class="font-semibold italic">{{csr!.givenName}}</p>
+        </div>
+        <div class="flex gap-2">
+            <p class="font-light">Surname:</p>
+            <p class="font-semibold italic">{{csr!.surname}}</p>
+        </div>
+        <div class="flex gap-2">
+            <p class="font-light">Organization:</p>
+            <p class="font-semibold italic">{{csr!.organization}}</p>
+        </div>
+        <div class="flex gap-2">
+            <p class="font-light">Organizational unit:</p>
+            <p class="font-semibold italic">{{csr!.organizationalUnit}}</p>
+        </div>
+        <div class="flex gap-2">
+            <p class="font-light">Country:</p>
+            <p class="font-semibold italic">{{csr!.country}}</p>
+        </div>
+        <div class="flex gap-2">
+            <p class="font-light">Creation date:</p>
+            <p class="font-semibold italic">{{csr!.creationDate.replace('T', ' ')}}</p>
+        </div>
+        <div class="flex gap-2 flex-col">
+            <p class="font-light">Public key:</p>
+            <p class="font-semibold italic break-all hyphens-auto truncate  {{isTextVisible ? 'whitespace-pre-wrap':'truncate'}}">{{csr!.publicKey }}</p>
+            <button class="font-thin italic" (click)="isTextVisible = !isTextVisible">{{isTextVisible ? 'Show less' : 'Show more'}}</button>
+        </div>
+    </div>
+</div>

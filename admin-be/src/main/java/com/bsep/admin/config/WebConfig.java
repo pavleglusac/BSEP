@@ -1,9 +1,14 @@
 package com.bsep.admin.config;
 
 
+import com.bsep.admin.api.RateLimitingInterceptor;
+import io.github.bucket4j.Bucket;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -29,4 +34,14 @@ public class WebConfig implements WebMvcConfigurer {
 				.allowCredentials(true)
 				.maxAge(MAX_AGE_SECS);
 	}
+
+	@Autowired
+	private Bucket bucket;
+
+
+	// register rate limiting interceptor
+ 	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+ 		registry.addInterceptor(new RateLimitingInterceptor(bucket));
+ 	}
 }

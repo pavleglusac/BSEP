@@ -7,37 +7,44 @@ import {
   LoggedUserAction,
   LoggedUserActionType,
 } from '../shared/store/logged-user-slice/logged-user.actions';
+import { Router } from '@angular/router';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private store: Store<StoreType>) {
-    this.store.select('loggedUser').subscribe((res) => {
-      console.log(res);
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   login = (
     email: string,
     password: string,
     code: string,
-    successCb: () => void,
+    successCb: (token: string) => void,
     errorCb: (error: any) => void
   ) => {
-    var that = this;
     this.http
       .post('api/auth/login', { email, password, loginToken: code })
       .subscribe({
         next(value: any) {
-          sessionStorage.setItem(tokenName, value.accessToken);
-          that.store.dispatch(new LoggedUserAction(LoggedUserActionType.LOGIN));
-          successCb();
+          successCb(value.accessToken);
         },
         error(err) {
-          console.log(err);
           errorCb(err.error);
         },
       });
   };
+
+  getUser = (successCb: (user: User) => void, errorCb: (error: any) => void) => {
+    this.http.get('api/auth/my-profile')
+    .subscribe({
+      next(value: any) {
+        console.log(value);
+        successCb(value);
+      },
+      error(err) {
+        errorCb(err.error);
+      },
+    })
+  }
 }

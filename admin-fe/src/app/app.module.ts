@@ -10,6 +10,9 @@ import { AppComponent } from './app.component';
 import { AuthInterceptor } from './shared/interceptors/http.interceptor';
 import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.reducer';
 import { metaReducers } from './local-storage.service';
+import { editCertificateReducer } from './shared/store/certificate-slice/certificate.reducer';
+import { CsrReducer } from './shared/store/csr-slice/csr.reducer';
+import { alarmReducer } from './shared/store/alarms-slice/alarm.reducer';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +29,9 @@ import { metaReducers } from './local-storage.service';
     StoreModule.forRoot(
       {
         loggedUser: loggedUserReducer,
+        certificate: editCertificateReducer,
+        csr: CsrReducer,
+        alarms: alarmReducer,
       },
       { metaReducers }
     ),

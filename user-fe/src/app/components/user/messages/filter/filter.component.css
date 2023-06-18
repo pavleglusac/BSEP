@@ -1,0 +1,3 @@
+.input-msg {
+    @apply block w-[35%] text-primary-violet px-0 text-sm bg-transparent border-0 border-b border-primary-gray-light appearance-none focus:outline-none focus:ring-0 focus:border-y-primary-violet h-[40px]
+}

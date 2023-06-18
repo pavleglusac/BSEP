@@ -1,0 +1,22 @@
+<p-dialog position="center" [(visible)]="visible" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false" class="bg-secondary-white h-50" [closable]="true" (onHide)="change()">
+    <div  class=" max-w-lg ml-64 rounded border border-primary-gray-light" style="background: rgb(247, 247, 249);">
+        <div class=" flex flex-col gap-2 p-4 justify-start">
+            <div class="flex flex-col gap-3">
+                <div class="font-semibold text-primary-violet italic tracking-wide uppercase self-start mb-3">
+                    tenants
+                </div> 
+                <div *ngFor="let tenant of tenants" class="flex gap-2">
+                    <img src="/assets/images/default_pfp.png" alt="profile picture" class="w-10 h-10 rounded-full my-auto border-black">
+                    <div class="flex flex-col">
+                        <p class="text-primary-gray-dark font-medium">{{tenant.name}}</p>
+                        <p class="text-primary-gray-light text-sm">{{tenant.email}}</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="flex gap-3 self-end">
+                <button class="button gray-button" (click)="hideDialog()" >Close</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>

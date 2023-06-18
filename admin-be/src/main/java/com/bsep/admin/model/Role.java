@@ -1,12 +1,52 @@
 package com.bsep.admin.model;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
-public enum Role {
-	ROLE_USER,
-	ROLE_ADMIN;
+import java.util.Set;
 
-	public SimpleGrantedAuthority toAuthority() {
-		return new SimpleGrantedAuthority(this.name());
+@Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "ROLE")
+public class Role implements GrantedAuthority {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
+
+	@Column(name = "name")
+	String name;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "role_privilege",
+			joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+	private Set<Privilege> privileges;
+
+	@JsonIgnore
+	@ManyToMany(mappedBy = "roles" , fetch = FetchType.LAZY)
+	private Set<User> users;
+
+	@Override
+	public String getAuthority() {
+		return name;
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 }

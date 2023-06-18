@@ -1,0 +1,50 @@
+<div class="bg-primary-gray-light bg-opacity-30 flex flex-col rounded-t-lg ">
+    <div class="p-10 py-7 border-b border-primary-gray-dark/[70%] flex items-center justify-between">
+        <div class="flex gap-3 italic font-semibold text-lg text-primary-violet uppercase">
+            Messages ({{messages.length}})
+        </div>
+        <div class="flex gap-2">
+            <div class="cursor-pointer my-auto" (click)="prevPage()"
+            [ngClass]="pageInfo.first ? 'cursor-default text-secondary-gray' : 'cursor-pointer text-primary-violet'">
+              <fa-icon [icon]="faChevronLeft"></fa-icon>
+            </div>
+      
+            <div class="flex text-xl my-auto text-primary-gray-dark gap-x-1">
+              {{ page }}<span class="text-medium">∣</span>{{ pageInfo.totalPages }}
+            </div>
+      
+            <div class="cursor-pointer my-auto" (click)="nextPage()"
+            [ngClass]="pageInfo.last ? 'cursor-default text-secondary-gray' : 'cursor-pointer text-primary-violet'">
+              <fa-icon [icon]="faChevronRight"></fa-icon>
+            </div>
+          </div>
+    </div>
+    <div class="flex divide-x divide-primary-gray-dark/[70%]  items-center text-lg">
+        <p *ngFor="let columnName of columnNames" class="flex justify-center font-medium text-secondary-gray brightness-75 w-full px-4 py-2">
+            {{columnName}}
+        </p>
+    </div>
+</div>
+<div class="bg-primary-gray-light bg-opacity-10 flex flex-col rounded-b-lg cursor-default">
+    <div *ngFor="let message of messages" class="flex divide-y divide-primary-gray-dark/[70%] items-center text-lg" [ngClass]="message.type === 'INFO' ? 'text-secondary-gray brightness-75': 'text-red-900'">
+        <p></p>
+        <div [title]="message.id" class="flex justify-center font-medium  w-[17%]">
+            <p class="w-[80%] px-3 py-2 truncate text-center">{{message.id}}</p>
+        </div>
+        <div [title]="message.type" class="flex justify-center font-medium  w-[17%]">
+            <p class="w-[80%] px-3 py-2 truncate text-center">{{message.type}}</p>
+        </div>
+        <div [title]="message.text" class="flex justify-center font-medium  w-[17%]">
+            <p class="w-[80%] px-3 py-2 truncate text-center">{{message.text}}</p>
+        </div>
+        <div [title]="message.value" class="flex justify-center font-medium  w-[17%]">
+            <p class="w-[80%] px-3 py-2 truncate text-center">{{message.value | number : '1.2-2'}}</p>
+        </div>
+        <div [title]="message.timestamp | date:'short'" class="flex justify-center font-medium  w-[17%]">                       
+            <p class="w-[80%] px-3 py-2 truncate text-center">{{message.timestamp | date:'short'}}</p>
+        </div>
+        <div [title]="message.deviceId" class="flex justify-center font-medium w-[17%]">
+            <p class="w-[80%] px-3 py-2 truncate text-center"> {{message.deviceId}}</p>
+        </div>
+    </div>
+</div>

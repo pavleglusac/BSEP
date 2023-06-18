@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environment/environment';
 import {
@@ -34,12 +34,27 @@ export class AuthService {
   ) => {
     var that = this;
     this.http
-      .post('api/auth/login', { email, password, loginToken: code })
+      .post('api/auth/login', { email, password, loginToken: code }, {withCredentials: true})
       .subscribe({
         next(value: any) {
           sessionStorage.setItem(environment.tokenName, value.accessToken);
           that.store.dispatch(new LoggedUserAction(LoggedUserActionType.LOGIN));
-          successCb();
+          that.http.get('api/auth/privileged', {
+            headers: new HttpHeaders({'Accept':'text/plain'}),
+            'responseType': 'text' as 'json',
+            withCredentials: true
+          })
+            .subscribe({
+              next(value: any) {
+                successCb();
+              },
+              error(err) {
+                console.log(err);
+                sessionStorage.removeItem(environment.tokenName);
+                that.store.dispatch(new LoggedUserAction(LoggedUserActionType.LOGOUT));
+                errorCb({ message: 'Incorrect credentials.' });
+              },
+            });
         },
         error(err) {
           console.log(err);

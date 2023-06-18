@@ -1,0 +1,42 @@
+<div class="flex flex-col gap-2 items-end min-h-[100px] max-h-[400px] overflow-auto z-[1000]">
+   
+    <div *ngFor="let option of filterOptions" class="flex gap-2 justify-between w-full">
+        <select class="input-msg" [(ngModel)]="option.filterField">
+            <option value="" [selected]="true" disabled>Choose field</option>
+            <option value="type">Type</option>
+            <option value="text">Text</option>
+            <option value="value">Value</option>
+            <option value="timestamp">Timestamp</option>
+        </select>
+        
+        <select *ngIf="option.filterField==='type'" class="input-msg" [(ngModel)]="option.messageType">
+            <option value="" [selected]="true" disabled>Choose type</option>
+            <option value="INFO">INFO</option>
+            <option value="ALARM">ALARM</option>
+        </select>
+
+        <input *ngIf="option.filterField==='text'" class="input-msg" [(ngModel)]="option.messageText" placeholder="Enter text"/>
+
+        <div *ngIf="option.filterField==='value'" class="flex gap-2 items-center">
+            <p class="text-xs text-secondary-gray">from:</p>
+            <input class="input-msg" [(ngModel)]="option.messageValue.from" type="number"/>
+            <p class="text-xs text-secondary-gray">to:</p>
+            <input class="input-msg" [(ngModel)]="option.messageValue.to" type="number"/>
+        </div>
+
+        <div *ngIf="option.filterField==='timestamp'" class="flex gap-2 items-center">
+            <p class="text-xs text-secondary-gray">from:</p>
+            <input class="input-msg" [(ngModel)]="option.messageTimestamp.from" type="date"/>
+            <p class="text-xs text-secondary-gray">to:</p>
+            <input class="input-msg" [(ngModel)]="option.messageTimestamp.to" type="date"/>
+        </div>
+
+        <fa-icon *ngIf="option.filterField !== ''" [icon]="faRemove" class="text-primary-violet my-auto text-xs cursor-pointer" (click)="remove(option)"></fa-icon>
+            
+    </div>
+
+    
+    <a *ngIf="filterOptions.length < 4" class="underline text-xs text-primary-gray-dark cursor-pointer mr-auto" (click)="addFilter()">Add filter</a>
+    
+    <button class="button gray-button !text-sm" (click)="apply()">Apply</button>
+</div>

@@ -1,10 +1,13 @@
 package com.bsep.admin.config;
 
 
+import com.bsep.admin.api.LoggingFilter;
+import com.bsep.admin.api.RateLimitingInterceptor;
 import com.bsep.admin.security.CustomAuthenticationProvider;
 import com.bsep.admin.security.CustomUserDetailsService;
 import com.bsep.admin.security.RestAuthenticationEntryPoint;
 import com.bsep.admin.security.TokenAuthenticationFilter;
+import com.bsep.admin.service.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
@@ -32,11 +36,15 @@ public class SecurityConfig {
 	@Autowired
 	private CustomAuthenticationProvider authProvider;
 
+	@Autowired
+	private LogService logService;
+
 	@Bean
 	public AuthenticationManager authManager(HttpSecurity http) throws Exception {
 		AuthenticationManagerBuilder authenticationManagerBuilder =
 				http.getSharedObject(AuthenticationManagerBuilder.class);
 		authenticationManagerBuilder.authenticationProvider(authProvider);
+		authenticationManagerBuilder.parentAuthenticationManager(null);
 		return authenticationManagerBuilder.build();
 	}
 
@@ -47,6 +55,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
 		http
 				.cors()
 					.and()
@@ -55,7 +64,10 @@ public class SecurityConfig {
 					.and()
 				.csrf()
 					.disable()
+				.addFilterAfter(new CspFilter(), HeaderWriterFilter.class)
 				.headers()
+					.xssProtection()
+					.and()
 					.frameOptions().disable()
 					.and()
 				.formLogin()
@@ -65,7 +77,12 @@ public class SecurityConfig {
 				.exceptionHandling()
 					.authenticationEntryPoint(new RestAuthenticationEntryPoint())
 					.and()
+				.requiresChannel()
+				.anyRequest()
+				.requiresSecure()
+				.and()
 				.authorizeHttpRequests()
+					.requestMatchers(new AntPathRequestMatcher("/ws/**")).authenticated()
 					.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
 					.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 					.requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
@@ -73,8 +90,9 @@ public class SecurityConfig {
 					.anyRequest().authenticated();
 
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterAfter(new LoggingFilter(logService), TokenAuthenticationFilter.class);
+
 		return http.build();
 	}
-
 
 }

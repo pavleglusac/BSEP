@@ -1,0 +1,45 @@
+<div class="flex justify-between bg-dark px-4 py-2">
+
+  <div class="flex">
+    <div class="w-80">
+      <form (ngSubmit)="handleSearch()">
+        <label class="block tracking-wide text-medium text-xs font-bold mb-1"
+        for="user-search">
+          Search users
+        </label>
+        <input class="appearance-none block w-full text-white tracking-wide
+        placeholder-medium caret-medium border-b focus:border-accent
+        bg-transparent leading-tight outline-none py-1 focus:transition-color duration-300"
+        [ngClass]="query && !showQueryError ? 'border-light' : 'border-medium'"
+        [ngClass]="showQueryError ? 'border-red-600' : ''" [(ngModel)]="query"
+        (change)="showQueryError = false"
+        [ngModelOptions]="{standalone: true}" id="user-search" type="text" placeholder="Query...">
+      </form>
+    </div>
+  
+    <div class="grid grid-flow-col grid-cols-2 grid-rows-2 ml-4">
+      <div *ngFor="let role of allRoles">
+        <div class="flex items-center mr-4">
+          <input [id]="role + '_checkbox'" type="checkbox" [checked]="selectedRoles.includes(role)"
+          [disabled]="selectedRoles.includes(role) && selectedRoles.length === 1"
+          (change)="selectRole($event, role)" class="w-4 h-4 text-accent accent-accent
+          bg-gray-100 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600">
+          <label [for]="role + '_checkbox'" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+            {{ role.replace('ROLE_', '').toLowerCase()}}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex gap-x-4 select-none">
+    <div class="flex flex-col justify-center h-10 my-auto w-36 px-4 cursor-pointer text-center" (click)="onlyLocked = !onlyLocked"
+    [ngClass]="onlyLocked ? 'bg-accent text-light' : 'bg-light'">
+      <p class="font-medium">{{ onlyLocked ? 'LOCKED USERS' : 'ALL USERS' }}</p>
+    </div>
+
+    <button class="bg-accent hover:bg-opacity-90 active:bg-accent-dark w-10 h-10 shrink-0 my-auto" (click)="handleSearch()">
+      <fa-icon [icon]="faSearch" class="text-light my-auto"></fa-icon>
+    </button>
+  </div>
+</div>

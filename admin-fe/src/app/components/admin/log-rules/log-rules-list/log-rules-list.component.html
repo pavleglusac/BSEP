@@ -1,0 +1,65 @@
+<div class="w-full flex flex-col gap-y-3">
+  <div *ngFor="let logRule of logRules">
+    <div class="flex flex-col border border-medium border-opacity-50 p-3 text-light">
+      
+      <div class="flex justify-between">
+
+        <div class="flex flex-col justify-center w-1/3">
+          <div class="flex font-bold text-lg">
+            <div class="text-accent">
+              {{ logRule.name }}
+            </div>
+            
+            <div class="font-bold ml-3 text-medium text-sm my-auto">
+              [ {{ logRule.logType ? logRule.logType.replaceAll('_', ' ') : 'ALL' }} ]
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center my-auto truncate w-1/3">
+          <div class="text-xs font-bold text-medium">Text</div>
+          {{ logRule.alarmText }}
+        </div>
+        
+        <div class="flex justify-end w-1/3">
+          <button class="hover:text-red-500 w-8" (click)="handleDeleteRule(logRule.name)">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-5 mt-4">
+        <div class="flex flex-col my-auto text-center">
+          <div class="text-xs text-medium">Action Regex</div>
+          <div class="font-bold">{{ logRule.actionRegex ? logRule.actionRegex : '-' }}</div>
+        </div>
+        <div class="flex flex-col my-auto text-center">
+          <div class="text-xs text-medium">Details Regex</div>
+          <div class="font-bold">{{ logRule.detailsRegex ? logRule.detailsRegex : '-' }}</div>
+        </div>
+        <div class="flex flex-col my-auto text-center">
+          <div class="text-xs text-medium">IP Address Regex</div>
+          <div class="font-bold">{{ logRule.ipAddressRegex ? logRule.ipAddressRegex : '-' }}</div>
+        </div>
+        <div class="flex flex-col my-auto text-center">
+          <div class="text-xs text-medium">Num. of logs</div>
+          <div class="font-bold">{{ logRule.operatorNum }} {{ logRule.num }}</div>
+        </div>
+        <div class="flex flex-col my-auto text-center">
+          <div class="text-xs text-medium">Window</div>
+          <div class="font-bold">{{ logRule.window ? logRule.window : '-' }}</div>
+        </div>
+      </div>
+
+      <div *ngIf="logRule.usernames.length > 0" class="flex mt-1 text-sm">
+        <div class="text-medium font-bold">Usernames:</div>
+        <div class="inline ml-2 w-72 lg:w-120 truncate font-bold">
+          <div *ngFor="let username of logRule.usernames; let i = index" class="inline">
+            {{ username }}{{ i === logRule.usernames.length - 1 ? '' : ',&nbsp;' }}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

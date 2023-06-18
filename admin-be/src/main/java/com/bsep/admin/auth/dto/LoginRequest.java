@@ -1,5 +1,7 @@
 package com.bsep.admin.auth.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequest {
-
-	private String email;
-	private String password;
-
-	private String loginToken;
+    @Email
+    private String email;
+    @NotBlank
+    private String password;
+    @NotBlank
+    private String loginToken;
 }

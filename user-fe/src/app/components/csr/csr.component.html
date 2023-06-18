@@ -1,0 +1,35 @@
+<div class="h-full flex justify-center items-start pt-10">
+    <form class="w-full max-w-2xl bg-white h-fit rounded-lg backdrop-blur-lg flex flex-col shadow-around">
+        <div class="header">
+            <p class="text-primary-violet font-semibold text-lg">Certificate Signing Request</p>
+        </div>
+        <div class="body">
+            <div class="w-full flex flex-col gap-2">
+                <label class="label">Common name</label>
+                <input type="text" class="input" name="commonName" [(ngModel)]="csr.commonName"/>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+                <label class="label" >Given name</label>
+                <input type="text" class="input" name="givenName" [(ngModel)]="csr.givenName"/>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+                <label class="label">Surname</label>
+                <input type="text" class="input" name="surname" [(ngModel)]="csr.surname"/>
+            </div>  
+            <div class="w-full flex flex-col gap-2">
+                <label class="label">Organization</label>
+                <input type="email" class="input" name="organization" [(ngModel)]="csr.organization"/>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+                <label class="label">Organizational unit</label>
+                <input type="email" class="input" name="organizationalUnit" [(ngModel)]="csr.organizationalUnit"/>
+            </div>
+            <div class="w-full flex flex-col gap-2">
+                <label class="label">Country</label>
+                <input type="email" class="input" name="country" [(ngModel)]="csr.country"/>
+            </div>  
+
+            <button class="button gray-button self-center" (click)="onCreate()">Create request</button>
+        </div>
+  </form>
+</div>

@@ -1,0 +1,41 @@
+<div class="m-auto flex justify-start min-h-full max-h-full overflow-auto">
+
+    <div class="flex flex-col p-20 gap-10 w-full">
+        <div class="flex flex-col gap-2">
+            <p class="text-primary-gray-dark text-lg mb-2">Choose real estate or its device to display reports:</p>
+            <div class="flex justify-start items-end gap-5">
+                <select class="input-msg" (change)="selectedRealEstate = getSelectedRealEstate($event.target)">
+                    <option value="" [selected]="true" disabled>Choose real estate</option>
+                    <option *ngFor="let realEstate of realEstates" [value]="realEstate.id">{{realEstate.name}} </option>
+                </select>
+
+                <div *ngIf="selectedRealEstate" class="flex gap-2 ml-auto">
+                    <button [title]="filterSelected ? 'Clear filter' : 'Filter search'" [ngClass]="filterSelected ? 'backdrop-brightness-95' :'' " (click)="clearFilter()" class="button gray-button !px-2">
+                        <fa-icon [icon]="faFilter"></fa-icon>
+                    </button>
+                    
+                    <select class="input-msg" [value]="typeField" (change)="selectedDevice = getSelectedDevice(selectedRealEstate, $event.target)">
+                        <option value="" [selected]="true" disabled>Choose device</option>
+                        <option *ngFor="let device of selectedRealEstate.devices" [value]="device.id">{{device.name}} {{device.type}}</option>
+                    </select>
+                    
+                    <div class="flex gap-4 items-center">
+                        <p class=" text-secondary-gray">from:</p>
+                        <input class="input-msg" [(ngModel)]="from" type="date"/>
+                        <p class=" text-secondary-gray">to:</p>
+                        <input class="input-msg" [(ngModel)]="to" type="date"/>
+                    </div>
+                </div>
+        
+
+                <button *ngIf="selectedRealEstate" class="ml-auto button violet-button place-self-end" (click)="show()">Show reports</button>
+            </div>
+            
+            <div class="flex flex-col gap-5 mt-16">
+                <app-report-entry *ngFor="let report of reports" [report]="report"></app-report-entry>
+            </div>
+
+        </div>
+        <p class="min-h-[5px]"></p>
+    </div>
+</div>

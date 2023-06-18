@@ -1,0 +1,14 @@
+.label {
+    @apply font-semibold text-primary-gray-dark
+}
+.input {
+    @apply block w-full px-0 text-sm bg-transparent border-0 border-b border-primary-gray-light appearance-none focus:outline-none focus:ring-0 focus:border-y-primary-violet
+}
+
+.header {
+    @apply h-[10%] bg-opacity-10 bg-primary-gray-light flex p-5 justify-start border-b border-primary-gray-light border-opacity-20
+}
+
+.body {
+    @apply px-10 py-8 flex flex-col gap-5
+}

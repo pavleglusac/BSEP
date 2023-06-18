@@ -7,14 +7,18 @@ import { metaReducers } from './local-storage.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login/login.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/http.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.reducer';
+import { realEstateReducer } from './shared/store/real-estate-slice/real-estate.reducer';
+import { alarmReducer } from './shared/store/threats-slice/threats.reducer';
+
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
+  declarations: [
+    AppComponent,
+  ],
   imports: [
     BrowserModule,
     FormsModule,
@@ -29,6 +33,8 @@ import { loggedUserReducer } from './shared/store/logged-user-slice/logged-user.
     StoreModule.forRoot(
       {
         loggedUser: loggedUserReducer,
+        realEstates: realEstateReducer,
+        threats: alarmReducer,
       },
       { metaReducers }
     ),
