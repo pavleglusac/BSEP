@@ -30,7 +30,7 @@
             <div class="flex flex-col gap-2 mt-2 overflow-auto max-h-16">
               <div *ngFor="let log of alarm.logs" class="flex justify-between w-full px-5">
                 <div class="flex gap-5">
-                  <p class="upper text-accent-dark italic font-bold">{{log.type}}</p>
+                  <p class="upper italic font-bold" [ngClass]="log.type.toLowerCase() !== 'error' ? ' text-accent-dark' : 'text-yellow-400'">{{log.type}}</p>
                   <p class="text-medium font-semibold">{{log.action}}</p>
                 </div>
                 <p [title]="log.details" class="text-medium truncate flex-nowrap max-w-[50%]">{{log.details}}</p>
